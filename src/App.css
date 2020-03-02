@@ -10,13 +10,266 @@
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
 }
 
+.settings{
+  width:100%;
+}
+
+.link-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  outline:none;
+}
+
+.link-button:hover,
+.link-button:focus,
+.link-button:active {
+  text-decoration: none;
+  outline:none;
+}
+
+.no-suggestions {
+  color: #999;
+  padding: 0.5rem;
+
+}
+
+.autocomplete input {
+    width: calc(300px + 1rem);
+}
+
+.autocomplete{
+    min-height: 165px;
+}
+
+.suggestions {
+  border: 1px solid #999;
+  border-top-width: 0;
+  list-style: none;
+  margin-top: 0;
+  max-height: 143px;
+  overflow-y: auto;
+  padding-left: 0;
+  width: calc(300px + 1rem);
+
+  display:inline-block;
+  position:relative;
+
+}
+
+.suggestions li {
+  padding: 0.5rem;
+}
+
+.suggestion-active,
+.suggestions li:hover {
+  background-color: #008f68;
+  color: #fae042;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.suggestions li:not(:last-of-type) {
+  border-bottom: 1px solid #999;
+}
+
+.profileform label{
+   display:block;
+
+}
+
 .App-link {
   color: #09d3ac;
+}
+
+.postlist {
+  text-align: left;
+  background: blue;
+  border-radius: 20px;
+  padding:30px;
+  margin:10px;
+
+  width:60%;
+  display: inline-flex;
+}
+
+.userlist {
+  text-align: left;
+  background: blue;
+  border-radius: 20px;
+  padding:30px;
+  margin:10px;
+  width:60%;
+  display: inline-flex;
+}
+
+.comments{
+    background:white;
+    width:90%;
+    display:block;
+    border-radius: 20px;
+    padding:10px;
+    margin:10px;
+    color:black;
+}
+
+.commentlist {
+  text-align: left;
+  background: lightblue;
+  color:black;
+  border-radius: 20px;
+  padding:10px;
+  margin:10px;
+  font-size: 12px;
+  width:90%;
+  display:block;
+}
+
+.hide{
+  display:none;
+}
+
+
+.maincontent{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.posts{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.postbody{
+  width:60%;
+  display:flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.comment-block{
+  width:100%;
+  display:flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sidenav{
+  /* need to specify some position other than static, so height can apply.
+     Fixed works since it will stay fixed to the side - 0 from both left and top. */
+  position:fixed;
+  left:0px;
+  top:0px;
+  height:100%;
+  width:100px;
+
+  /* internally to this container, we want to use flex positioning of the menu elements */
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  background-color: blue;
+}
+
+.sidenav ul{
+   list-style-type: none;
+   padding:10px;
+   margin:0px;
+   margin-top: 40px;
+}
+
+.sidenav-icon{
+  width:40px;
+  height:40px;
+
+  margin-bottom:15px;
+}
+
+.comment-indicator{
+  text-align:right;
+  width:100%;
+  display:block;
+  float:right;
+  margin-top: 10px;
+}
+
+.comment-icon{
+  width:40px;
+  height:40px;
+  float:right;
+}
+
+.comment-indicator-text{
+  background-color: lightblue;
+  color: black;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  width:120px;
+  padding:5px;
+  float:right;
+  margin-left:10px;
+  text-align: center;
+}
+
+.hide{
+  display:none;
+}
+
+/* The Modal (background) */
+.modal {
+  display: block;
+  position: fixed; /* Stay in place */
+  z-index: 0; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 1px 10px 20px 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+  height: 200px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  line-height: 42px;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

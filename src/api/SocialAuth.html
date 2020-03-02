@@ -1,0 +1,72 @@
+ <!DOCTYPE HTML>
+ <html>
+
+ <head>
+   <script src="Social.js"></script>
+   <link rel="stylesheet" type="text/css" href="Social.css">
+   <style>
+     .roundbox {
+       background-color: green;
+       color: white;
+       border-radius: 10px;
+       padding: 10px;
+       margin: 10px;
+       width: 50%;
+     }
+   </style>
+
+ </head>
+
+ <body>
+   <h1>Authentication Routines</h1>
+   <div class="roundbox">
+     <h2>Login</h2>
+     <p>login with email address and password</p>
+     <form id="loginform" action="SocialAuth.php" method="POST">
+       <input type="hidden" name="action" value="login">
+       <label>Username</label><input type="text" id="username" name="username" ) size="50" )>
+       <br>
+       <label>Password</label><input type="password" ) id="password" name="password" size="50">
+
+       <input type="submit" />
+     </form>
+   </div>
+
+   <div class="roundbox">
+     <h2>Register</h2>
+     <p>For registering new users. Registration will send an OTP to set your password. </p>
+     <form id="registerform" action="SocialAuth.php" method="POST">
+       <input type="hidden" name="action" value="register">
+       <label>Email Address</label><input type="text" id="email_addr" name="email_addr" size="50">
+
+       <input type="submit" />
+     </form>
+   </div>
+   <div class="roundbox">
+     <h2>Forgot Password</h2>
+     <p>For sending the token you need for the set password feature</p>
+     <form id="forgotform" action="SocialAuth.php" method="POST">
+       <input type="hidden" name="action" value="forgotpassword">
+       <label>Email Address</label><input type="text" id="email_addr" name="email_addr" size="50">
+       <input type="submit" />
+
+     </form>
+   </div>
+   <div class="roundbox">
+     <h2>Set Password</h2>
+     <p>For change password, resetting your password when you forget it, or establishing an initial password after registration</p>
+     <form id="setpasswordform" action="SocialAuth.php" method="POST">
+       <input type="hidden" name="action" value="setpassword">
+       <label>Email Address</label><input type="text" id="email_addr" name="email_addr" size="50">
+       <br>
+       <label>Token</label><input type="text" id="token" name="token" size="50">
+       <br>
+       <label>New Password</label><input type="password" id="newpassword" name="newpassword" size="50">
+       <br>
+       <label>Confirm Password</label><input type="password" id="confirmpassword" name="confirmpassword" size="50">
+       <input type="submit" />
+     </form>
+   </div>
+ </body>
+
+ </html>

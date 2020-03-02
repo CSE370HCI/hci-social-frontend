@@ -1,0 +1,36 @@
+{ "project":"Social",
+  "security":{
+    "user_table":"users",
+    "user_id_field":"user_id",
+    "api_key_field":"session_token",
+    "otp_field":"otp",
+    "security_level":"update_only",
+    "generate_login_page":"Y",
+    "email_addr_field":"email_addr",
+    "password_field":"password"
+  },
+  "dbinfo":{"schema":"social",
+            "host":"stark.cse.buffalo.edu",
+            "user":"social_user",
+            "passwd":"cse3702020!",
+            "database":"social"
+  },
+  "datasets":[
+      {"table_name":"connections", "id_key":"connection_id", "controller_filename":"connectioncontroller.php", "joins":[]},
+      {"table_name":"users", "id_key":"user_id","controller_filename":"usercontroller.php",
+        "joins":[
+          {"join_type":"join", "table_name":"connections", "table_key":"user_id", "join_key":"user_id", "joins":[]},
+          {"join_type":"join", "table_name":"user_artifacts", "table_key":"user_id", "join_key":"user_id", "joins":[]},
+          {"join_type":"join", "table_name":"user_prefs", "table_key":"user_id", "join_key":"user_id", "joins":[]},
+          {"join_type":"join", "table_name":"group_members", "table_key":"user_id", "join_key":"user_id", "joins":[]}
+        ]},
+      {"table_name":"groups","id_key":"group_id","controller_filename":"groupcontroller.php","joins":[]},
+      {"table_name":"messages","id_key":"message_id","controller_filename":"messagecontroller.php","joins":[]},
+      {"table_name":"post_tags","id_key":"post_tag_id","controller_filename":"ptcontroller.php","joins":[]},
+      {"table_name":"posts","id_key":"post_id","controller_filename":"postcontroller.php","joins":[]},
+      {"table_name":"user_artifacts","id_key":"artifact_id","controller_filename":"uacontroller.php","joins":[]},
+      {"table_name":"user_prefs","id_key":"pref_id","controller_filename":"upcontroller.php","joins":[]},
+      {"table_name":"group_members","id_key":"gm_id","controller_filename":"gmcontroller.php","joins":[]}
+  ],
+  "outpath":"c:\\Users\\Alan Hunt\\Documents\\CSE\\apigen\\social\\"
+}
