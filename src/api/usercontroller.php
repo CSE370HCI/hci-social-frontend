@@ -71,12 +71,6 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
-
-    $mode = "blanknull";
-    if (array_key_exists('mode', $decoded_params)) {
-        $mode =  $decoded_params['mode'];
-    }
-
     if ($action == "addOrEditUsers") {
         if (validateAPIKey($userId, $sessionToken)) {
             $args = array();
@@ -104,103 +98,17 @@ if (isValidJSON($json_params)) {
                 }
             } else {
                 $sql = "UPDATE users SET username = ?,email_addr = ?,password = ?,session_token = ?,otp = ?,status = ?,name = ?,first_name = ?,last_name = ?,user_role = ? WHERE user_id = ?; ";
-                $args = array();
-                $sql = "UPDATE users SET ";
-                $first = true;
-
-                if (!IsNullOrEmpty($username)) {
-                    if ($first) {
-                        $sql .= " username = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " , username = ? ";
-                    }
-                    array_push($args, $username);
-                }
-                if (!IsNullOrEmpty($emailAddr)) {
-                    if ($first) {
-                        $sql .= " email_addr = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,email_addr = ? ";
-                    }
-                    array_push($args, $emailAddr);
-                }
-                if (!IsNullOrEmpty($password)) {
-                    if ($first) {
-                        $sql .= " password = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,password = ? ";
-                    }
-                    array_push($args, $password);
-                }
-                if (!IsNullOrEmpty($sessionToken)) {
-                    if ($first) {
-                        $sql .= " session_token = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,session_token = ? ";
-                    }
-                    array_push($args, $sessionToken);
-                }
-                if (!IsNullOrEmpty($otp)) {
-                    if ($first) {
-                        $sql .= " otp = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " , otp = ? ";
-                    }
-                    array_push($args, $otp);
-                }
-                if (!IsNullOrEmpty($status)) {
-                    if ($first) {
-                        $sql .= " status = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,status = ? ";
-                    }
-                    array_push($args, $status);
-                }
-                if (!IsNullOrEmpty($name)) {
-                    if ($first) {
-                        $sql .= " name = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,name = ? ";
-                    }
-                    array_push($args, $name);
-                }
-                if (!IsNullOrEmpty($firstName)) {
-                    if ($first) {
-                        $sql .= " first_name = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,first_name = ? ";
-                    }
-                    array_push($args, $firstName);
-                }
-                if (!IsNullOrEmpty($lastName)) {
-                    if ($first) {
-                        $sql .= " last_name = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,last_name = ? ";
-                    }
-                    array_push($args, $lastName);
-                }
-                if (!IsNullOrEmpty($userRole)) {
-                    if ($first) {
-                        $sql .= " user_role = ? ";
-                        $first = false;
-                    } else {
-                        $sql .= " ,user_role = ? ";
-                    }
-                    array_push($args, $userRole);
-                }
-                $sql .= " WHERE user_id = ? ";
+                array_push($args, $username);
+                array_push($args, $emailAddr);
+                array_push($args, $password);
+                array_push($args, $sessionToken);
+                array_push($args, $otp);
+                array_push($args, $status);
+                array_push($args, $name);
+                array_push($args, $firstName);
+                array_push($args, $lastName);
+                array_push($args, $userRole);
                 array_push($args, $userId);
-
                 try {
                     $statement = $conn->prepare($sql);
                     $statement->execute($args);

@@ -58,7 +58,7 @@ if (isValidJSON($json_params)) {
         // forward to error page
     } elseif ($action == "register") {
         $conn = getDbConnection();
-        $email = $_POST["email_addr"];
+        $email = $decoded_params["email_addr"];
         $token = uniqid();
         $sql = "INSERT INTO users (email_addr, otp) VALUES (?,?)";
         $args = [$email, $token];
@@ -69,10 +69,10 @@ if (isValidJSON($json_params)) {
         mail($email, "otp", "Welcome to <appname> Your OTP is ".$token);
         $json["message"] = "Account created.  A confirmation email has been sent.";
     } elseif ($action == "setpassword") {
-        $email = $_POST["email_addr"];
-        $otp = $_POST["token"];
-        $password = $_POST["newpassword"];
-        $confirm = $_POST["confirmpassword"];
+        $email = $decoded_params["email_addr"];
+        $otp = $decoded_params["token"];
+        $password = $decoded_params["newpassword"];
+        $confirm = $decoded_params["confirmpassword"];
 
         $conn = getDbConnection();
         $sql = "SELECT * FROM users WHERE email_addr = ?";
