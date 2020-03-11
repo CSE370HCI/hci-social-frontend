@@ -161,10 +161,10 @@ if (isValidJSON($json_params)) {
         }
         if (!IsNullOrEmpty($userId)) {
             if ($first) {
-                $sql .= " WHERE user_id = ? ";
+                $sql .= " WHERE posts.user_id = ? ";
                 $first = false;
             } else {
-                $sql .= " AND user_id = ? ";
+                $sql .= " AND posts.user_id = ? ";
             }
             array_push($args, $userId);
         }
@@ -223,10 +223,10 @@ if (isValidJSON($json_params)) {
             array_push($args, $parentId);
         } else {
             if ($first) {
-                $sql .= " WHERE parent_id is NULL ";
+                $sql .= " WHERE (parent_id is null or parent_id =  0)  ";
                 $first = false;
             } else {
-                $sql .= " AND parent_id is NULL";
+                $sql .= " AND (parent_id is null or parent_id =  0) ";
             }
         }
 
