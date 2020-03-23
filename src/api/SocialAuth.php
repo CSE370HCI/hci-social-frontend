@@ -136,7 +136,7 @@ if (isValidJSON($json_params)) {
             }
         }
     } elseif ($action == "forgotpassword") {
-        $email = $_POST["email_addr"];
+        $email = $decoded_params["email_addr"];
 
         $conn = getDbConnection();
         $token = uniqid();
