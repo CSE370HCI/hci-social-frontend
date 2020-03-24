@@ -23,6 +23,8 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('posttagid', $decoded_params)) {
         $postTagId =  $decoded_params['posttagid'];
     }
+
+    // TODO : change to filter id in all the controllers
     $userId = "";
     if (array_key_exists('userid', $decoded_params)) {
         $userId =  $decoded_params['userid'];

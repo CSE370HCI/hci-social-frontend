@@ -63,20 +63,20 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('userrole', $decoded_params)) {
         $userRole =  $decoded_params['userrole'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
     if ($action == "addOrEditUsers") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($userId)) {
-                $sql = "INSERT INTO users (user_id,username,email_addr,password,session_token,otp,status,name,first_name,last_name,user_role) VALUES ( ?,?,?,?,?,?,?,?,?,?,?);";
-                array_push($args, $userId);
+                $sql = "INSERT INTO users (username,email_addr,password,session_token,otp,status,name,first_name,last_name,user_role) VALUES ( ?,?,?,?,?,?,?,?,?,?,?);";
+                
                 array_push($args, $username);
                 array_push($args, $emailAddr);
                 array_push($args, $password);
@@ -127,7 +127,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deleteUsers") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM users WHERE user_id = ?";
             $args = array();
             array_push($args, $userId);
