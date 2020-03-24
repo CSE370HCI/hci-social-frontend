@@ -39,16 +39,16 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('message', $decoded_params)) {
         $message =  $decoded_params['message'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
     if ($action == "addOrEditMessages") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($messageId)) {
                 $sql = "INSERT INTO messages (message_id,user_id,recipient_id,group_id,message) VALUES ( ?,?,?,?,?);";
@@ -91,7 +91,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deleteMessages") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM messages WHERE message_id = ?";
             $args = array();
             array_push($args, $messageId);

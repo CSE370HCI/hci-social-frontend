@@ -35,16 +35,16 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('prefvalue', $decoded_params)) {
         $prefValue =  $decoded_params['prefvalue'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
     if ($action == "addOrEditUserPrefs") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($prefId)) {
                 $sql = "INSERT INTO user_prefs (pref_id,user_id,pref_name,pref_value) VALUES ( ?,?,?,?);";
@@ -85,7 +85,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deleteUserPrefs") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM user_prefs WHERE pref_id = ?";
             $args = array();
             array_push($args, $prefId);

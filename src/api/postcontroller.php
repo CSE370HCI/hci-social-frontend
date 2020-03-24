@@ -51,9 +51,9 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('parentid', $decoded_params)) {
         $parentId =  $decoded_params['parentid'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
@@ -64,7 +64,7 @@ if (isValidJSON($json_params)) {
         $maxPosts =  $decoded_params['max_posts'];
     }
     if ($action == "addOrEditPosts") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($postId)) {
                 $sql = "INSERT INTO posts (post_id,user_id,post_type,post_text,post_pic_url,comment_flag,parent_id) VALUES ( ?,?,?,?,?,?,?);";
@@ -122,7 +122,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deletePosts") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM posts WHERE post_id = ?";
             $args = array();
             array_push($args, $postId);

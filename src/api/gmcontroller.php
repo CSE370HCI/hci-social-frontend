@@ -35,16 +35,16 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('membertype', $decoded_params)) {
         $memberType =  $decoded_params['membertype'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
     if ($action == "addOrEditGroupMembers") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($gmId)) {
                 $sql = "INSERT INTO group_members (gm_id,group_id,user_id,member_type) VALUES ( ?,?,?,?);";
@@ -85,7 +85,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deleteGroupMembers") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM group_members WHERE gm_id = ?";
             $args = array();
             array_push($args, $gmId);

@@ -39,16 +39,16 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('connectionstatus', $decoded_params)) {
         $connectionStatus =  $decoded_params['connectionstatus'];
     }
-    $userId = "";
+    $authUserId = "";
     if (array_key_exists('user_id', $decoded_params)) {
-        $userId =  $decoded_params['user_id'];
+        $authUserId =  $decoded_params['user_id'];
     }
     $sessionToken = "";
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
     if ($action == "addOrEditConnections") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($connectionId)) {
                 $sql = "INSERT INTO connections (connection_id,user_id,connect_user_id,connection_type,connection_status) VALUES ( ?,?,?,?,?);";
@@ -91,7 +91,7 @@ if (isValidJSON($json_params)) {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
     } elseif ($action == "deleteConnections") {
-        if (validateAPIKey($userId, $sessionToken)) {
+        if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM connections WHERE connection_id = ?";
             $args = array();
             array_push($args, $connectionId);
