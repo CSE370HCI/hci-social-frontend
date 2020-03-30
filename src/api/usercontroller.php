@@ -76,7 +76,7 @@ if (isValidJSON($json_params)) {
             $args = array();
             if (IsNullOrEmpty($userId)) {
                 $sql = "INSERT INTO users (username,email_addr,password,session_token,otp,status,name,first_name,last_name,user_role) VALUES ( ?,?,?,?,?,?,?,?,?,?,?);";
-                
+
                 array_push($args, $username);
                 array_push($args, $emailAddr);
                 array_push($args, $password);
@@ -378,7 +378,11 @@ if (isValidJSON($json_params)) {
         } catch (Exception $e) {
             $json['Exception'] =  $e->getMessage();
         }
+
+
+
         foreach ($result as $row1) {
+            $conn2 = null;
             $sql = "SELECT connections.* FROM users, connections WHERE
              users.user_id = connections.user_id
               AND users.user_id = ".$row1['user_id'];
@@ -395,6 +399,8 @@ if (isValidJSON($json_params)) {
             foreach ($result2 as $row2) {
                 $row1['connections'][] = $row2;
             }
+            $conn2 = null;
+
             $sql = "SELECT user_artifacts.* FROM users, user_artifacts WHERE
              users.user_id = user_artifacts.user_id
               AND users.user_id = ".$row1['user_id'];
@@ -427,6 +433,9 @@ if (isValidJSON($json_params)) {
             foreach ($result2 as $row2) {
                 $row1['user_prefs'][] = $row2;
             }
+
+
+            $conn2 = null;
             $sql = "SELECT group_members.* FROM users, group_members WHERE
              users.user_id = group_members.user_id
               AND users.user_id = ".$row1['user_id'];
@@ -444,6 +453,8 @@ if (isValidJSON($json_params)) {
                 $row1['group_members'][] = $row2;
             }
             $json['users'][] = $row1;
+            $conn2 = null;
+            closeConnections();
         }
     } else {
         $json['Exeption'] = "Unrecognized Action ";

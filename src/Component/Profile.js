@@ -40,7 +40,7 @@ export default class Profile extends React.Component {
       method: "post",
       body: JSON.stringify({
         action: "getCompleteUsers",
-        user_id: this.props.userid
+        userid: this.props.userid
       })
     })
       .then(res => res.json())
