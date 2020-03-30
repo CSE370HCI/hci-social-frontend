@@ -1,6 +1,7 @@
 {
   "name": "myfirstreact",
   "version": "0.1.0",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "react": "^16.10.2",
