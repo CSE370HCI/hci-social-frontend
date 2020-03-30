@@ -63,6 +63,14 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('max_posts', $decoded_params)) {
         $maxPosts =  $decoded_params['max_posts'];
     }
+    $tag = "";
+    if (array_key_exists('tag', $decoded_params)) {
+        $tag =  $decoded_params['tag'];
+    }
+    $tagType = "";
+    if (array_key_exists('tag_type', $decoded_params)) {
+        $tagType =  $decoded_params['tag_type'];
+    }
     if ($action == "addOrEditPosts") {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
@@ -228,6 +236,24 @@ if (isValidJSON($json_params)) {
             } else {
                 $sql .= " AND (parent_id is null or parent_id =  0) ";
             }
+        }
+        if (!IsNullOrEmpty($tag)) {
+            if ($first) {
+                $sql .= " WHERE exists (select 'x' from post_tags pt where pt.post_id = posts.post_id and pt.tag=?) ";
+                $first = false;
+            } else {
+                $sql .= " AND exists (select 'x' from post_tags pt where pt.post_id = posts.post_id and pt.tag=?) ";
+            }
+            array_push($args, $tag);
+        }
+        if (!IsNullOrEmpty($tagType)) {
+            if ($first) {
+                $sql .= " WHERE exists (select 'x' from post_tags pt where pt.post_id = posts.post_id and pt.tag_type=?) ";
+                $first = false;
+            } else {
+                $sql .= " AND exists (select 'x' from post_tags pt where pt.post_id = posts.post_id and pt.tag_type=?) ";
+            }
+            array_push($args, $tagType);
         }
 
         $sql .= " order by timestamp desc ";
