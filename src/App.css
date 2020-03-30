@@ -11,7 +11,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: flex-center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
@@ -143,7 +143,7 @@
 .maincontent{
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  
   justify-content: center;
   flex-grow: 1;
 }
