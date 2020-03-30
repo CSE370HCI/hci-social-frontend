@@ -382,6 +382,8 @@ if (isValidJSON($json_params)) {
 
 
         foreach ($result as $row1) {
+            //error_log("testing max connections");
+
             $conn2 = null;
             $sql = "SELECT connections.* FROM users, connections WHERE
              users.user_id = connections.user_id
@@ -454,6 +456,11 @@ if (isValidJSON($json_params)) {
             }
             $json['users'][] = $row1;
             $conn2 = null;
+
+            // close the connections each swing through the loop, or
+            // mysql will run out of open connections if you have
+            // more than a few users in the database and you ask for
+            // them all.
             closeConnections();
         }
     } else {
