@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+#db connection file with passwords
+/src/api/connect.php
+
 # testing
 /coverage
 
