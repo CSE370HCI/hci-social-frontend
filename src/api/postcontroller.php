@@ -71,6 +71,10 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('tag_type', $decoded_params)) {
         $tagType =  $decoded_params['tag_type'];
     }
+    $offset = "";
+    if (array_key_exists('offset', $decoded_params)) {
+        $offset =  $decoded_params['offset'];
+    }
     if ($action == "addOrEditPosts") {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
@@ -259,9 +263,12 @@ if (isValidJSON($json_params)) {
         $sql .= " order by timestamp desc ";
 
         if (!IsNullOrEmpty($maxPosts)) {
-            $sql .= " LIMIT ".$maxPosts;
+            if (!IsNullOrEmpty($offset)) {
+                $sql .= " LIMIT ".$offset.",".$maxPosts;
+            } else {
+                $sql .= " LIMIT ".$maxPosts;
+            }
         }
-
 
         $json['SQL'] = $sql;
         try {
@@ -351,6 +358,17 @@ if (isValidJSON($json_params)) {
                 $sql .= " AND parent_id IS NULL ";
             }
         }
+
+        $sql .= " order by timestamp desc ";
+
+        if (!IsNullOrEmpty($maxPosts)) {
+            if (!IsNullOrEmpty($offset)) {
+                $sql .= " LIMIT ".$offset.",".$maxPosts;
+            } else {
+                $sql .= " LIMIT ".$maxPosts;
+            }
+        }
+
         $json['SQL'] = $sql;
         try {
             $statement = $conn->prepare($sql);
