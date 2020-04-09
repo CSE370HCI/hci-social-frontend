@@ -71,6 +71,11 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('session_token', $decoded_params)) {
         $sessionToken =  $decoded_params['session_token'];
     }
+    $mode = "ignorenulls";
+    if (array_key_exists('mode', $decoded_params)) {
+        $mode =  $decoded_params['mode'];
+    }
+
     if ($action == "addOrEditUsers") {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
@@ -97,18 +102,82 @@ if (isValidJSON($json_params)) {
                     $json['Exception'] =  $e->getMessage();
                 }
             } else {
-                $sql = "UPDATE users SET username = ?,email_addr = ?,password = ?,session_token = ?,otp = ?,status = ?,name = ?,first_name = ?,last_name = ?,user_role = ? WHERE user_id = ?; ";
-                array_push($args, $username);
-                array_push($args, $emailAddr);
-                array_push($args, $password);
-                array_push($args, $sessionToken);
-                array_push($args, $otp);
-                array_push($args, $status);
-                array_push($args, $name);
-                array_push($args, $firstName);
-                array_push($args, $lastName);
-                array_push($args, $userRole);
+                $first = true;
+                $sql = "UPDATE users SET ";
+
+                if ($mode == "erasenulls" || !IsNullOrEmpty($username)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "username = ? ";
+                    array_push($args, $username);
+                }
+
+                if ($mode == "erasenulls" || !IsNullOrEmpty($emailAddr)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "email_addr = ? ";
+                    array_push($args, $emailAddr);
+                }
+
+                if ($mode == "erasenulls" || !IsNullOrEmpty($status)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "status = ? ";
+                    array_push($args, $status);
+                }
+
+                if ($mode == "erasenulls" || !IsNullOrEmpty($name)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "name = ? ";
+                    array_push($args, $name);
+                }
+
+                if ($mode == "erasenulls" || !IsNullOrEmpty($firstName)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "first_name = ? ";
+                    array_push($args, $firstName);
+                }
+                if ($mode == "erasenulls" || !IsNullOrEmpty($lastName)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "last_name = ? ";
+                    array_push($args, $lastName);
+                }
+                if ($mode == "erasenulls" || !IsNullOrEmpty($userRole)) {
+                    if (!$first) {
+                        $sql .= ',';
+                    } else {
+                        $first = false;
+                    }
+                    $sql .= "user_role = ? ";
+                    array_push($args, $userRole);
+                }
+
+                $sql .= " WHERE user_id = ?; ";
                 array_push($args, $userId);
+
+                $json['SQL'] = $sql;
+
                 try {
                     $statement = $conn->prepare($sql);
                     $statement->execute($args);
