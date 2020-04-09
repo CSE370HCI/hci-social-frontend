@@ -222,7 +222,7 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "getUsers") {
         $args = array();
-        $sql = "SELECT * FROM users";
+        $sql = "SELECT user_id, username, email_addr, status, name, first_name, last_name, user_role FROM users";
         $first = true;
         if (!IsNullOrEmpty($userId)) {
             if ($first) {
@@ -251,33 +251,7 @@ if (isValidJSON($json_params)) {
             }
             array_push($args, $emailAddr);
         }
-        if (!IsNullOrEmpty($password)) {
-            if ($first) {
-                $sql .= " WHERE password = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND password = ? ";
-            }
-            array_push($args, $password);
-        }
-        if (!IsNullOrEmpty($sessionToken)) {
-            if ($first) {
-                $sql .= " WHERE session_token = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND session_token = ? ";
-            }
-            array_push($args, $sessionToken);
-        }
-        if (!IsNullOrEmpty($otp)) {
-            if ($first) {
-                $sql .= " WHERE otp = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND otp = ? ";
-            }
-            array_push($args, $otp);
-        }
+
         if (!IsNullOrEmpty($status)) {
             if ($first) {
                 $sql .= " WHERE status = ? ";
@@ -337,7 +311,7 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "getCompleteUsers") {
         $args = array();
-        $sql = "SELECT * FROM users";
+        $sql = "SELECT user_id, username, email_addr, status, name, first_name, last_name, user_role  FROM users";
         $first = true;
         if (!IsNullOrEmpty($userId)) {
             if ($first) {
@@ -366,33 +340,7 @@ if (isValidJSON($json_params)) {
             }
             array_push($args, $emailAddr);
         }
-        if (!IsNullOrEmpty($password)) {
-            if ($first) {
-                $sql .= " WHERE password = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND password = ? ";
-            }
-            array_push($args, $password);
-        }
-        if (!IsNullOrEmpty($sessionToken)) {
-            if ($first) {
-                $sql .= " WHERE session_token = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND session_token = ? ";
-            }
-            array_push($args, $sessionToken);
-        }
-        if (!IsNullOrEmpty($otp)) {
-            if ($first) {
-                $sql .= " WHERE otp = ? ";
-                $first = false;
-            } else {
-                $sql .= " AND otp = ? ";
-            }
-            array_push($args, $otp);
-        }
+      
         if (!IsNullOrEmpty($status)) {
             if ($first) {
                 $sql .= " WHERE status = ? ";
