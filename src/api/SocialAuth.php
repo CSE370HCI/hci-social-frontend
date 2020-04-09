@@ -18,6 +18,13 @@ if (isValidJSON($json_params)) {
     $json = array();
 
     if ($action == "login") {
+        if (!array_key_exists('username', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : username";
+        }
+        if (!array_key_exists('password', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : password";
+        }
+
         $username = $decoded_params["username"];
         $password = $decoded_params["password"];
 
@@ -57,6 +64,10 @@ if (isValidJSON($json_params)) {
         }
         // forward to error page
     } elseif ($action == "register") {
+        if (!array_key_exists('email_addr', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : email_addr";
+        }
+
         $conn = getDbConnection();
         $email = $decoded_params["email_addr"];
         $token = uniqid();
@@ -69,6 +80,13 @@ if (isValidJSON($json_params)) {
         mail($email, "otp", "Welcome to <appname> Your OTP is ".$token);
         $json["message"] = "Account created.  A confirmation email has been sent.";
     } elseif ($action == "logout") {
+        if (!array_key_exists('username', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : username";
+        }
+        if (!array_key_exists('session_token', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : session_token";
+        }
+
         $username = $decoded_params["username"];
         $token = $decoded_params["session_token"];
 
@@ -106,6 +124,20 @@ if (isValidJSON($json_params)) {
             }
         }
     } elseif ($action == "setpassword") {
+        if (!array_key_exists('email_addr', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : email_addr";
+        }
+        if (!array_key_exists('token', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : token";
+        }
+        if (!array_key_exists('newpassword', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : newpassword";
+        }
+        if (!array_key_exists('confirmpassword', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : confirmpassword";
+        }
+
+
         $email = $decoded_params["email_addr"];
         $otp = $decoded_params["token"];
         $password = $decoded_params["newpassword"];
@@ -136,6 +168,10 @@ if (isValidJSON($json_params)) {
             }
         }
     } elseif ($action == "forgotpassword") {
+        if (!array_key_exists('email_addr', $decoded_params)) {
+            $json['Exeption'] = "missing required parameter : email_addr";
+        }
+
         $email = $decoded_params["email_addr"];
 
         $conn = getDbConnection();

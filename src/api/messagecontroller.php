@@ -176,6 +176,33 @@ if (isValidJSON($json_params)) {
         foreach ($result as $row1) {
             $json['messages'][] = $row1;
         }
+    } elseif ($action == "getConversations") {
+        $args = array();
+        $sql = "SELECT distinct recipient_id FROM messages ";
+        $first = true;
+
+        if (!IsNullOrEmpty($userId)) {
+            if ($first) {
+                $sql .= " WHERE user_id = ? ";
+                $first = false;
+            } else {
+                $sql .= " AND user_id = ? ";
+            }
+            array_push($args, $userId);
+        }
+
+        $json['SQL'] = $sql;
+        try {
+            $statement = $conn->prepare($sql);
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $statement->execute($args);
+            $result = $statement->fetchAll();
+        } catch (Exception $e) {
+            $json['Exception'] =  $e->getMessage();
+        }
+        foreach ($result as $row1) {
+            $json['recipient_ids'][] = $row1["recipient_id"];
+        }
     } else {
         $json['Exeption'] = "Unrecognized Action ";
     }

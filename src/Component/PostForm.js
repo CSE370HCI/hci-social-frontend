@@ -16,14 +16,15 @@ export default class PostForm extends React.Component {
     //keep the form from actually submitting
     event.preventDefault();
 
-    //make the api call to the authentication page
+    //make the api call to post
     fetch("http://stark.cse.buffalo.edu/hci/postcontroller.php", {
       method: "post",
       body: JSON.stringify({
         action: "addOrEditPosts",
         user_id: sessionStorage.getItem("user"),
         session_token: sessionStorage.getItem("token"),
-        posttext: this.state.post_text
+        posttext: this.state.post_text,
+        userid: sessionStorage.getItem("user")
       })
     })
       .then(res => res.json())

@@ -8,17 +8,28 @@ require 'connect.php';
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");$json = array();
+
 // pull the input, which should be in the form of a JSON object
 $json_params = file_get_contents('php://input');
+
 // check to make sure that the JSON is in a valid format
 if (isValidJSON($json_params)) {
-    //load in all the potential parameters.  These should match the database columns for the objects.
+
+    // get a database connection from connect.php
     $conn = getDbConnection();
+
+    //load in all the potential parameters.
     $decoded_params = json_decode($json_params, true);
+
+    // the action parameter will tell us which specific action the user is trying to accomplish with connections
     $action = $decoded_params['action'];
     $json['action'] = $action;
+
     // uncomment the following line if you want to turn PHP error reporting on for debug - note, this will break the JSON response
     //ini_set('display_errors', 1); error_reporting(-1);
+
+    // the rest of the parameters should match fields in the database, and help us build
+    // our SQL
     $connectionId = "";
     if (array_key_exists('connectionid', $decoded_params)) {
         $connectionId =  $decoded_params['connectionid'];
@@ -109,7 +120,7 @@ if (isValidJSON($json_params)) {
                     $json['Exception'] =  $e->getMessage();
                 }
             } else {
-                $json['Status'] = "ERROR - Id is required";
+                $json['Status'] = "ERROR - missing required parameter connectionid";
             }
             $json['Action'] = $action;
         } else {
