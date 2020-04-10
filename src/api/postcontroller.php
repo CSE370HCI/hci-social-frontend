@@ -352,10 +352,10 @@ if (isValidJSON($json_params)) {
             array_push($args, $parentId);
         } else {
             if ($first) {
-                $sql .= " WHERE parent_id IS NULL ";
+                $sql .= " WHERE (parent_id is null or parent_id =  0)  ";
                 $first = false;
             } else {
-                $sql .= " AND parent_id IS NULL ";
+                $sql .= " AND (parent_id is null or parent_id =  0) ";
             }
         }
 
