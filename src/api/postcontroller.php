@@ -75,6 +75,10 @@ if (isValidJSON($json_params)) {
     if (array_key_exists('offset', $decoded_params)) {
         $offset =  $decoded_params['offset'];
     }
+    $showUserPosts = "false";
+    if (array_key_exists('showuserposts', $decoded_params)) {
+        $showUserPosts =  $decoded_params['showuserposts'];
+    }
     if ($action == "addOrEditPosts") {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
@@ -284,8 +288,17 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "getConnectionPosts") {
         $args = array();
-        $sql = "SELECT posts.*, users.name FROM posts, users where posts.user_id = users.user_id  and posts.user_id in (SELECT distinct connect_user_id from connections where connections.user_id = ?) ";
+        $sql = "SELECT posts.*, users.name FROM posts, users where posts.user_id = users.user_id   ";
+
+        if ($showUserPosts == "true") {
+            $sql .= "and (posts.user_id in (SELECT distinct connect_user_id from connections where connections.user_id = ?) OR posts.user_id = ?)";
+            array_push($args, $userId);
+        } else {
+            $sql .= "and posts.user_id in (SELECT distinct connect_user_id from connections where connections.user_id = ?)";
+        }
+
         array_push($args, $userId);
+
         $first = false;
         if (!IsNullOrEmpty($postId)) {
             if ($first) {
