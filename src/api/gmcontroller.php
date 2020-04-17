@@ -47,19 +47,23 @@ if (isValidJSON($json_params)) {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $args = array();
             if (IsNullOrEmpty($gmId)) {
-                $sql = "INSERT INTO group_members (gm_id,group_id,user_id,member_type) VALUES ( ?,?,?,?);";
-                array_push($args, $gmId);
-                array_push($args, $groupId);
-                array_push($args, $userId);
-                array_push($args, $memberType);
-                try {
-                    $statement = $conn->prepare($sql);
-                    $statement->execute($args);
-                    $last_id = $conn->lastInsertId();
-                    $json['Record Id'] = $last_id;
-                    $json['Status'] = "SUCCESS - Inserted Id $last_id";
-                } catch (Exception $e) {
-                    $json['Exception'] =  $e->getMessage();
+                if (IsNullOrEmpty($userId) || IsNullOrEmpty($groupId)) {
+                    $json['Status'] = "ERROR - Missing required fields.  Both userid and groupid are required. ";
+                } else {
+                    $sql = "INSERT INTO group_members (gm_id,group_id,user_id,member_type) VALUES ( ?,?,?,?);";
+                    array_push($args, $gmId);
+                    array_push($args, $groupId);
+                    array_push($args, $userId);
+                    array_push($args, $memberType);
+                    try {
+                        $statement = $conn->prepare($sql);
+                        $statement->execute($args);
+                        $last_id = $conn->lastInsertId();
+                        $json['Record Id'] = $last_id;
+                        $json['Status'] = "SUCCESS - Inserted Id $last_id";
+                    } catch (Exception $e) {
+                        $json['Exception'] =  $e->getMessage();
+                    }
                 }
             } else {
                 $sql = "UPDATE group_members SET group_id = ?,user_id = ?,member_type = ? WHERE gm_id = ?; ";

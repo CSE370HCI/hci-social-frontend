@@ -284,7 +284,7 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "getConnectionPosts") {
         $args = array();
-        $sql = "SELECT * FROM posts where user_id in (SELECT connect_user_id from connections where user_id = ?) ";
+        $sql = "SELECT posts.*, users.name FROM posts, users where posts.user_id = users.user_id  and posts.user_id in (SELECT distinct connect_user_id from connections where connections.user_id = ?) ";
         array_push($args, $userId);
         $first = false;
         if (!IsNullOrEmpty($postId)) {
