@@ -111,10 +111,10 @@ if (isValidJSON($json_params)) {
                     $json['Exception'] =  $e->getMessage();
                 }
             } else {
-                $sql = "UPDATE posts SET user_id = ?,post_type = ?,timestamp = ?,post_text = ?,post_pic_url = ?,comment_flag = ?,parent_id = ? WHERE post_id = ?; ";
+                $sql = "UPDATE posts SET user_id = ?,post_type = ?,timestamp = now(),post_text = ?,post_pic_url = ?,comment_flag = ?,parent_id = ? WHERE post_id = ?; ";
                 array_push($args, $userId);
                 array_push($args, $postType);
-                array_push($args, $timestamp);
+                
                 array_push($args, $postText);
                 array_push($args, $postPicUrl);
                 array_push($args, $commentFlag);
