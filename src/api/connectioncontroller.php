@@ -132,7 +132,7 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "getConnections") {
         $args = array();
-        $sql = "SELECT connections.*, users.name FROM connections, users where connections.connect_user_id = users.user_id  ";
+        $sql = "SELECT connections.*, users.name, users2.name as user_name FROM connections, users, users as users2 where connections.connect_user_id = users.user_id and connections.user_id = users2.user_id   ";
         $first = false;
         if (!IsNullOrEmpty($connectionId)) {
             if ($first) {
