@@ -90,6 +90,27 @@ if (isValidJSON($json_params)) {
         } else {
             $json['Status'] = "ERROR - API Key Check Failed";
         }
+    } elseif ($action == "incrementUserArtifacts") {
+        $sql = "UPDATE user_artifacts SET artifact_url = artifact_url+1, WHERE user_id = ? and artifact_category = ?; ";
+      
+
+        array_push($args, $artifactUrl);
+        array_push($args, $userId);
+        array_push($args, $artifactCategory);
+
+        try {
+            $statement = $conn->prepare($sql);
+            $statement->execute($args);
+            $count = $statement->rowCount();
+            if ($count > 0) {
+                $json['Status'] = "SUCCESS - Updated $count Rows";
+            } else {
+                $json['Status'] = "ERROR - Updated 0 Rows - Check for Valid Ids ";
+            }
+        } catch (Exception $e) {
+            $json['Exception'] =  $e->getMessage();
+        }
+        $json['Action'] = $action;
     } elseif ($action == "deleteUserArtifacts") {
         if (validateAPIKey($authUserId, $sessionToken)) {
             $sql = "DELETE FROM user_artifacts WHERE artifact_id = ?";
