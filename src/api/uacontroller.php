@@ -92,12 +92,10 @@ if (isValidJSON($json_params)) {
         }
     } elseif ($action == "incrementUserArtifacts") {
         $sql = "UPDATE user_artifacts SET artifact_url = artifact_url+1, WHERE user_id = ? and artifact_category = ?; ";
-
-
-      
+        $args = array();
         array_push($args, $userId);
         array_push($args, $artifactCategory);
-
+        $json["SQL"]=$sql;
         try {
             $statement = $conn->prepare($sql);
             $statement->execute($args);
