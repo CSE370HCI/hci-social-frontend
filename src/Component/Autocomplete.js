@@ -29,13 +29,17 @@ class Autocomplete extends Component {
   onChange = e => {
     const {suggestions} = this.props;
     const userInput = e.currentTarget.value;
+    let filteredSuggestions = suggestions;
 
     // Filter our suggestions that don't contain the user's input
-    const filteredSuggestions = suggestions.filter(
-      suggestion =>
-        suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-    );
+    if (suggestions){
+     filteredSuggestions = suggestions.filter(
+        suggestion =>
+          suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+      );
+    }else{
 
+    }
     // Update the user input and filtered suggestions, reset the active
     // suggestion and make sure the suggestions are shown
     this.setState({

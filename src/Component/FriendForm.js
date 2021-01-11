@@ -34,7 +34,8 @@ export default class FriendForm extends React.Component {
         result => {
           if (result.users) {
             let names = [];
-            result.users.forEach(element => names.push(element.name));
+
+            result.users.forEach(element => {if (element.name){names.push(element.name)}});
 
             this.setState({
               users: names,
