@@ -10,50 +10,7 @@ import {
   BrowserRouter as Router, Route, Switch, Link
 } from 'react-router-dom';
 
-class MainContent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      section: "main",
-      openModal: false
-    };
-  }
 
-  render() {
-    if (this.state.section === "main") {
-      return (
-        <div>
-          <p>Social Media Test Harness</p>
-          <LoginForm />
-          <PostForm />
-        </div>
-      );
-    } else if (this.state.section === "friends") {
-      return (
-        <div>
-          <p>Friends</p>
-          <FriendForm userid={sessionStorage.getItem("user")} />
-          <FriendList userid={sessionStorage.getItem("user")} />
-        </div>
-      );
-    } else if (this.state.section === "settings") {
-      return (
-        <div className="settings">
-          <p>Settings</p>
-          <Profile userid={sessionStorage.getItem("user")} />
-        </div>
-      );
-    } else {
-      return <p>Unidentified Section!</p>;
-    }
-  }
-}
-
-function setMenuOption(mode, maincontent, e) {
-  maincontent.current.setState({
-    section: mode
-  });
-}
 
 function toggleModal(app) {
   app.setState({
