@@ -34,6 +34,7 @@ export default class PostingList extends React.Component {
 
               posts: result.posts
             });
+            console.log("Got Posts");
           }
         },
         error => {
@@ -41,6 +42,7 @@ export default class PostingList extends React.Component {
             isLoaded: true,
             error
           });
+          console.log("ERROR loading Posts")
         }
       );
   }
