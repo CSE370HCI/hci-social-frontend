@@ -6,11 +6,10 @@ import LoginForm from "./Component/LoginForm.js";
 import Profile from "./Component/Profile.js";
 import FriendForm from "./Component/FriendForm.js";
 import Modal from "./Component/Modal.js";
+import Navbar from "./Component/Navbar.js";
 import {
   BrowserRouter as Router, Route, Switch, Link
 } from 'react-router-dom';
-
-
 
 function toggleModal(app) {
   app.setState({
@@ -37,53 +36,8 @@ class App extends React.Component {
       <Router>
       <div className="App">
         <header className="App-header">
-          <div id="sidenav" className="sidenav">
-            <ul id="side-menu-items">
-              <li className="pm admin student">
-                <Link to="/posts">
-                  <img
-                    src={post}
-                    className="sidenav-icon"
-                    alt="Posts"
-                    title="Posts"
-                  />
-                </Link>
-              </li>
-              <li className="pm admin">
-                <Link to="/friends">
-                  <img
-                    src={friend}
-                    className="sidenav-icon"
-                    alt="Friends"
-                    title="Friends"
-                  />
-                </Link>
-              </li>
-              <li className="pm admin">
-                <Link to="/settings">
-                  <img
-                    src={setting}
-                    className="sidenav-icon"
-                    alt="Settings"
-                    title="Settings"
-                  />
-                </Link>
-              </li>
-              <li className="pm admin">
-                <button
-                  className="link-button"
-                  onClick={e => toggleModal(this, e)}
-                >
-                  <img
-                    src={help}
-                    className="sidenav-icon"
-                    alt="Settings"
-                    title="Settings"
-                  />
-                </button>
-              </li>
-            </ul>
-          </div>
+
+          <Navbar toggleModal={e => toggleModal(this, e)} />
 
           <div className="maincontent" id="mainContent">
             <Switch>
