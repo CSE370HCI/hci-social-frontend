@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "loggerFormat": "tiny",
+    "session": {
+      "store": "@foal/typeorm"
+    }
+  },
+  "database": {
+    "type": "sqlite",
+    "database": "./db.sqlite3"
+  }
+}
