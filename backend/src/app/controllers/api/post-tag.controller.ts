@@ -20,10 +20,8 @@ const postTagSchema = {
     },
     type: {
       type: 'string',
-      description:  `
-        Implementation specific field for categorizing tags; you may want to have both
-        "likes" and "upvotes" - having the tag type allows you to do both.
-      `
+      description:  'Implementation specific field for categorizing tags; you may want to have both ' +
+        '"likes" and "upvotes" - having the tag type allows you to do both.'
     }
   },
   required: [ 'postID', 'name' ],
@@ -32,11 +30,9 @@ const postTagSchema = {
 
 @ApiDefineTag({
   name: 'Post Tag',
-  description: `
-    This is an implementation specific dataset that will handle any tags that are applied to posts in your system.
-    This could be like/dislike, or some sort of semantic tagging (offtopic, insightful, etc) - any
-    specific set of values that users can apply to posts.
-  `
+  description: 'This is an implementation specific dataset that will handle any tags that are applied to posts in your system. ' +
+    'This could be like/dislike, or some sort of semantic tagging (offtopic, insightful, etc) - any ' +
+    'specific set of values that users can apply to posts.'
 })
 @ApiUseTag('Post Tag')
 export class PostTagController {

@@ -22,11 +22,9 @@ const userPreferenceSchema = {
 
 @ApiDefineTag({
   name: 'User Preference',
-  description: `
-    This is an implementation specific dataset that can hold any generic user preferences
-    that you want to define in a name value style way. This could be anything from how many results
-    show up at a time in their feed to what language they want the site to display in to what timezone they're in.
-  `
+  description: 'This is an implementation specific dataset that can hold any generic user preferences ' +
+    'that you want to define in a name value style way. This could be anything from how many results ' +
+    'show up at a time in their feed to what language they want the site to display in to what timezone they\'re in.'
 })
 @ApiUseTag('User Preference')
 export class UserPreferenceController {
@@ -42,7 +40,7 @@ export class UserPreferenceController {
   @ApiResponse(200, { description: 'Returns a list of user preferences.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: true })
+  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...userPreferenceSchema, required: []})
   async findUserPreferences(ctx: Context<User>) {
     const userPreferences = await getRepository(UserPreference).find({

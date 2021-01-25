@@ -1,4 +1,5 @@
 import {
+  ApiDefineTag,
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
@@ -19,7 +20,13 @@ const groupSchema = {
   type: 'object',
 };
 
-@ApiUseTag('group')
+@ApiDefineTag({
+  name: 'Group',
+  description: 'If your platform supports groups, they can be created and managed through the groups API. ' +
+    'This might be creating special interest groups among friends, or invite lists to events, or ' +
+    ' security groups for post visibility, or all of the above!'
+})
+@ApiUseTag('Group')
 export class GroupController {
 
   @Get()

@@ -16,11 +16,9 @@ const groupMemberSchema = {
     groupID: { type: 'number' },
     type: {
       type: 'string',
-      description: `
-        Implementation specific field to allow you to break members up into subcategories;
-        could be "organizer" and "attendee" or "admin" and "user" - whatever
-        makes sense to your platform.
-      `
+      description: 'Implementation specific field to allow you to break members up into subcategories; ' +
+        'could be "organizer" and "attendee" or "admin" and "user" - whatever ' +
+        'makes sense to your platform.'
     },
   },
   required: [ 'groupID' ],

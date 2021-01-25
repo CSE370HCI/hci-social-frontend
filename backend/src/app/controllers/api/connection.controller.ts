@@ -16,18 +16,14 @@ const connectionSchema = {
     connectedUserID: { type: 'number' },
     type: {
       type: 'string',
-      description: `
-        Implementation specific field for allowing different types of connections;
-        you may want to have both friends and followers, for example
-      `
+      description: 'Implementation specific field for allowing different types of connections; ' +
+        'you may want to have both friends and followers, for example'
     },
     status: {
       type: 'string',
-      description: `
-        Implementation specific field for differentiating the current status of a connection;
-        if people have to accept friend requests, for example, this could be set to "pending"
-        when a request is made.  If you block a friend, this may be set to "blocked", and so on.
-      `
+      description: 'Implementation specific field for differentiating the current status of a connection; ' +
+        'if people have to accept friend requests, for example, this could be set to "pending"' +
+        'when a request is made.  If you block a friend, this may be set to "blocked", and so on.'
     }
   },
   required: [ 'connectedUserID' ],
@@ -36,9 +32,8 @@ const connectionSchema = {
 
 @ApiDefineTag({
   name: 'Connection',
-  description: `
-    This dataset will hold all the connections between users (friends, followers, whatever your model calls for).
-  `
+  description: 'This dataset will hold all the connections between users (friends, followers, ' +
+    'whatever your model calls for).'
 })
 @ApiUseTag('Connection')
 export class ConnectionController {

@@ -15,24 +15,18 @@ const userArtifactSchema = {
   properties: {
     type: {
       type: 'string',
-      description: `
-        Implementation specific field to define types of artifacts; this could be "picture",
-        "document", "title" - whatever makes sense for your system.
-      `
+      description: 'Implementation specific field to define types of artifacts; this could be "picture", ' +
+        '"document", "title" - whatever makes sense for your system.'
     },
     url: {
       type: 'string',
-      description: `
-        The path to the artifact; it could be a local path if the artifact is an uploaded file,
-        or a full URL if it is a link to a remote artifact
-      `
+      description: 'The path to the artifact; it could be a local path if the artifact is an uploaded file, ' +
+        'or a full URL if it is a link to a remote artifact'
     },
     category: {
       type: 'string',
-      description: `
-        Implementation specific field to categorize artifacts; this could be "profile pictures",
-        or "favorite posts" or "associated accounts" - whatever makes sense for your system.
-      `
+      description: 'Implementation specific field to categorize artifacts; this could be "profile pictures", ' +
+        'or "favorite posts" or "associated accounts" - whatever makes sense for your system.'
     }
   },
   required: [ ],
@@ -41,11 +35,9 @@ const userArtifactSchema = {
 
 @ApiDefineTag({
   name: 'User Artifact',
-  description: `
-    This is an implementation specific dataset that can hold any additional information or data
-    for a particular user in a categorizable way. This could be a profile picture, birthday,
-    timeline photo, job title, etc.
-  `
+  description: 'This is an implementation specific dataset that can hold any additional information or data ' +
+    'for a particular user in a categorizable way. This could be a profile picture, birthday, ' +
+    'timeline photo, job title, etc.'
 })
 @ApiUseTag('User Artifact')
 export class UserArtifactController {

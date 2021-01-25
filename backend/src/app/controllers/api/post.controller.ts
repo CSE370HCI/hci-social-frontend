@@ -15,10 +15,9 @@ const postSchemaWithoutParent = {
   properties: {
     type: {
       type: 'string',
-      description: `
-        Implementation specific field to define types of posts; this could be "post", "comment", "blog", "essay",
-        etc. - whatever makes sense for your platform.
-      `
+      description: 'Implementation specific field to define types of posts; this could be "post", ' +
+        '"comment", "blog", "essay", ' +
+        'etc. - whatever makes sense for your platform.'
     },
     content: { type: 'string' },
     thumbnailURL: {
@@ -36,25 +35,21 @@ const postSchema = {
     ...postSchemaWithoutParent.properties,
     parentID: {
       type: 'number',
-      description: `
-        If this post is a comment, the id of the parent post that you are commenting on.
-        For creates, if this field is set, the API call to add a post will automatically increment
-        the commentCount in the parent record
-      `
+      description: 'If this post is a comment, the id of the parent post that you are commenting on. ' +
+        'For creates, if this field is set, the API call to add a post will automatically increment ' +
+        'the commentCount in the parent record'
     },
   }
 };
 
 @ApiDefineTag({
   name: 'Post',
-  description: `
-    The heart of any social media site is the posts that the users create. This dataset will contain
-    the post data, and also any comments for those posts. This is handled in the DB via the Materialized Path
-    pattern (aka Path Enumeration) where a path is stored on each post noting its chain of ancestors.
-    For more information, see https://www.slideshare.net/billkarwin/models-for-hierarchical-data.
-    Adding a comment will automatically update the parent post as well, to increment the commentCount field.
-    Tags (like, +1, etc) will be handled separately (Post Tags).
-  `
+  description: 'The heart of any social media site is the posts that the users create. This dataset will contain ' +
+    'the post data, and also any comments for those posts. This is handled in the DB via the Materialized Path ' +
+    'pattern (aka Path Enumeration) where a path is stored on each post noting its chain of ancestors. ' +
+    'For more information, see https://www.slideshare.net/billkarwin/models-for-hierarchical-data. ' +
+    'Adding a comment will automatically update the parent post as well, to increment the commentCount field. ' +
+    'Tags (like, +1, etc) will be handled separately (Post Tags).'
 })
 @ApiUseTag('Post')
 export class PostController {

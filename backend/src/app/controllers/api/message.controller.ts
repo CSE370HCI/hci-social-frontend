@@ -31,10 +31,8 @@ const messageSchema = {
 
 @ApiDefineTag({
   name: 'Message',
-  description: `
-    If your platform supports some type of chat or instant messaging, the messages API allows you
-    to store the messages.
-  `
+  description: 'If your platform supports some type of chat or instant messaging, the messages API allows you ' +
+    'to store the messages.'
 })
 @ApiUseTag('Message')
 export class MessageController {
