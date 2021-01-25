@@ -5,3 +5,4 @@ export { Connection } from './connection.entity';
 export { Post } from './post.entity';
 export { PostTag } from './post-tag.entity';
 export { Group } from './group.entity';
+export { GroupMember } from './group-member.entity';

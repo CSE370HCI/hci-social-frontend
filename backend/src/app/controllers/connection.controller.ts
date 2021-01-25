@@ -126,7 +126,6 @@ export class ConnectionController {
     }
 
     const { connectedUserID, ...body } = ctx.request.body;
-
     Object.assign(connection, body);
     if (connectedUserID) connection.connectedUser.id = connectedUserID;
 
