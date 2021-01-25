@@ -7,6 +7,7 @@ import {
 import { getRepository } from 'typeorm';
 
 import { Group, User } from '../entities';
+import { ValidateQuery } from '../hooks';
 
 const groupSchema = {
   additionalProperties: false,
@@ -33,6 +34,7 @@ export class GroupController {
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQueryParam('userID', { type: 'number' }, { required: false })
+  @ValidateQuery({...groupSchema, required: []})
   async findGroups(ctx: Context<User>) {
     const groups = await getRepository(Group).find({
       skip: ctx.request.query.skip,
