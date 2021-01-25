@@ -1,4 +1,5 @@
 import {
+  ApiDefineTag,
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
@@ -33,7 +34,13 @@ const connectionSchema = {
   type: 'object',
 };
 
-@ApiUseTag('connection')
+@ApiDefineTag({
+  name: 'Connection',
+  description: `
+    This dataset will hold all the connections between users (friends, followers, whatever your model calls for).
+  `
+})
+@ApiUseTag('Connection')
 export class ConnectionController {
 
   @Get()
