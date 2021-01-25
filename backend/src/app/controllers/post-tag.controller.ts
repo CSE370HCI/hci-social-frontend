@@ -61,7 +61,12 @@ export class PostTagController {
       where: {
         owner: {
           id: ctx.request.query.userID
-        }
+        },
+        post: {
+          id: ctx.request.query.postID
+        },
+        name: ctx.request.query.name,
+        type: ctx.request.query.type
       }
     });
     return new HttpResponseOK(postTags);

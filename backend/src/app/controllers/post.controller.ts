@@ -83,6 +83,9 @@ export class PostController {
         parent: {
           id: ctx.request.query.parentID
         },
+        type: ctx.request.query.type,
+        content: ctx.request.query.content,
+        thumbnailURL: ctx.request.query.thumbnailURL
       }
     });
     return new HttpResponseOK(posts);
