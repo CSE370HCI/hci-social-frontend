@@ -10,7 +10,7 @@ import { getRepository, getTreeRepository } from 'typeorm';
 import { Post, User } from '../entities';
 import { ValidateQuery } from '../hooks';
 
-const postSchema = {
+const postSchemaWithoutParent = {
   additionalProperties: false,
   properties: {
     type: {
@@ -25,6 +25,15 @@ const postSchema = {
       type: 'string',
       description: 'If you have thumbnail images, this is the URL to the thumbnail for this post.'
     },
+  },
+  required: [  ],
+  type: 'object',
+}
+
+const postSchema = {
+  ...postSchemaWithoutParent,
+  properties: {
+    ...postSchemaWithoutParent.properties,
     parentID: {
       type: 'number',
       description: `
@@ -33,9 +42,7 @@ const postSchema = {
         the commentCount in the parent record
       `
     },
-  },
-  required: [  ],
-  type: 'object',
+  }
 };
 
 @ApiDefineTag({
@@ -109,8 +116,12 @@ export class PostController {
   @ApiResponse(201, { description: 'Post successfully created. Returns the post.' })
   @ValidateBody(postSchema)
   async createPost(ctx: Context<User>) {
+    const {parentID, ...body} = ctx.request.body
     const post: Post = await getRepository(Post).save({
-      ...ctx.request.body,
+      ...body,
+      parent: {
+        id: parentID
+      },
       owner: ctx.user
     });
     if (post.parent) await getRepository(Post).increment(post, 'commentCount', 1);
@@ -124,7 +135,7 @@ export class PostController {
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
-  @ValidateBody({ ...postSchema, required: [] })
+  @ValidateBody({ ...postSchemaWithoutParent, required: [] })
   async modifyPost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
       id: ctx.request.params.postId,
@@ -149,7 +160,7 @@ export class PostController {
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
-  @ValidateBody(postSchema)
+  @ValidateBody(postSchemaWithoutParent)
   async replacePost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
       id: ctx.request.params.postId,
