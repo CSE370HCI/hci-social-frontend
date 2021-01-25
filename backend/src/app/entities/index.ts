@@ -4,3 +4,4 @@ export { UserArtifact } from './user-artifact.entity';
 export { Connection } from './connection.entity';
 export { Post } from './post.entity';
 export { PostTag } from './post-tag.entity';
+export { Group } from './group.entity';
