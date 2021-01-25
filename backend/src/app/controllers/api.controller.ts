@@ -1,7 +1,10 @@
-import { ApiInfo, ApiServer, controller } from '@foal/core';
+import { ApiInfo, ApiServer, controller, UseSessions } from '@foal/core';
+import { fetchUser } from '@foal/typeorm';
 import { createConnection } from 'typeorm';
+import { User } from '../entities';
 
 import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './api';
+import { AuthController } from './api/auth.controller';
 
 @ApiInfo({
   title: 'HCI-Social API',
@@ -10,8 +13,12 @@ import { ConnectionController, GroupController, GroupMemberController, MessageCo
 @ApiServer({
   url: '/api'
 })
+@UseSessions({
+  user: fetchUser(User)
+})
 export class ApiController {
   subControllers = [
+    controller('/auth', AuthController),
     controller('/user-preferences', UserPreferenceController),
     controller('/user-artifacts', UserArtifactController),
     controller('/connections', ConnectionController),

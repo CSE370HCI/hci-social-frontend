@@ -1,0 +1,72 @@
+import { ApiDefineTag, ApiInfo, ApiServer, ApiUseTag, Context, createSession, dependency, hashPassword, HttpResponseOK, HttpResponseUnauthorized, Post, Store, UseSessions, ValidateBody, verifyPassword } from '@foal/core';
+
+import { User } from '../../entities';
+
+const credentialsSchema = {
+  additionalProperties: false,
+  properties: {
+    email: { type: 'string', format: 'email' },
+    password: { type: 'string' }
+  },
+  required: [ 'email', 'password' ],
+  type: 'object',
+};
+
+@ApiDefineTag({
+  name: 'Authentication',
+  description: 'An API exists that manages much of the work for account creation and management as well. ' +
+    'This will manage login, set password, register, etc. To make authenticated requests after logging in, ' +
+    'set the `Authorization` HTTP header with the value `Bearer <token>`'
+})
+@ApiUseTag('Authentication')
+@UseSessions()
+export class AuthController {
+  @dependency
+  store: Store;
+
+  @Post('/signup')
+  @ValidateBody(credentialsSchema)
+  async signup(ctx: Context) {
+    const user = new User();
+    user.email = ctx.request.body.email;
+    user.password = await hashPassword(ctx.request.body.password);
+    await user.save();
+
+    ctx.session = await createSession(this.store);
+    ctx.session.setUser(user);
+
+    return new HttpResponseOK({
+      token: ctx.session.getToken()
+    });
+  }
+
+  @Post('/login')
+  @ValidateBody(credentialsSchema)
+  async login(ctx: Context) {
+    const user = await User.findOne({ email: ctx.request.body.email });
+
+    if (!user) {
+      return new HttpResponseUnauthorized();
+    }
+
+    if (!await verifyPassword(ctx.request.body.password, user.password)) {
+      return new HttpResponseUnauthorized();
+    }
+
+    ctx.session = await createSession(this.store);
+    ctx.session.setUser(user);
+
+    return new HttpResponseOK({
+      token: ctx.session.getToken()
+    });
+  }
+
+  @Post('/logout')
+  async logout(ctx: Context) {
+    if (ctx.session) {
+      await ctx.session.destroy();
+    }
+
+    return new HttpResponseOK();
+  }
+}
