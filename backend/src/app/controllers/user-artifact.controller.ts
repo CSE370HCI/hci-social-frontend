@@ -8,6 +8,7 @@ import {
 import { getRepository } from 'typeorm';
 
 import { UserArtifact, User } from '../entities';
+import { ValidateQuery } from '../hooks';
 
 const userArtifactSchema = {
   additionalProperties: false,
@@ -61,9 +62,7 @@ export class UserArtifactController {
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQueryParam('userID', { type: 'number' }, { required: false })
-  @ValidateQueryParam('type', { type: 'string' }, { required: false })
-  @ValidateQueryParam('url', { type: 'string' }, { required: false })
-  @ValidateQueryParam('category', { type: 'string' }, { required: false })
+  @ValidateQuery({...userArtifactSchema, required: []})
   async findUserArtifacts(ctx: Context<User>) {
     const userArtifacts = await getRepository(UserArtifact).find({
       skip: ctx.request.query.skip,

@@ -8,6 +8,7 @@ import {
 import { getRepository } from 'typeorm';
 
 import { UserPreference, User } from '../entities';
+import { ValidateQuery } from '../hooks';
 
 const userPreferenceSchema = {
   additionalProperties: false,
@@ -42,8 +43,7 @@ export class UserPreferenceController {
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQueryParam('userID', { type: 'number' }, { required: true })
-  @ValidateQueryParam('name', { type: 'string' }, { required: false })
-  @ValidateQueryParam('value', { type: 'string' }, { required: false })
+  @ValidateQuery({...userPreferenceSchema, required: []})
   async findUserPreferences(ctx: Context<User>) {
     const userPreferences = await getRepository(UserPreference).find({
       skip: ctx.request.query.skip,
