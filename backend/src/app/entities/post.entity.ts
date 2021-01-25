@@ -12,10 +12,10 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, { nullable: false })
   owner: User;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   updatedAt: Date;
 
   @Column({ nullable: true })

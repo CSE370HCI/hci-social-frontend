@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { Message, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { Message, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const messageSchema = {
   additionalProperties: false,

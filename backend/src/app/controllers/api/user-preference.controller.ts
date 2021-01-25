@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { UserPreference, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { UserPreference, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const userPreferenceSchema = {
   additionalProperties: false,

@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository, getTreeRepository } from 'typeorm';
 
-import { Post, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { Post, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const postSchemaWithoutParent = {
   additionalProperties: false,

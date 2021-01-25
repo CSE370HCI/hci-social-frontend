@@ -1,10 +1,10 @@
-// 3p
+s// 3p
 import { createApp } from '@foal/core';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 
 // App
-import { AppController } from '../app/app.controller';
+import { AppController } from '../app/controllers/app.controller';
 
 describe('The server', () => {
 

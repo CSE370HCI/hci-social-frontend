@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { PostTag, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { PostTag, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const postTagSchema = {
   additionalProperties: false,

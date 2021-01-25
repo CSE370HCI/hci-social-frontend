@@ -1,9 +1,16 @@
-import { controller, IAppController } from '@foal/core';
+import { ApiInfo, ApiServer, controller } from '@foal/core';
 import { createConnection } from 'typeorm';
 
-import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './controllers';
+import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './api';
 
-export class AppController implements IAppController {
+@ApiInfo({
+  title: 'HCI-Social API',
+  version: '1.0.0'
+})
+@ApiServer({
+  url: '/api'
+})
+export class ApiController {
   subControllers = [
     controller('/user-preferences', UserPreferenceController),
     controller('/user-artifacts', UserArtifactController),

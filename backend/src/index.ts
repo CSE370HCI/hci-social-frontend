@@ -7,7 +7,7 @@ import * as http from 'http';
 import { Config, createApp } from '@foal/core';
 
 // App
-import { AppController } from './app/app.controller';
+import { AppController } from './app/controllers/app.controller';
 
 async function main() {
   const app = await createApp(AppController);

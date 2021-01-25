@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { Connection, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { Connection, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const connectionSchema = {
   additionalProperties: false,

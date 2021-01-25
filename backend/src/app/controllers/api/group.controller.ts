@@ -6,8 +6,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { Group, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { Group, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const groupSchema = {
   additionalProperties: false,

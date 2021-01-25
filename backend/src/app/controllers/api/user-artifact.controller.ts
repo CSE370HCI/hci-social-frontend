@@ -7,8 +7,8 @@ import {
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
-import { UserArtifact, User } from '../entities';
-import { ValidateQuery } from '../hooks';
+import { UserArtifact, User } from '../../entities';
+import { ValidateQuery } from '../../hooks';
 
 const userArtifactSchema = {
   additionalProperties: false,
