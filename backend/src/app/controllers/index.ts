@@ -1,1 +1,1 @@
-export { ApiController } from './api.controller';
+export { UserPreferenceController } from './user-preference.controller';
