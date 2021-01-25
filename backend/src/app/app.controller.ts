@@ -1,7 +1,7 @@
 import { controller, IAppController } from '@foal/core';
 import { createConnection } from 'typeorm';
 
-import { ConnectionController, GroupController, GroupMemberController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './controllers';
+import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './controllers';
 
 export class AppController implements IAppController {
   subControllers = [
@@ -11,7 +11,8 @@ export class AppController implements IAppController {
     controller('/posts', PostController),
     controller('/post-tags', PostTagController),
     controller('/groups', GroupController),
-    controller('/group-members', GroupMemberController)
+    controller('/group-members', GroupMemberController),
+    controller('/messages', MessageController)
   ];
 
   async init() {

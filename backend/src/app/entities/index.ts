@@ -6,3 +6,4 @@ export { Post } from './post.entity';
 export { PostTag } from './post-tag.entity';
 export { Group } from './group.entity';
 export { GroupMember } from './group-member.entity';
+export { Message } from './message.entity';
