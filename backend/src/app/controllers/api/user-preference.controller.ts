@@ -13,8 +13,8 @@ import { ValidateQuery } from '../../hooks';
 const userPreferenceSchema = {
   additionalProperties: false,
   properties: {
-    name: { type: 'string', maxLength: 255 },
-    value: { type: 'string', maxLength: 1024 },
+    name: { type: 'string' },
+    value: { type: 'string' },
   },
   required: [ 'name', 'value' ],
   type: 'object',

@@ -1,4 +1,7 @@
-import { ApiDefineTag, ApiInfo, ApiServer, ApiUseTag, Context, createSession, dependency, hashPassword, HttpResponseOK, HttpResponseUnauthorized, Post, Store, UseSessions, ValidateBody, verifyPassword } from '@foal/core';
+import {
+  ApiDefineTag, ApiUseTag, Context, createSession, dependency, hashPassword, HttpResponseOK,
+  HttpResponseUnauthorized, Post, Store, UseSessions, ValidateBody, verifyPassword
+} from '@foal/core';
 
 import { User } from '../../entities';
 
@@ -29,7 +32,7 @@ export class AuthController {
   async signup(ctx: Context) {
     const user = new User();
     user.email = ctx.request.body.email;
-    user.password = await hashPassword(ctx.request.body.password);
+    user.password = ctx.request.body.password;
     await user.save();
 
     ctx.session = await createSession(this.store);

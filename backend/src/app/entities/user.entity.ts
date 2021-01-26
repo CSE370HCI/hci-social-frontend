@@ -1,5 +1,5 @@
 import { hashPassword } from '@foal/core';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
@@ -10,14 +10,11 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
-  username: string;
-
   @Column()
   password: string;
 
   @Column({ nullable: true })
-  status: string;
+  username: string;
 
   @Column({ nullable: true })
   firstName: string;
@@ -26,7 +23,16 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column({ nullable: true })
+  status: string;
+
+  @Column({ nullable: true })
   role: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    this.password = await hashPassword(this.password);
+  }
 
 }
 
