@@ -13,10 +13,15 @@ import { ValidateQuery } from '../../hooks';
 const groupSchema = {
   additionalProperties: false,
   properties: {
+    userID: {
+      description: 'The user that created the group. If you want system wide groups, you might set' +
+            'the user ID to `null` to specify a system group.',
+      anyOf: [{ type: 'number' }, { type: 'null' }]
+    },
     name: { type: 'string', description: 'Implementation specific field to store the name of this particular group' },
     type: { type: 'string', description: 'Implementation specific field to categorize groups' },
   },
-  required: [ 'name' ],
+  required: [],
   type: 'object',
 };
 
@@ -40,7 +45,6 @@ export class GroupController {
   @ApiResponse(200, { description: 'Returns a list of groups.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...groupSchema, required: []})
   async findGroups(ctx: Context<User>) {
     const groups = await getRepository(Group).find({
@@ -65,8 +69,7 @@ export class GroupController {
   @ValidatePathParam('groupId', { type: 'number' })
   async findGroupById(ctx: Context<User>) {
     const group = await getRepository(Group).findOne({
-      id: ctx.request.params.groupId,
-      owner: ctx.user
+      id: ctx.request.params.groupId
     });
 
     if (!group) {
@@ -83,9 +86,12 @@ export class GroupController {
   @ApiResponse(201, { description: 'Group successfully created. Returns the group.' })
   @ValidateBody(groupSchema)
   async createGroup(ctx: Context<User>) {
+    const {userID, ...body} = ctx.request.body;
     const group = await getRepository(Group).save({
-      ...ctx.request.body,
-      owner: ctx.user
+      ...body,
+      owner: {
+        id: userID
+      }
     });
     return new HttpResponseCreated(group);
   }
@@ -100,15 +106,16 @@ export class GroupController {
   @ValidateBody({ ...groupSchema, required: [] })
   async modifyGroup(ctx: Context<User>) {
     const group = await getRepository(Group).findOne({
-      id: ctx.request.params.groupId,
-      owner: ctx.user
+      id: ctx.request.params.groupId
     });
 
     if (!group) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(group, ctx.request.body);
+    const {userID, ...body} = ctx.request.body;
+    Object.assign(group, body);
+    if (userID !== undefined) group.owner.id = userID;
 
     await getRepository(Group).save(group);
 
@@ -125,8 +132,7 @@ export class GroupController {
   @ValidateBody(groupSchema)
   async replaceGroup(ctx: Context<User>) {
     const group = await getRepository(Group).findOne({
-      id: ctx.request.params.groupId,
-      owner: ctx.user
+      id: ctx.request.params.groupId
     });
 
     if (!group) {
@@ -148,8 +154,7 @@ export class GroupController {
   @ValidatePathParam('groupId', { type: 'number' })
   async deleteGroup(ctx: Context<User>) {
     const group = await getRepository(Group).findOne({
-      id: ctx.request.params.groupId,
-      owner: ctx.user
+      id: ctx.request.params.groupId
     });
 
     if (!group) {
