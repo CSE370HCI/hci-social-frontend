@@ -1,7 +1,7 @@
 {
   "name": "hci-social-backend",
-  "version": "0.0.0",
-  "description": "Backend/API layer for UB CSE370 course project",
+  "version": "0.1.0",
+  "description": "Backend/API layer for the UB CSE370 course project",
   "license": "MIT",
   "repository": {},
   "scripts": {

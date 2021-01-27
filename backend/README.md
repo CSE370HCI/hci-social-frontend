@@ -1,5 +1,5 @@
 # HCI-Social Backend
-Backend/API layer for UB CSE370 course project
+Backend/API layer for the UB CSE370 course project
 
 ## Getting Started
 The simplest way to get started is by running `npm run develop`. This will start the application

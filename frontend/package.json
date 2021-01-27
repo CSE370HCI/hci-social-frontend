@@ -1,5 +1,6 @@
 {
-  "name": "myfirstreact",
+  "name": "hci-social-frontend",
+  "description": "Frontend for UB CSE370 course project",
   "version": "0.1.0",
   "homepage": "./",
   "private": true,
