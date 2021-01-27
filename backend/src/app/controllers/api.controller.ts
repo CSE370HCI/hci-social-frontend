@@ -5,6 +5,7 @@ import { User } from '../entities';
 
 import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './api';
 import { AuthController } from './api/auth.controller';
+import { UserController } from './api/user.controller';
 
 @ApiInfo({
   title: 'HCI-Social API',
@@ -19,6 +20,7 @@ import { AuthController } from './api/auth.controller';
 export class ApiController {
   subControllers = [
     controller('/auth', AuthController),
+    controller('/users', UserController),
     controller('/user-preferences', UserPreferenceController),
     controller('/user-artifacts', UserArtifactController),
     controller('/connections', ConnectionController),
