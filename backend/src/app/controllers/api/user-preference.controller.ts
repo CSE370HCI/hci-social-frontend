@@ -54,7 +54,7 @@ export class UserPreferenceController {
   @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...userPreferenceSchema, required: []})
   async findUserPreferences(ctx: Context<User>) {
-    const userPreferences = await getRepository(UserPreference).find({
+    const userPreferences = await getRepository(UserPreference).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getUserPreferenceParams(ctx.request.query)

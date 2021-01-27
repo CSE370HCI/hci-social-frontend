@@ -67,7 +67,7 @@ export class UserArtifactController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...userArtifactSchema, required: []})
   async findUserArtifacts(ctx: Context<User>) {
-    const userArtifacts = await getRepository(UserArtifact).find({
+    const userArtifacts = await getRepository(UserArtifact).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getUserArtifactParams(ctx.request.query)

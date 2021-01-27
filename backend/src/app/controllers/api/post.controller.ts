@@ -75,7 +75,7 @@ export class PostController {
   @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
-    const posts = await getRepository(Post).find({
+    const posts = await getRepository(Post).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getPostParams(ctx.request.query)

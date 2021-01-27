@@ -66,7 +66,7 @@ export class MessageController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...messageSchema, required: []})
   async findMessages(ctx: Context<User>) {
-    const messages = await getRepository(Message).find({
+    const messages = await getRepository(Message).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getMessageParams(ctx.request.query)

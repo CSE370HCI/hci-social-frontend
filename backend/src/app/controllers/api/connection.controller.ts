@@ -65,7 +65,7 @@ export class ConnectionController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...connectionSchema, required: []})
   async findConnections(ctx: Context<User>) {
-    const connections = await getRepository(Connection).find({
+    const connections = await getRepository(Connection).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getConnectionParams(ctx.request.query)

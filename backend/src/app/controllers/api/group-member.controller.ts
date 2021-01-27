@@ -58,7 +58,7 @@ export class GroupMemberController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...groupMemberSchema, required: []})
   async findGroupMembers(ctx: Context<User>) {
-    const groupMembers = await getRepository(GroupMember).find({
+    const groupMembers = await getRepository(GroupMember).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getGroupMemberParams(ctx.request.query)

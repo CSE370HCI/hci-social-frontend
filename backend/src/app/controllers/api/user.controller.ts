@@ -63,7 +63,7 @@ export class UserController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...getUserSchema(false), required: []})
   async findUsers(ctx: Context<User>) {
-    const users = await getRepository(User).find({
+    const users = await getRepository(User).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getUserParams(ctx.request.query)

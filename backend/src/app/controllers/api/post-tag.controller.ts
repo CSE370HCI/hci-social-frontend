@@ -68,7 +68,7 @@ export class PostTagController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...postTagSchema, required: []})
   async findPostTags(ctx: Context<User>) {
-    const postTags = await getRepository(PostTag).find({
+    const postTags = await getRepository(PostTag).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getPostTagParams(ctx.request.query)
