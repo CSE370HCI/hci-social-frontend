@@ -33,6 +33,12 @@ export class AuthController {
     const user = new User();
     user.email = ctx.request.body.email;
     user.password = ctx.request.body.password;
+    // TODO: Allow these to be configurable at signup?
+    user.username = '';
+    user.firstName = '';
+    user.lastName = '';
+    user.status= '';
+    user.role = '';
     await user.save();
 
     ctx.session = await createSession(this.store);
