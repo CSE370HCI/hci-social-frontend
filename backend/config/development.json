@@ -2,5 +2,8 @@
   "settings": {
     "debug": true,
     "loggerFormat": "dev"
+  },
+  "database": {
+    "synchronize": true
   }
 }

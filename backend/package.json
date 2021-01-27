@@ -7,16 +7,16 @@
   "scripts": {
     "build": "shx rm -rf build && tsc -p tsconfig.app.json",
     "start": "node ./build/index.js",
-    "develop": "ts-node-dev --no-notify src/",
-    "build:test": "shx rm -rf && tsc -p tsconfig.test.json",
+    "develop": "cross-env NODE_ENV=development ts-node-dev --no-notify src/",
+    "build:test": "shx rm build -rf && tsc -p tsconfig.test.json",
     "start:test": "mocha --file ./build/test.js \"./build/**/*.spec.js\"",
     "test": "npm run build:test && concurrently \"tsc -p tsconfig.test.json -w\" \"mocha --file ./build/test.js -w \\\"./build/**/*.spec.js\\\"\"",
-    "build:e2e": "shx rm -rf && tsc -p tsconfig.e2e.json",
+    "build:e2e": "shx rm -rf build && tsc -p tsconfig.e2e.json",
     "start:e2e": "mocha --timeout 4000 --file ./build/e2e.js \"./build/e2e/**/*.js\"",
     "e2e": "npm run build:e2e && concurrently \"tsc -p tsconfig.e2e.json -w\" \"mocha --file ./build/e2e.js -w \\\"./build/e2e/**/*.js\\\"\"",
     "lint": "eslint --ext ts src",
     "lint:fix": "eslint --ext ts --fix src",
-    "makemigrations": "shx rm -rf && tsc -p tsconfig.app.json && npx typeorm migration:generate --name migration && tsc -p tsconfig.app.json",
+    "makemigrations": "shx rm -rf build && tsc -p tsconfig.app.json && npx typeorm migration:generate --name migration && tsc -p tsconfig.app.json",
     "migrations": "npx typeorm migration:run",
     "revertmigration": "npx typeorm migration:revert"
   },
@@ -29,7 +29,7 @@
     "@foal/typeorm": "^2.0.0",
     "source-map-support": "~0.5.19",
     "sqlite3": "~5.0.0",
-    "typeorm": "0.2.24"
+    "typeorm": "^0.2.30"
   },
   "devDependencies": {
     "@types/mocha": "7.0.2",
@@ -37,6 +37,7 @@
     "@typescript-eslint/eslint-plugin": "~2.7.0",
     "@typescript-eslint/parser": "~2.7.0",
     "concurrently": "~5.3.0",
+    "cross-env": "^7.0.3",
     "eslint": "^6.7.0",
     "mocha": "~8.2.0",
     "shx": "^0.3.3",
