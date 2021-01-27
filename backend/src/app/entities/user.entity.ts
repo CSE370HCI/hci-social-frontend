@@ -4,28 +4,28 @@ import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGenerate
 @Entity()
 export class User extends BaseEntity {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'user_id' })
   id: number;
 
-  @Column({ unique: true })
+  @Column({ name: 'user_email', unique: true })
   email: string;
 
-  @Column({ select: false })
+  @Column({ name: 'user_password', select: false })
   password: string;
 
-  @Column()
+  @Column({ name: 'user_username' })
   username: string;
 
-  @Column()
+  @Column({ name: 'user_first_name'} )
   firstName: string;
 
-  @Column()
+  @Column({ name: 'user_last_name' })
   lastName: string;
 
-  @Column()
+  @Column({ name: 'user_status' })
   status: string;
 
-  @Column()
+  @Column({ name: 'user_role' })
   role: string;
 
   @BeforeInsert()

@@ -1,19 +1,20 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { User } from './user.entity';
 
 @Entity()
 export class Group extends BaseEntity {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'group_id' })
   id: number;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'group_owner_id' })
   owner: User;
 
-  @Column()
+  @Column({ name: 'group_name' })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'group_type', nullable: true })
   type: string;
 }
