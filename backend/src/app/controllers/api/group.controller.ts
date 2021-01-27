@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Group, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const groupSchema = {
   additionalProperties: false,
@@ -31,14 +32,18 @@ const groupSchema = {
   type: 'object',
 };
 
-function getGroupParams(params: any, resetDefaults = false) {
-  return {
+function getGroupParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     owner: {
       id: resetDefaults ? params.ownerID ?? null : params.ownerID
     },
     name: resetDefaults ? params.name ?? '' : params.name,
     type: resetDefaults ? params.type ?? '' : params.type
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -66,7 +71,7 @@ export class GroupController {
     const groups = await getRepository(Group).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getGroupParams(ctx.request.query)
+      where: getGroupParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(groups);
   }
@@ -98,7 +103,7 @@ export class GroupController {
   async createGroup(ctx: Context<User>) {
     const {userID, ...body} = ctx.request.body;
     const group = await getRepository(Group).save(
-      getGroupParams(ctx.request.body)
+      getGroupParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(group);
   }
@@ -120,7 +125,7 @@ export class GroupController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(group, getGroupParams(ctx.request.body));
+    Object.assign(group, getGroupParams(ctx.request.body, 'remove'));
 
     await getRepository(Group).save(group);
 
@@ -144,7 +149,7 @@ export class GroupController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(group, getGroupParams(ctx.request.body, true));
+    Object.assign(group, getGroupParams(ctx.request.body, 'default'));
 
     await getRepository(Group).save(group);
 

@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Message, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const messageSchema = {
   additionalProperties: false,
@@ -30,8 +31,10 @@ const messageSchema = {
   type: 'object',
 };
 
-function getMessageParams(params: any, resetDefaults = false) {
-  return {
+function getMessageParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     content: params.content,
     author: {
       id: params.authorID
@@ -43,6 +46,8 @@ function getMessageParams(params: any, resetDefaults = false) {
       id: resetDefaults ? params.recipientGroupID ?? null : params.recipientGroupID
     }
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -69,7 +74,7 @@ export class MessageController {
     const messages = await getRepository(Message).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getMessageParams(ctx.request.query)
+      where: getMessageParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(messages);
   }
@@ -100,7 +105,7 @@ export class MessageController {
   @ValidateBody(messageSchema)
   async createMessage(ctx: Context<User>) {
     const message = await getRepository(Message).save(
-      getMessageParams(ctx.request.body, true)
+      getMessageParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(message);
   }
@@ -122,7 +127,7 @@ export class MessageController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(message, getMessageParams(ctx.request.body));
+    Object.assign(message, getMessageParams(ctx.request.body, 'remove'));
 
     await getRepository(Message).save(message);
 
@@ -146,7 +151,7 @@ export class MessageController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(message, getMessageParams(ctx.request.body, true));
+    Object.assign(message, getMessageParams(ctx.request.body, 'default'));
 
     await getRepository(Message).save(message);
 

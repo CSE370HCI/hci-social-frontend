@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Connection, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const connectionSchema = {
   additionalProperties: false,
@@ -31,8 +32,10 @@ const connectionSchema = {
   type: 'object',
 };
 
-function getConnectionParams(params: any, resetDefaults = true) {
-  return {
+function getConnectionParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     user: {
       id: params.userID
     },
@@ -42,6 +45,8 @@ function getConnectionParams(params: any, resetDefaults = true) {
     type: resetDefaults ? params.type ?? '' : params.type,
     status: resetDefaults ? params.status ?? '' : params.status
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -68,7 +73,7 @@ export class ConnectionController {
     const connections = await getRepository(Connection).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getConnectionParams(ctx.request.query)
+      where: getConnectionParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(connections);
   }
@@ -99,7 +104,7 @@ export class ConnectionController {
   @ValidateBody(connectionSchema)
   async createConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).save(
-      getConnectionParams(ctx.request.body, true)
+      getConnectionParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(connection);
   }
@@ -121,7 +126,7 @@ export class ConnectionController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(connection, getConnectionParams(ctx.request.body));
+    Object.assign(connection, getConnectionParams(ctx.request.body, 'remove'));
 
     await getRepository(Connection).save(connection);
 
@@ -146,7 +151,7 @@ export class ConnectionController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(connection, getConnectionParams(ctx.request.body, true));
+    Object.assign(connection, getConnectionParams(ctx.request.body, 'default'));
 
     await getRepository(Connection).save(connection);
 

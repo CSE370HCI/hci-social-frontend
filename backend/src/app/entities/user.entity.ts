@@ -31,7 +31,7 @@ export class User extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    this.password = await hashPassword(this.password);
+    if (this.password !== undefined) this.password = await hashPassword(this.password);
   }
 
 }

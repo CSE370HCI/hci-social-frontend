@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { PostTag, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const postTagSchema = {
   additionalProperties: false,
@@ -33,8 +34,10 @@ const postTagSchema = {
   type: 'object',
 };
 
-function getPostTagParams(params: any, resetDefaults = false) {
-  return {
+function getPostTagParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     post: {
       id: params.postID
     },
@@ -44,6 +47,8 @@ function getPostTagParams(params: any, resetDefaults = false) {
     name: resetDefaults ? params.name ?? '' : params.name,
     type: resetDefaults ? params.type ?? '' : params.type
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -71,7 +76,7 @@ export class PostTagController {
     const postTags = await getRepository(PostTag).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getPostTagParams(ctx.request.query)
+      where: getPostTagParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(postTags);
   }
@@ -103,7 +108,7 @@ export class PostTagController {
   async createPostTag(ctx: Context<User>) {
     const { postID, ...body } = ctx.request.body;
     const postTag = await getRepository(PostTag).save(
-      getPostTagParams(ctx.request.body, true)
+      getPostTagParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(postTag);
   }
@@ -125,7 +130,7 @@ export class PostTagController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(postTag, getPostTagParams(ctx.request.body));
+    Object.assign(postTag, getPostTagParams(ctx.request.body, 'remove'));
 
     await getRepository(PostTag).save(postTag);
 
@@ -149,7 +154,7 @@ export class PostTagController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(postTag, getPostTagParams(ctx.request.body, true));
+    Object.assign(postTag, getPostTagParams(ctx.request.body, 'default'));
 
     await getRepository(PostTag).save(postTag);
 

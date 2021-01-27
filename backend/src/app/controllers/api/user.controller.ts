@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 function getUserSchema(withPassword) {
   return {
@@ -27,11 +28,11 @@ function getUserSchema(withPassword) {
   };
 }
 
-function getUserParams(params: any, resetDefaults = false) {
-  return {
+function getUserParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     email: params.email,
-    // Even when we "reset defaults" this will be undefined and left unaltered
-    // We're leaving changes to this only for the auth controller
     password: params.password,
     username: resetDefaults ? params.username ?? '' : params.username,
     firstName: resetDefaults ? params.firstName ?? '' : params.firstName,
@@ -39,6 +40,8 @@ function getUserParams(params: any, resetDefaults = false) {
     status: resetDefaults ? params.status ?? '' : params.status,
     role: resetDefaults ? params.role ?? '' : params.role
   }
+  
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -66,7 +69,7 @@ export class UserController {
     const users = await getRepository(User).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getUserParams(ctx.request.query)
+      where: getUserParams(ctx.request.query, 'remove')
     });
     
     return new HttpResponseOK(users);
@@ -98,7 +101,7 @@ export class UserController {
   @ValidateBody(getUserSchema(true))
   async createUser(ctx: Context<User>) {
     const user = await getRepository(User).save(
-      getUserParams(ctx.request.body, true)
+      getUserParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(user);
   }
@@ -120,7 +123,7 @@ export class UserController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(user, getUserParams(ctx.request.body, false));
+    Object.assign(user, getUserParams(ctx.request.body, 'remove'));
 
     await getRepository(User).save(user);
 
@@ -144,7 +147,7 @@ export class UserController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(user, getUserParams(ctx.request.body, true));
+    Object.assign(user, getUserParams(ctx.request.body, 'default'));
 
     await getRepository(User).save(user);
 

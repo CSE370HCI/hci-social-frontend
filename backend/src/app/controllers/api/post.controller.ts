@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Post, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const postSchema = {
   additionalProperties: false,
@@ -35,8 +36,10 @@ const postSchema = {
   type: 'object',
 }
 
-function getPostParams(params: any, resetDefaults = false) {
-  return {
+function getPostParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     author: {
       id: params.userID
     },
@@ -47,6 +50,8 @@ function getPostParams(params: any, resetDefaults = false) {
     content: resetDefaults ? params.content ?? '' : params.content,
     thumbnailURL: resetDefaults ? params.thumbnailURL ?? '' : params.thumbnailURL
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -78,7 +83,7 @@ export class PostController {
     const posts = await getRepository(Post).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getPostParams(ctx.request.query)
+      where: getPostParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(posts);
   }
@@ -109,7 +114,7 @@ export class PostController {
   @ValidateBody(postSchema)
   async createPost(ctx: Context<User>) {
     const post: Post = await getRepository(Post).save(
-      getPostParams(ctx.request.body, true)
+      getPostParams(ctx.request.body, 'default')
     );
     if (post.parent) await getRepository(Post).increment(post, 'commentCount', 1);
     return new HttpResponseCreated(post);
@@ -134,7 +139,7 @@ export class PostController {
 
     const oldParent = post.parent;
 
-    Object.assign(post, getPostParams(ctx.request.body));
+    Object.assign(post, getPostParams(ctx.request.body, 'remove'));
 
     await getRepository(Post).save(post);
 
@@ -172,7 +177,7 @@ export class PostController {
 
     const oldParent = post.parent;
 
-    Object.assign(post, getPostParams(ctx.request.body, true));
+    Object.assign(post, getPostParams(ctx.request.body, 'default'));
 
     if (
       oldParent?.id !== post.parent?.id

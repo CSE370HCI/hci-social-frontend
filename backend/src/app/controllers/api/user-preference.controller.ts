@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { UserPreference, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const userPreferenceSchema = {
   additionalProperties: false,
@@ -21,14 +22,18 @@ const userPreferenceSchema = {
   type: 'object',
 };
 
-function getUserPreferenceParams(params: any, resetDefaults = false) {
-  return {
+function getUserPreferenceParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     user: {
       id: params.userID
     },
     name: params.name,
     value: params.value
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -57,7 +62,7 @@ export class UserPreferenceController {
     const userPreferences = await getRepository(UserPreference).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getUserPreferenceParams(ctx.request.query)
+      where: getUserPreferenceParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(userPreferences);
   }
@@ -88,7 +93,7 @@ export class UserPreferenceController {
   @ValidateBody(userPreferenceSchema)
   async createUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).save(
-      getUserPreferenceParams(ctx.request.body, true)
+      getUserPreferenceParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(userPreference);
   }
@@ -110,7 +115,7 @@ export class UserPreferenceController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body));
+    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body, 'remove'));
 
     await getRepository(UserPreference).save(userPreference);
 
@@ -134,7 +139,7 @@ export class UserPreferenceController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body, true));
+    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body, 'default'));
 
     await getRepository(UserPreference).save(userPreference);
 

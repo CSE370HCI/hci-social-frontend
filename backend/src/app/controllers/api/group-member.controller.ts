@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { GroupMember, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const groupMemberSchema = {
   additionalProperties: false,
@@ -26,8 +27,10 @@ const groupMemberSchema = {
   type: 'object',
 };
 
-function getGroupMemberParams(params: any, resetDefaults = false) {
-  return {
+function getGroupMemberParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     user: {
       id: params.userID
     },
@@ -36,6 +39,8 @@ function getGroupMemberParams(params: any, resetDefaults = false) {
     },
     type: resetDefaults ? params.type ?? '' : params.type
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -61,7 +66,7 @@ export class GroupMemberController {
     const groupMembers = await getRepository(GroupMember).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getGroupMemberParams(ctx.request.query)
+      where: getGroupMemberParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(groupMembers);
   }
@@ -92,7 +97,7 @@ export class GroupMemberController {
   @ValidateBody(groupMemberSchema)
   async createGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).save(
-      getGroupMemberParams(ctx.request.body, true)
+      getGroupMemberParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(groupMember);
   }
@@ -114,7 +119,7 @@ export class GroupMemberController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(groupMember, getGroupMemberParams(ctx.request.body));
+    Object.assign(groupMember, getGroupMemberParams(ctx.request.body, 'remove'));
 
     await getRepository(GroupMember).save(groupMember);
 
@@ -138,7 +143,7 @@ export class GroupMemberController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(groupMember, getGroupMemberParams(ctx.request.body, true));
+    Object.assign(groupMember, getGroupMemberParams(ctx.request.body, 'default'));
 
     await getRepository(GroupMember).save(groupMember);
 

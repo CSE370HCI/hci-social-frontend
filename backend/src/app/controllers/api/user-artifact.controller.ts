@@ -9,6 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { UserArtifact, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
+import { removeUndefined } from '../../utils';
 
 const userArtifactSchema = {
   additionalProperties: false,
@@ -34,8 +35,10 @@ const userArtifactSchema = {
   type: 'object',
 };
 
-function getUserArtifactParams(params: any, resetDefaults = false) {
-  return {
+function getUserArtifactParams(params: any, undefinedMode: 'remove' | 'default') {
+  const resetDefaults = undefinedMode === 'default';
+
+  const res = {
     owner: {
       id: params.ownerID
     },
@@ -43,6 +46,8 @@ function getUserArtifactParams(params: any, resetDefaults = false) {
     url: resetDefaults ? params.url ?? '' : params.url,
     category: resetDefaults ? params.category ?? '' : params.category
   }
+
+  return undefinedMode === 'remove' ? removeUndefined(res) : res;
 }
 
 @ApiDefineTag({
@@ -70,7 +75,7 @@ export class UserArtifactController {
     const userArtifacts = await getRepository(UserArtifact).findAndCount({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: getUserArtifactParams(ctx.request.query)
+      where: getUserArtifactParams(ctx.request.query, 'remove')
     });
     return new HttpResponseOK(userArtifacts);
   }
@@ -101,7 +106,7 @@ export class UserArtifactController {
   @ValidateBody(userArtifactSchema)
   async createUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).save(
-      getUserArtifactParams(ctx.request.body, true)
+      getUserArtifactParams(ctx.request.body, 'default')
     );
     return new HttpResponseCreated(userArtifact);
   }
@@ -123,7 +128,7 @@ export class UserArtifactController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body));
+    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body, 'remove'));
 
     await getRepository(UserArtifact).save(userArtifact);
 
@@ -147,7 +152,7 @@ export class UserArtifactController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body, true));
+    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body, 'default'));
 
     await getRepository(UserArtifact).save(userArtifact);
 
