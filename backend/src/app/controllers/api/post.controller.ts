@@ -41,7 +41,7 @@ function getPostParams(params: any, undefinedMode: 'remove' | 'default') {
 
   const res = {
     author: {
-      id: params.userID
+      id: params.authorID
     },
     parent: {
       id: resetDefaults ? params.parentID ?? null : params.parentID

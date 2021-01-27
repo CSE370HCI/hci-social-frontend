@@ -15,7 +15,8 @@ For production:
 
 ## Development Scripts
 - `npm run makemigrations` Creates new migration scripts with new DB schema changes. Run this
-  whenever you make changes to entities.
+  whenever you make changes to entities. Note that this will remove your current sqlite DB
+  and re-generate it (with the old schema), as diffs are done against the DB schema of the DB itself
 - `npm run lint` Run ESLint to find any code style problems
 - `npm run lint-fix` Run ESLint and automatically fix issues where possible
 - `npm run test` Run mocha unit tests
