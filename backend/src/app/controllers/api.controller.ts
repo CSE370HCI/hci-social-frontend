@@ -30,8 +30,4 @@ export class ApiController {
     controller('/group-members', GroupMemberController),
     controller('/messages', MessageController)
   ];
-
-  async init() {
-    await createConnection();
-  }
 }
