@@ -13,7 +13,8 @@ import { ValidateQuery } from '../../hooks';
 const messageSchema = {
   additionalProperties: false,
   properties: {
-    message: { type: 'string' },
+    authorID: { type: 'number' },
+    content: { type: 'string' },
   },
   oneOf: [
     {
@@ -25,9 +26,24 @@ const messageSchema = {
       required: [ 'recipientGroupID' ]
     },
   ],
-  required: [ 'message' ],
+  required: [ 'authorID', 'content' ],
   type: 'object',
 };
+
+function getMessageParams(params: any, resetDefaults = false) {
+  return {
+    content: params.content,
+    author: {
+      id: params.authorID
+    },
+    recipientUser: {
+      id: resetDefaults ? params.recipientUserID ?? null : params.recipientUserID
+    },
+    recipientGroup: {
+      id: resetDefaults ? params.recipientGroupID ?? null : params.recipientGroupID
+    }
+  }
+}
 
 @ApiDefineTag({
   name: 'Message',
@@ -48,24 +64,12 @@ export class MessageController {
   @ApiResponse(200, { description: 'Returns a list of messages.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...messageSchema, required: []})
   async findMessages(ctx: Context<User>) {
     const messages = await getRepository(Message).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        message: ctx.request.query.message,
-        recipientUser: {
-          id: ctx.request.query.recipientUserID
-        },
-        recipientGroup: {
-          id: ctx.request.query.recipientGroupID
-        }
-      }
+      where: getMessageParams(ctx.request.query)
     });
     return new HttpResponseOK(messages);
   }
@@ -78,8 +82,7 @@ export class MessageController {
   @ValidatePathParam('messageId', { type: 'number' })
   async findMessageById(ctx: Context<User>) {
     const message = await getRepository(Message).findOne({
-      id: ctx.request.params.messageId,
-      owner: ctx.user
+      id: ctx.request.params.messageId
     });
 
     if (!message) {
@@ -96,17 +99,9 @@ export class MessageController {
   @ApiResponse(201, { description: 'Message successfully created. Returns the message.' })
   @ValidateBody(messageSchema)
   async createMessage(ctx: Context<User>) {
-    const { recipientUserID, recipientGroupID, ...body } = ctx.request.body;
-    const message = await getRepository(Message).save({
-      ...body,
-      recipientUser: {
-        id: recipientUserID
-      },
-      recipientGroup: {
-        id: recipientGroupID
-      },
-      owner: ctx.user
-    });
+    const message = await getRepository(Message).save(
+      getMessageParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(message);
   }
 
@@ -120,18 +115,14 @@ export class MessageController {
   @ValidateBody({ ...messageSchema, required: [] })
   async modifyMessage(ctx: Context<User>) {
     const message = await getRepository(Message).findOne({
-      id: ctx.request.params.messageId,
-      owner: ctx.user
+      id: ctx.request.params.messageId
     });
 
     if (!message) {
       return new HttpResponseNotFound();
     }
 
-    const { recipientUserID, recipientGroupID, ...body } = ctx.request.body;
-    Object.assign(message, body);
-    if (recipientUserID) message.recipientUser.id = recipientUserID;
-    if (recipientGroupID) message.recipientGroup.id = recipientGroupID;
+    Object.assign(message, getMessageParams(ctx.request.body));
 
     await getRepository(Message).save(message);
 
@@ -148,18 +139,14 @@ export class MessageController {
   @ValidateBody(messageSchema)
   async replaceMessage(ctx: Context<User>) {
     const message = await getRepository(Message).findOne({
-      id: ctx.request.params.messageId,
-      owner: ctx.user
+      id: ctx.request.params.messageId
     });
 
     if (!message) {
       return new HttpResponseNotFound();
     }
 
-    const { recipientUserID, recipientGroupID, ...body } = ctx.request.body;
-    Object.assign(message, ctx.request.body);
-    message.recipientUser.id = recipientUserID;
-    message.recipientGroup.id = recipientGroupID;
+    Object.assign(message, getMessageParams(ctx.request.body, true));
 
     await getRepository(Message).save(message);
 
@@ -174,8 +161,7 @@ export class MessageController {
   @ValidatePathParam('messageId', { type: 'number' })
   async deleteMessage(ctx: Context<User>) {
     const message = await getRepository(Message).findOne({
-      id: ctx.request.params.messageId,
-      owner: ctx.user
+      id: ctx.request.params.messageId
     });
 
     if (!message) {

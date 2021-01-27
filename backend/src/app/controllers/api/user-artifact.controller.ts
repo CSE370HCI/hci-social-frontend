@@ -13,6 +13,7 @@ import { ValidateQuery } from '../../hooks';
 const userArtifactSchema = {
   additionalProperties: false,
   properties: {
+    ownerID: { type: 'number' },
     type: {
       type: 'string',
       description: 'Implementation specific field to define types of artifacts; this could be "picture", ' +
@@ -29,9 +30,20 @@ const userArtifactSchema = {
         'or "favorite posts" or "associated accounts" - whatever makes sense for your system.'
     }
   },
-  required: [ ],
+  required: [ 'ownerID' ],
   type: 'object',
 };
+
+function getUserArtifactParams(params: any, resetDefaults = false) {
+  return {
+    owner: {
+      id: params.ownerID
+    },
+    type: resetDefaults ? params.type ?? '' : params.type,
+    url: resetDefaults ? params.url ?? '' : params.url,
+    category: resetDefaults ? params.category ?? '' : params.category
+  }
+}
 
 @ApiDefineTag({
   name: 'User Artifact',
@@ -53,20 +65,12 @@ export class UserArtifactController {
   @ApiResponse(200, { description: 'Returns a list of user artifacts.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...userArtifactSchema, required: []})
   async findUserArtifacts(ctx: Context<User>) {
     const userArtifacts = await getRepository(UserArtifact).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        type: ctx.request.query.type,
-        url: ctx.request.query.url,
-        category: ctx.request.query.category
-      }
+      where: getUserArtifactParams(ctx.request.query)
     });
     return new HttpResponseOK(userArtifacts);
   }
@@ -79,8 +83,7 @@ export class UserArtifactController {
   @ValidatePathParam('userArtifactId', { type: 'number' })
   async findUserArtifactById(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).findOne({
-      id: ctx.request.params.userArtifactId,
-      owner: ctx.user
+      id: ctx.request.params.userArtifactId
     });
 
     if (!userArtifact) {
@@ -97,10 +100,9 @@ export class UserArtifactController {
   @ApiResponse(201, { description: 'UserArtifact successfully created. Returns the user artifact.' })
   @ValidateBody(userArtifactSchema)
   async createUserArtifact(ctx: Context<User>) {
-    const userArtifact = await getRepository(UserArtifact).save({
-      ...ctx.request.body,
-      owner: ctx.user
-    });
+    const userArtifact = await getRepository(UserArtifact).save(
+      getUserArtifactParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(userArtifact);
   }
 
@@ -114,15 +116,14 @@ export class UserArtifactController {
   @ValidateBody({ ...userArtifactSchema, required: [] })
   async modifyUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).findOne({
-      id: ctx.request.params.userArtifactId,
-      owner: ctx.user
+      id: ctx.request.params.userArtifactId
     });
 
     if (!userArtifact) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userArtifact, ctx.request.body);
+    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body));
 
     await getRepository(UserArtifact).save(userArtifact);
 
@@ -139,15 +140,14 @@ export class UserArtifactController {
   @ValidateBody(userArtifactSchema)
   async replaceUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).findOne({
-      id: ctx.request.params.userArtifactId,
-      owner: ctx.user
+      id: ctx.request.params.userArtifactId
     });
 
     if (!userArtifact) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userArtifact, ctx.request.body);
+    Object.assign(userArtifact, getUserArtifactParams(ctx.request.body, true));
 
     await getRepository(UserArtifact).save(userArtifact);
 
@@ -162,8 +162,7 @@ export class UserArtifactController {
   @ValidatePathParam('userArtifactId', { type: 'number' })
   async deleteUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).findOne({
-      id: ctx.request.params.userArtifactId,
-      owner: ctx.user
+      id: ctx.request.params.userArtifactId
     });
 
     if (!userArtifact) {

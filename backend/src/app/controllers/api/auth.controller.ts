@@ -46,13 +46,28 @@ export class AuthController {
   @Post('/login')
   @ValidateBody(credentialsSchema)
   async login(ctx: Context) {
-    const user = await User.findOne({ email: ctx.request.body.email });
+    const passwordQueryResult = await User.findOne({
+      where: {
+        email: ctx.request.body.email
+      },
+      select: ['password']
+    });
 
-    if (!user) {
+    if (!passwordQueryResult) {
       return new HttpResponseUnauthorized();
     }
 
-    if (!await verifyPassword(ctx.request.body.password, user.password)) {
+    if (!await verifyPassword(ctx.request.body.password, passwordQueryResult.password)) {
+      return new HttpResponseUnauthorized();
+    }
+
+    // A shame that we have to do this twice, but TypeORM doesn't have a way to force select
+    // columns with `select: false` set.
+    const user = await User.findOne({
+      email: ctx.request.body.email
+    });
+
+    if (!user) {
       return new HttpResponseUnauthorized();
     }
 

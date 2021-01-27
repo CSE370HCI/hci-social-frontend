@@ -10,7 +10,7 @@ export class Message extends BaseEntity {
   id: number;
 
   @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  author: User;
 
   @ManyToOne(() => User)
   recipientUser: User;

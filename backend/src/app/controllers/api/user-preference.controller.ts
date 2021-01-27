@@ -13,12 +13,23 @@ import { ValidateQuery } from '../../hooks';
 const userPreferenceSchema = {
   additionalProperties: false,
   properties: {
+    userID: { type: 'number' },
     name: { type: 'string' },
     value: { type: 'string' },
   },
-  required: [ 'name', 'value' ],
+  required: [ 'userID', 'name', 'value' ],
   type: 'object',
 };
+
+function getUserPreferenceParams(params: any, resetDefaults = false) {
+  return {
+    user: {
+      id: params.userID
+    },
+    name: params.name,
+    value: params.value
+  }
+}
 
 @ApiDefineTag({
   name: 'User Preference',
@@ -46,13 +57,7 @@ export class UserPreferenceController {
     const userPreferences = await getRepository(UserPreference).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        name: ctx.request.query.name,
-        value: ctx.request.query.value
-      }
+      where: getUserPreferenceParams(ctx.request.query)
     });
     return new HttpResponseOK(userPreferences);
   }
@@ -65,8 +70,7 @@ export class UserPreferenceController {
   @ValidatePathParam('userPreferenceId', { type: 'number' })
   async findUserPreferenceById(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).findOne({
-      id: ctx.request.params.userPreferenceId,
-      owner: ctx.user
+      id: ctx.request.params.userPreferenceId
     });
 
     if (!userPreference) {
@@ -83,10 +87,9 @@ export class UserPreferenceController {
   @ApiResponse(201, { description: 'User preference successfully created. Returns the user preference.' })
   @ValidateBody(userPreferenceSchema)
   async createUserPreference(ctx: Context<User>) {
-    const userPreference = await getRepository(UserPreference).save({
-      ...ctx.request.body,
-      owner: ctx.user
-    });
+    const userPreference = await getRepository(UserPreference).save(
+      getUserPreferenceParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(userPreference);
   }
 
@@ -100,15 +103,14 @@ export class UserPreferenceController {
   @ValidateBody({ ...userPreferenceSchema, required: [] })
   async modifyUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).findOne({
-      id: ctx.request.params.userPreferenceId,
-      owner: ctx.user
+      id: ctx.request.params.userPreferenceId
     });
 
     if (!userPreference) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userPreference, ctx.request.body);
+    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body));
 
     await getRepository(UserPreference).save(userPreference);
 
@@ -125,15 +127,14 @@ export class UserPreferenceController {
   @ValidateBody(userPreferenceSchema)
   async replaceUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).findOne({
-      id: ctx.request.params.userPreferenceId,
-      owner: ctx.user
+      id: ctx.request.params.userPreferenceId
     });
 
     if (!userPreference) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(userPreference, ctx.request.body);
+    Object.assign(userPreference, getUserPreferenceParams(ctx.request.body, true));
 
     await getRepository(UserPreference).save(userPreference);
 
@@ -148,8 +149,7 @@ export class UserPreferenceController {
   @ValidatePathParam('userPreferenceId', { type: 'number' })
   async deleteUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).findOne({
-      id: ctx.request.params.userPreferenceId,
-      owner: ctx.user
+      id: ctx.request.params.userPreferenceId
     });
 
     if (!userPreference) {

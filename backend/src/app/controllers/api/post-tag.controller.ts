@@ -14,6 +14,11 @@ const postTagSchema = {
   additionalProperties: false,
   properties: {
     postID: { type: 'number' },
+    userID: {
+      description: 'The user that added the tag/that the tag is applicable for. If you want to create ' +
+        'a "system" tag, you might want to set this to `null`',
+      oneOf: [{ type: 'number' }, { type: 'null' }]
+    },
     name: {
       type: 'string',
       description: 'Implementation specific field for the tag itself; this might be "like" or "sad" or "offtopic"'
@@ -24,9 +29,22 @@ const postTagSchema = {
         '"likes" and "upvotes" - having the tag type allows you to do both.'
     }
   },
-  required: [ 'postID', 'name' ],
+  required: [ 'postID' ],
   type: 'object',
 };
+
+function getPostTagParams(params: any, resetDefaults = false) {
+  return {
+    post: {
+      id: params.postID
+    },
+    user: {
+      id: resetDefaults ? params.userID ?? null : params.userID
+    },
+    name: resetDefaults ? params.name ?? '' : params.name,
+    type: resetDefaults ? params.type ?? '' : params.type
+  }
+}
 
 @ApiDefineTag({
   name: 'Post Tag',
@@ -48,22 +66,12 @@ export class PostTagController {
   @ApiResponse(200, { description: 'Returns a list of post tags.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...postTagSchema, required: []})
   async findPostTags(ctx: Context<User>) {
     const postTags = await getRepository(PostTag).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        post: {
-          id: ctx.request.query.postID
-        },
-        name: ctx.request.query.name,
-        type: ctx.request.query.type
-      }
+      where: getPostTagParams(ctx.request.query)
     });
     return new HttpResponseOK(postTags);
   }
@@ -76,8 +84,7 @@ export class PostTagController {
   @ValidatePathParam('postTagId', { type: 'number' })
   async findPostTagById(ctx: Context<User>) {
     const postTag = await getRepository(PostTag).findOne({
-      id: ctx.request.params.postTagId,
-      owner: ctx.user
+      id: ctx.request.params.postTagId
     });
 
     if (!postTag) {
@@ -95,13 +102,9 @@ export class PostTagController {
   @ValidateBody(postTagSchema)
   async createPostTag(ctx: Context<User>) {
     const { postID, ...body } = ctx.request.body;
-    const postTag = await getRepository(PostTag).save({
-      ...body,
-      post: {
-        id: postID
-      },
-      owner: ctx.user
-    });
+    const postTag = await getRepository(PostTag).save(
+      getPostTagParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(postTag);
   }
 
@@ -115,17 +118,14 @@ export class PostTagController {
   @ValidateBody({ ...postTagSchema, required: [] })
   async modifyPostTag(ctx: Context<User>) {
     const postTag = await getRepository(PostTag).findOne({
-      id: ctx.request.params.postTagId,
-      owner: ctx.user
+      id: ctx.request.params.postTagId
     });
 
     if (!postTag) {
       return new HttpResponseNotFound();
     }
 
-    const { postID, ...body } = ctx.request.body;
-    Object.assign(postTag, body);
-    if (postID) postTag.post.id = postID;
+    Object.assign(postTag, getPostTagParams(ctx.request.body));
 
     await getRepository(PostTag).save(postTag);
 
@@ -142,17 +142,14 @@ export class PostTagController {
   @ValidateBody(postTagSchema)
   async replacePostTag(ctx: Context<User>) {
     const postTag = await getRepository(PostTag).findOne({
-      id: ctx.request.params.postTagId,
-      owner: ctx.user
+      id: ctx.request.params.postTagId
     });
 
     if (!postTag) {
       return new HttpResponseNotFound();
     }
 
-    const { postID, ...body } = ctx.request.body;
-    Object.assign(postTag, body);
-    postTag.post.id = postID;
+    Object.assign(postTag, getPostTagParams(ctx.request.body, true));
 
     await getRepository(PostTag).save(postTag);
 
@@ -167,8 +164,7 @@ export class PostTagController {
   @ValidatePathParam('postTagId', { type: 'number' })
   async deletePostTag(ctx: Context<User>) {
     const postTag = await getRepository(PostTag).findOne({
-      id: ctx.request.params.postTagId,
-      owner: ctx.user
+      id: ctx.request.params.postTagId
     });
 
     if (!postTag) {

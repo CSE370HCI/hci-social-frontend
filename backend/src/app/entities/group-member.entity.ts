@@ -10,12 +10,12 @@ export class GroupMember extends BaseEntity {
   id: number;
 
   @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  user: User;
 
   @ManyToOne(() => Group, { nullable: false })
   group: Group;
 
-  @Column({ nullable: true })
+  @Column()
   type: string;
 
 }

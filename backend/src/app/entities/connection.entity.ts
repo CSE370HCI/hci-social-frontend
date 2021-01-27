@@ -9,14 +9,14 @@ export class Connection extends BaseEntity {
   id: number;
 
   @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  user: User;
 
   @ManyToOne(() => User, { nullable: false })
   connectedUser: User;
 
-  @Column({ nullable: true })
+  @Column()
   type: string;
 
-  @Column({ nullable: true })
+  @Column()
   status: string;
 }

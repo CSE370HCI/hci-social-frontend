@@ -13,17 +13,33 @@ import { ValidateQuery } from '../../hooks';
 const groupSchema = {
   additionalProperties: false,
   properties: {
-    userID: {
-      description: 'The user that created the group. If you want system wide groups, you might set' +
-            'the user ID to `null` to specify a system group.',
+    ownerID: {
+      description: 'The user that created the group or is otherwise considered its owner. If you ' +
+        'want system wide groups, you might set the user ID to `null` to specify a system group.',
       anyOf: [{ type: 'number' }, { type: 'null' }]
     },
-    name: { type: 'string', description: 'Implementation specific field to store the name of this particular group' },
-    type: { type: 'string', description: 'Implementation specific field to categorize groups' },
+    name: {
+      description: 'Implementation specific field to store the name of this particular group',
+      type: 'string'
+    },
+    type: {
+      description: 'Implementation specific field to categorize groups',
+      type: 'string'
+    },
   },
   required: [],
   type: 'object',
 };
+
+function getGroupParams(params: any, resetDefaults = false) {
+  return {
+    owner: {
+      id: resetDefaults ? params.ownerID ?? null : params.ownerID
+    },
+    name: resetDefaults ? params.name ?? '' : params.name,
+    type: resetDefaults ? params.type ?? '' : params.type
+  }
+}
 
 @ApiDefineTag({
   name: 'Group',
@@ -50,13 +66,7 @@ export class GroupController {
     const groups = await getRepository(Group).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        name: ctx.request.query.name,
-        type: ctx.request.query.type
-      }
+      where: getGroupParams(ctx.request.query)
     });
     return new HttpResponseOK(groups);
   }
@@ -87,12 +97,9 @@ export class GroupController {
   @ValidateBody(groupSchema)
   async createGroup(ctx: Context<User>) {
     const {userID, ...body} = ctx.request.body;
-    const group = await getRepository(Group).save({
-      ...body,
-      owner: {
-        id: userID
-      }
-    });
+    const group = await getRepository(Group).save(
+      getGroupParams(ctx.request.body)
+    );
     return new HttpResponseCreated(group);
   }
 
@@ -113,9 +120,7 @@ export class GroupController {
       return new HttpResponseNotFound();
     }
 
-    const {userID, ...body} = ctx.request.body;
-    Object.assign(group, body);
-    if (userID !== undefined) group.owner.id = userID;
+    Object.assign(group, getGroupParams(ctx.request.body));
 
     await getRepository(Group).save(group);
 
@@ -139,7 +144,7 @@ export class GroupController {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(group, ctx.request.body);
+    Object.assign(group, getGroupParams(ctx.request.body, true));
 
     await getRepository(Group).save(group);
 

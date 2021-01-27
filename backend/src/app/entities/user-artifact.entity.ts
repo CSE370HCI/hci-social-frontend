@@ -11,13 +11,13 @@ export class UserArtifact extends BaseEntity {
   @ManyToOne(() => User, { nullable: false })
   owner: User;
 
-  @Column({ nullable: true })
+  @Column()
   type: string;
 
-  @Column({ nullable: true })
+  @Column()
   url: string;
 
-  @Column({ nullable: true })
+  @Column()
   category: string;
 
 }

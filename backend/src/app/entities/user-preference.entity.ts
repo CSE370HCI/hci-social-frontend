@@ -9,7 +9,7 @@ export class UserPreference extends BaseEntity {
   id: number;
 
   @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  user: User;
 
   @Column()
   name: string;

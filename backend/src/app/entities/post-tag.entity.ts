@@ -9,16 +9,16 @@ export class PostTag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, { nullable: false })
-  owner: User;
-
   @ManyToOne(() => Post, { nullable: false })
   post: Post;
+
+  @ManyToOne(() => User)
+  user: User;
 
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   type: string;
 
 }

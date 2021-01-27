@@ -13,6 +13,7 @@ import { ValidateQuery } from '../../hooks';
 const groupMemberSchema = {
   additionalProperties: false,
   properties: {
+    userID: { type: 'number' },
     groupID: { type: 'number' },
     type: {
       type: 'string',
@@ -21,9 +22,21 @@ const groupMemberSchema = {
         'makes sense to your platform.'
     },
   },
-  required: [ 'groupID' ],
+  required: [ 'userID', 'groupID' ],
   type: 'object',
 };
+
+function getGroupMemberParams(params: any, resetDefaults = false) {
+  return {
+    user: {
+      id: params.userID
+    },
+    group: {
+      id: params.groupID
+    },
+    type: resetDefaults ? params.type ?? '' : params.type
+  }
+}
 
 @ApiDefineTag({
   name: 'Group Member',
@@ -43,21 +56,12 @@ export class GroupMemberController {
   @ApiResponse(200, { description: 'Returns a list of group members.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...groupMemberSchema, required: []})
   async findGroupMembers(ctx: Context<User>) {
     const groupMembers = await getRepository(GroupMember).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        group: {
-          id: ctx.request.query.groupID
-        },
-        type: ctx.request.query.type
-      }
+      where: getGroupMemberParams(ctx.request.query)
     });
     return new HttpResponseOK(groupMembers);
   }
@@ -70,8 +74,7 @@ export class GroupMemberController {
   @ValidatePathParam('groupMemberId', { type: 'number' })
   async findGroupMemberById(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).findOne({
-      id: ctx.request.params.groupMemberId,
-      owner: ctx.user
+      id: ctx.request.params.groupMemberId
     });
 
     if (!groupMember) {
@@ -88,14 +91,9 @@ export class GroupMemberController {
   @ApiResponse(201, { description: 'Group member successfully created. Returns the group member.' })
   @ValidateBody(groupMemberSchema)
   async createGroupMember(ctx: Context<User>) {
-    const { groupID, ...body } = ctx.request.body;
-    const groupMember = await getRepository(GroupMember).save({
-      ...body,
-      group: {
-        id: groupID
-      },
-      owner: ctx.user
-    });
+    const groupMember = await getRepository(GroupMember).save(
+      getGroupMemberParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(groupMember);
   }
 
@@ -109,17 +107,14 @@ export class GroupMemberController {
   @ValidateBody({ ...groupMemberSchema, required: [] })
   async modifyGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).findOne({
-      id: ctx.request.params.groupMemberId,
-      owner: ctx.user
+      id: ctx.request.params.groupMemberId
     });
 
     if (!groupMember) {
       return new HttpResponseNotFound();
     }
 
-    const { groupID, ...body } = ctx.request.body;
-    Object.assign(groupMember, body);
-    if (groupID) groupMember.group.id = groupID;
+    Object.assign(groupMember, getGroupMemberParams(ctx.request.body));
 
     await getRepository(GroupMember).save(groupMember);
 
@@ -136,17 +131,14 @@ export class GroupMemberController {
   @ValidateBody(groupMemberSchema)
   async replaceGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).findOne({
-      id: ctx.request.params.groupMemberId,
-      owner: ctx.user
+      id: ctx.request.params.groupMemberId
     });
 
     if (!groupMember) {
       return new HttpResponseNotFound();
     }
 
-    const { groupID, ...body } = ctx.request.body;
-    Object.assign(groupMember, body);
-    groupMember.group.id = groupID;
+    Object.assign(groupMember, getGroupMemberParams(ctx.request.body, true));
 
     await getRepository(GroupMember).save(groupMember);
 
@@ -161,8 +153,7 @@ export class GroupMemberController {
   @ValidatePathParam('groupMemberId', { type: 'number' })
   async deleteGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).findOne({
-      id: ctx.request.params.groupMemberId,
-      owner: ctx.user
+      id: ctx.request.params.groupMemberId
     });
 
     if (!groupMember) {

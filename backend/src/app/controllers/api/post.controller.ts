@@ -5,42 +5,49 @@ import {
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post as HTTPPost,
   Put, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
-import { getRepository, getTreeRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 import { Post, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
 
-const postSchemaWithoutParent = {
+const postSchema = {
   additionalProperties: false,
   properties: {
+    authorID: { type: 'number' },
+    parentID: {
+      description: 'If this post is a comment, the id of the parent post that you are commenting on. ' +
+        'The API will automatically increment or decrement the commentCount in the parent record as appropriate',
+      oneOf: [{ type: 'number' }, { type: 'null' }]
+    },
+    content: { type: 'string' },
     type: {
       type: 'string',
       description: 'Implementation specific field to define types of posts; this could be "post", ' +
         '"comment", "blog", "essay", ' +
         'etc. - whatever makes sense for your platform.'
     },
-    content: { type: 'string' },
     thumbnailURL: {
       type: 'string',
       description: 'If you have thumbnail images, this is the URL to the thumbnail for this post.'
     },
   },
-  required: [  ],
+  required: [ 'authorID' ],
   type: 'object',
 }
 
-const postSchema = {
-  ...postSchemaWithoutParent,
-  properties: {
-    ...postSchemaWithoutParent.properties,
-    parentID: {
-      type: 'number',
-      description: 'If this post is a comment, the id of the parent post that you are commenting on. ' +
-        'For creates, if this field is set, the API call to add a post will automatically increment ' +
-        'the commentCount in the parent record'
+function getPostParams(params: any, resetDefaults = false) {
+  return {
+    author: {
+      id: params.userID
     },
+    parent: {
+      id: resetDefaults ? params.parentID ?? null : params.parentID
+    },
+    type: resetDefaults ? params.type ?? '' : params.type,
+    content: resetDefaults ? params.content ?? '' : params.content,
+    thumbnailURL: resetDefaults ? params.thumbnailURL ?? '' : params.thumbnailURL
   }
-};
+}
 
 @ApiDefineTag({
   name: 'Post',
@@ -71,17 +78,7 @@ export class PostController {
     const posts = await getRepository(Post).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        parent: {
-          id: ctx.request.query.parentID
-        },
-        type: ctx.request.query.type,
-        content: ctx.request.query.content,
-        thumbnailURL: ctx.request.query.thumbnailURL
-      }
+      where: getPostParams(ctx.request.query)
     });
     return new HttpResponseOK(posts);
   }
@@ -94,17 +91,14 @@ export class PostController {
   @ValidatePathParam('postId', { type: 'number' })
   async findPostById(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
-      id: ctx.request.params.postId,
-      owner: ctx.user
+      id: ctx.request.params.postId
     });
 
     if (!post) {
       return new HttpResponseNotFound();
     }
 
-    const tree = getTreeRepository(Post).findDescendantsTree(post);
-
-    return new HttpResponseOK(tree);
+    return new HttpResponseOK(post);
   }
 
   @HTTPPost()
@@ -114,14 +108,9 @@ export class PostController {
   @ApiResponse(201, { description: 'Post successfully created. Returns the post.' })
   @ValidateBody(postSchema)
   async createPost(ctx: Context<User>) {
-    const {parentID, ...body} = ctx.request.body
-    const post: Post = await getRepository(Post).save({
-      ...body,
-      parent: {
-        id: parentID
-      },
-      owner: ctx.user
-    });
+    const post: Post = await getRepository(Post).save(
+      getPostParams(ctx.request.body, true)
+    );
     if (post.parent) await getRepository(Post).increment(post, 'commentCount', 1);
     return new HttpResponseCreated(post);
   }
@@ -133,20 +122,32 @@ export class PostController {
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
-  @ValidateBody({ ...postSchemaWithoutParent, required: [] })
+  @ValidateBody({ ...postSchema, required: [] })
   async modifyPost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
-      id: ctx.request.params.postId,
-      owner: ctx.user
+      id: ctx.request.params.postId
     });
 
     if (!post) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(post, ctx.request.body);
+    const oldParent = post.parent;
+
+    Object.assign(post, getPostParams(ctx.request.body));
 
     await getRepository(Post).save(post);
+
+    if (
+      oldParent?.id !== post.parent?.id
+      // I'm not positive what will happen if the user doesn't provide an updated parent ID
+      // after we save, so I'm just going to be extra safe here
+      // TODO: Verify actual behavior
+      && !(post.parent?.id === undefined && (oldParent === null || oldParent?.id === null))
+    ) {
+      if (post.parent && post.parent.id) getRepository(Post).increment(post.parent, 'commentCount', 1);
+      if (oldParent && oldParent.id) getRepository(Post).decrement(oldParent, 'commentCount', 1);
+    }
 
     return new HttpResponseOK(post);
   }
@@ -158,18 +159,31 @@ export class PostController {
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
-  @ValidateBody(postSchemaWithoutParent)
+  @ValidateBody(postSchema)
   async replacePost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
       id: ctx.request.params.postId,
-      owner: ctx.user
+      author: ctx.user
     });
 
     if (!post) {
       return new HttpResponseNotFound();
     }
 
-    Object.assign(post, ctx.request.body);
+    const oldParent = post.parent;
+
+    Object.assign(post, getPostParams(ctx.request.body, true));
+
+    if (
+      oldParent?.id !== post.parent?.id
+      // I'm not positive what will happen if this was blank before and we provide an explicit null
+      // after we save, so I'm just going to be extra safe here
+      // TODO: Verify actual behavior
+      && !(oldParent?.id === undefined && (post.parent === null || post.parent?.id === null))
+    ) {
+      if (post.parent && post.parent.id) getRepository(Post).increment(post.parent, 'commentCount', 1);
+      if (oldParent && oldParent.id) getRepository(Post).decrement(oldParent, 'commentCount', 1);
+    }
 
     await getRepository(Post).save(post);
 
@@ -184,15 +198,19 @@ export class PostController {
   @ValidatePathParam('postId', { type: 'number' })
   async deletePost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
-      id: ctx.request.params.postId,
-      owner: ctx.user
+      id: ctx.request.params.postId
     });
 
     if (!post) {
       return new HttpResponseNotFound();
     }
 
+    const parent = post.parent;
+
     await getRepository(Post).delete(ctx.request.params.postId);
+
+    // TODO: Is the parent.id check redundant?
+    if (parent && parent.id) getRepository(Post).decrement(parent, 'commentCount', 1)
 
     return new HttpResponseNoContent();
   }

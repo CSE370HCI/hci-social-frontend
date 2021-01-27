@@ -10,22 +10,22 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
-  @Column({ nullable: true })
+  @Column()
   username: string;
 
-  @Column({ nullable: true })
+  @Column()
   firstName: string;
 
-  @Column({ nullable: true })
+  @Column()
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column()
   status: string;
 
-  @Column({ nullable: true })
+  @Column()
   role: string;
 
   @BeforeInsert()

@@ -13,6 +13,7 @@ import { ValidateQuery } from '../../hooks';
 const connectionSchema = {
   additionalProperties: false,
   properties: {
+    userID: { type: 'number' },
     connectedUserID: { type: 'number' },
     type: {
       type: 'string',
@@ -26,9 +27,22 @@ const connectionSchema = {
         'when a request is made.  If you block a friend, this may be set to "blocked", and so on.'
     }
   },
-  required: [ 'connectedUserID' ],
+  required: [ 'userID', 'connectedUserID' ],
   type: 'object',
 };
+
+function getConnectionParams(params: any, resetDefaults = true) {
+  return {
+    user: {
+      id: params.userID
+    },
+    connectedUser: {
+      id: params.userID
+    },
+    type: resetDefaults ? params.type ?? '' : params.type,
+    status: resetDefaults ? params.status ?? '' : params.status
+  }
+}
 
 @ApiDefineTag({
   name: 'Connection',
@@ -49,18 +63,12 @@ export class ConnectionController {
   @ApiResponse(200, { description: 'Returns a list of connections.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...connectionSchema, required: []})
   async findConnections(ctx: Context<User>) {
     const connections = await getRepository(Connection).find({
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
-      where: {
-        owner: {
-          id: ctx.request.query.userID
-        },
-        connectedUser: ctx.request.query.connectedUserID
-      }
+      where: getConnectionParams(ctx.request.query)
     });
     return new HttpResponseOK(connections);
   }
@@ -73,8 +81,7 @@ export class ConnectionController {
   @ValidatePathParam('connectionId', { type: 'number' })
   async findConnectionById(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
-      id: ctx.request.params.connectionId,
-      owner: ctx.user
+      id: ctx.request.params.connectionId
     });
 
     if (!connection) {
@@ -91,14 +98,9 @@ export class ConnectionController {
   @ApiResponse(201, { description: 'Connection successfully created. Returns the connection.' })
   @ValidateBody(connectionSchema)
   async createConnection(ctx: Context<User>) {
-    const { connectedUserID, ...body } = ctx.request.body;
-    const connection = await getRepository(Connection).save({
-      ...body,
-      connectedUser: {
-        id: connectedUserID
-      },
-      owner: ctx.user,
-    });
+    const connection = await getRepository(Connection).save(
+      getConnectionParams(ctx.request.body, true)
+    );
     return new HttpResponseCreated(connection);
   }
 
@@ -112,17 +114,14 @@ export class ConnectionController {
   @ValidateBody({ ...connectionSchema, required: [] })
   async modifyConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
-      id: ctx.request.params.connectionId,
-      owner: ctx.user
+      id: ctx.request.params.connectionId
     });
 
     if (!connection) {
       return new HttpResponseNotFound();
     }
 
-    const { connectedUserID, ...body } = ctx.request.body;
-    Object.assign(connection, body);
-    if (connectedUserID) connection.connectedUser.id = connectedUserID;
+    Object.assign(connection, getConnectionParams(ctx.request.body));
 
     await getRepository(Connection).save(connection);
 
@@ -140,16 +139,14 @@ export class ConnectionController {
   async replaceConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
       id: ctx.request.params.connectionId,
-      owner: ctx.user
+      user: ctx.user
     });
 
     if (!connection) {
       return new HttpResponseNotFound();
     }
 
-    const { connectedUserID, ...body } = ctx.request.body;
-    Object.assign(connection, body);
-    connection.connectedUser.id = connectedUserID;
+    Object.assign(connection, getConnectionParams(ctx.request.body, true));
 
     await getRepository(Connection).save(connection);
 
@@ -165,7 +162,7 @@ export class ConnectionController {
   async deleteConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
       id: ctx.request.params.connectionId,
-      owner: ctx.user
+      user: ctx.user
     });
 
     if (!connection) {

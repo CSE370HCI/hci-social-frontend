@@ -1,16 +1,15 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { User } from './user.entity';
 
 @Entity()
-@Tree("materialized-path")
 export class Post extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  author: User;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -18,7 +17,7 @@ export class Post extends BaseEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: true })
+  @Column()
   type: string;
 
   @Column()
@@ -27,11 +26,11 @@ export class Post extends BaseEntity {
   @Column()
   thumbnailURL: string;
 
-  @TreeChildren()
-  children: Post[];
-
-  @TreeParent()
+  @ManyToOne(() => Post, post => post.children)
   parent: Post;
+
+  @OneToMany(() => Post, post => post.parent)
+  children: Post[];
 
   @Column()
   commentCount: number;
