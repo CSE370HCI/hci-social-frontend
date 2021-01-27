@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -90,6 +90,7 @@ export class UserPreferenceController {
   @ApiOperationSummary('Create a new user preference.')
   @ApiResponse(400, { description: 'Invalid user preference.' })
   @ApiResponse(201, { description: 'User preference successfully created. Returns the user preference.' })
+  @UserRequired()
   @ValidateBody(userPreferenceSchema)
   async createUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).save(
@@ -104,6 +105,7 @@ export class UserPreferenceController {
   @ApiResponse(400, { description: 'Invalid user preference.' })
   @ApiResponse(404, { description: 'User preference not found.' })
   @ApiResponse(200, { description: 'User preference successfully updated. Returns the user preference.' })
+  @UserRequired()
   @ValidatePathParam('userPreferenceId', { type: 'number' })
   @ValidateBody({ ...userPreferenceSchema, required: [] })
   async modifyUserPreference(ctx: Context<User>) {
@@ -128,6 +130,7 @@ export class UserPreferenceController {
   @ApiResponse(400, { description: 'Invalid user preference.' })
   @ApiResponse(404, { description: 'User preference not found.' })
   @ApiResponse(200, { description: 'User preference successfully updated. Returns the user preference.' })
+  @UserRequired()
   @ValidatePathParam('userPreferenceId', { type: 'number' })
   @ValidateBody(userPreferenceSchema)
   async replaceUserPreference(ctx: Context<User>) {
@@ -151,6 +154,7 @@ export class UserPreferenceController {
   @ApiOperationSummary('Delete a user preference.')
   @ApiResponse(404, { description: 'User preference not found.' })
   @ApiResponse(204, { description: 'User preference successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('userPreferenceId', { type: 'number' })
   async deleteUserPreference(ctx: Context<User>) {
     const userPreference = await getRepository(UserPreference).findOne({

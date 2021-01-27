@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -104,6 +104,7 @@ export class PostTagController {
   @ApiOperationSummary('Create a new post tag.')
   @ApiResponse(400, { description: 'Invalid post tag.' })
   @ApiResponse(201, { description: 'PostTag successfully created. Returns the post tag.' })
+  @UserRequired()
   @ValidateBody(postTagSchema)
   async createPostTag(ctx: Context<User>) {
     const { postID, ...body } = ctx.request.body;
@@ -119,6 +120,7 @@ export class PostTagController {
   @ApiResponse(400, { description: 'Invalid post tag.' })
   @ApiResponse(404, { description: 'PostTag not found.' })
   @ApiResponse(200, { description: 'PostTag successfully updated. Returns the post tag.' })
+  @UserRequired()
   @ValidatePathParam('postTagId', { type: 'number' })
   @ValidateBody({ ...postTagSchema, required: [] })
   async modifyPostTag(ctx: Context<User>) {
@@ -143,6 +145,7 @@ export class PostTagController {
   @ApiResponse(400, { description: 'Invalid post tag.' })
   @ApiResponse(404, { description: 'PostTag not found.' })
   @ApiResponse(200, { description: 'PostTag successfully updated. Returns the post tag.' })
+  @UserRequired()
   @ValidatePathParam('postTagId', { type: 'number' })
   @ValidateBody(postTagSchema)
   async replacePostTag(ctx: Context<User>) {
@@ -166,6 +169,7 @@ export class PostTagController {
   @ApiOperationSummary('Delete a post tag.')
   @ApiResponse(404, { description: 'PostTag not found.' })
   @ApiResponse(204, { description: 'PostTag successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('postTagId', { type: 'number' })
   async deletePostTag(ctx: Context<User>) {
     const postTag = await getRepository(PostTag).findOne({

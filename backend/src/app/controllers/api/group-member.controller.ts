@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -94,6 +94,7 @@ export class GroupMemberController {
   @ApiOperationSummary('Create a new group member.')
   @ApiResponse(400, { description: 'Invalid group member.' })
   @ApiResponse(201, { description: 'Group member successfully created. Returns the group member.' })
+  @UserRequired()
   @ValidateBody(groupMemberSchema)
   async createGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).save(
@@ -108,6 +109,7 @@ export class GroupMemberController {
   @ApiResponse(400, { description: 'Invalid group member.' })
   @ApiResponse(404, { description: 'Group member not found.' })
   @ApiResponse(200, { description: 'Group member successfully updated. Returns the group member.' })
+  @UserRequired()
   @ValidatePathParam('groupMemberId', { type: 'number' })
   @ValidateBody({ ...groupMemberSchema, required: [] })
   async modifyGroupMember(ctx: Context<User>) {
@@ -132,6 +134,7 @@ export class GroupMemberController {
   @ApiResponse(400, { description: 'Invalid group member.' })
   @ApiResponse(404, { description: 'Group member not found.' })
   @ApiResponse(200, { description: 'Group member successfully updated. Returns the group member.' })
+  @UserRequired()
   @ValidatePathParam('groupMemberId', { type: 'number' })
   @ValidateBody(groupMemberSchema)
   async replaceGroupMember(ctx: Context<User>) {
@@ -155,6 +158,7 @@ export class GroupMemberController {
   @ApiOperationSummary('Delete a group member.')
   @ApiResponse(404, { description: 'Group member not found.' })
   @ApiResponse(204, { description: 'Group member successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('groupMemberId', { type: 'number' })
   async deleteGroupMember(ctx: Context<User>) {
     const groupMember = await getRepository(GroupMember).findOne({

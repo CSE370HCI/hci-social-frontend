@@ -1,4 +1,4 @@
-import { ApiInfo, ApiServer, controller, UseSessions } from '@foal/core';
+import { ApiDefineSecurityScheme, ApiInfo, ApiSecurityRequirement, ApiServer, controller, UseSessions } from '@foal/core';
 import { fetchUser } from '@foal/typeorm';
 import { createConnection } from 'typeorm';
 import { User } from '../entities';
@@ -13,6 +13,11 @@ import { UserController } from './api/user.controller';
 })
 @ApiServer({
   url: '/api'
+})
+@ApiSecurityRequirement({ bearerAuth: [] })
+@ApiDefineSecurityScheme('bearerAuth', {
+  type: 'http',
+  scheme: 'bearer'
 })
 @UseSessions({
   user: fetchUser(User)

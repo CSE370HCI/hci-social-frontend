@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -98,6 +98,7 @@ export class UserController {
   @ApiOperationSummary('Create a new user.')
   @ApiResponse(400, { description: 'Invalid user.' })
   @ApiResponse(201, { description: 'User successfully created. Returns the user.' })
+  @UserRequired()
   @ValidateBody(getUserSchema(true))
   async createUser(ctx: Context<User>) {
     const user = await getRepository(User).save(
@@ -112,6 +113,7 @@ export class UserController {
   @ApiResponse(400, { description: 'Invalid user.' })
   @ApiResponse(404, { description: 'User not found.' })
   @ApiResponse(200, { description: 'User successfully updated. Returns the user.' })
+  @UserRequired()
   @ValidatePathParam('userId', { type: 'number' })
   @ValidateBody({ ...getUserSchema(false), required: [] })
   async modifyUser(ctx: Context<User>) {
@@ -136,6 +138,7 @@ export class UserController {
   @ApiResponse(400, { description: 'Invalid user.' })
   @ApiResponse(404, { description: 'User not found.' })
   @ApiResponse(200, { description: 'User successfully updated. Returns the user.' })
+  @UserRequired()
   @ValidatePathParam('userId', { type: 'number' })
   @ValidateBody(getUserSchema(false))
   async replaceUser(ctx: Context<User>) {
@@ -159,6 +162,7 @@ export class UserController {
   @ApiOperationSummary('Delete a user.')
   @ApiResponse(404, { description: 'User not found.' })
   @ApiResponse(204, { description: 'User successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('userId', { type: 'number' })
   async deleteUser(ctx: Context<User>) {
     const user = await getRepository(User).findOne({

@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -99,9 +99,9 @@ export class GroupController {
   @ApiOperationSummary('Create a new group.')
   @ApiResponse(400, { description: 'Invalid group.' })
   @ApiResponse(201, { description: 'Group successfully created. Returns the group.' })
+  @UserRequired()
   @ValidateBody(groupSchema)
   async createGroup(ctx: Context<User>) {
-    const {userID, ...body} = ctx.request.body;
     const group = await getRepository(Group).save(
       getGroupParams(ctx.request.body, 'default')
     );
@@ -114,6 +114,7 @@ export class GroupController {
   @ApiResponse(400, { description: 'Invalid group.' })
   @ApiResponse(404, { description: 'Group not found.' })
   @ApiResponse(200, { description: 'Group successfully updated. Returns the group.' })
+  @UserRequired()
   @ValidatePathParam('groupId', { type: 'number' })
   @ValidateBody({ ...groupSchema, required: [] })
   async modifyGroup(ctx: Context<User>) {
@@ -138,6 +139,7 @@ export class GroupController {
   @ApiResponse(400, { description: 'Invalid group.' })
   @ApiResponse(404, { description: 'Group not found.' })
   @ApiResponse(200, { description: 'Group successfully updated. Returns the group.' })
+  @UserRequired()
   @ValidatePathParam('groupId', { type: 'number' })
   @ValidateBody(groupSchema)
   async replaceGroup(ctx: Context<User>) {
@@ -161,6 +163,7 @@ export class GroupController {
   @ApiOperationSummary('Delete a group.')
   @ApiResponse(404, { description: 'Group not found.' })
   @ApiResponse(204, { description: 'Group successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('groupId', { type: 'number' })
   async deleteGroup(ctx: Context<User>) {
     const group = await getRepository(Group).findOne({

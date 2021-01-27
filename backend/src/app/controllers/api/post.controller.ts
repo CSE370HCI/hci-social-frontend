@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post as HTTPPost,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -111,6 +111,7 @@ export class PostController {
   @ApiOperationSummary('Create a new post.')
   @ApiResponse(400, { description: 'Invalid post.' })
   @ApiResponse(201, { description: 'Post successfully created. Returns the post.' })
+  @UserRequired()
   @ValidateBody(postSchema)
   async createPost(ctx: Context<User>) {
     const post: Post = await getRepository(Post).save(
@@ -125,6 +126,7 @@ export class PostController {
   @ApiOperationSummary('Update/modify an existing post.')
   @ApiResponse(400, { description: 'Invalid post.' })
   @ApiResponse(404, { description: 'Post not found.' })
+  @UserRequired()
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
   @ValidateBody({ ...postSchema, required: [] })
@@ -163,6 +165,7 @@ export class PostController {
   @ApiResponse(400, { description: 'Invalid post.' })
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(200, { description: 'Post successfully updated. Returns the post.' })
+  @UserRequired()
   @ValidatePathParam('postId', { type: 'number' })
   @ValidateBody(postSchema)
   async replacePost(ctx: Context<User>) {
@@ -200,6 +203,7 @@ export class PostController {
   @ApiOperationSummary('Delete a post.')
   @ApiResponse(404, { description: 'Post not found.' })
   @ApiResponse(204, { description: 'Post successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('postId', { type: 'number' })
   async deletePost(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({

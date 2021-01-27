@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -102,6 +102,7 @@ export class MessageController {
   @ApiOperationSummary('Create a new message.')
   @ApiResponse(400, { description: 'Invalid message.' })
   @ApiResponse(201, { description: 'Message successfully created. Returns the message.' })
+  @UserRequired()
   @ValidateBody(messageSchema)
   async createMessage(ctx: Context<User>) {
     const message = await getRepository(Message).save(
@@ -116,6 +117,7 @@ export class MessageController {
   @ApiResponse(400, { description: 'Invalid message.' })
   @ApiResponse(404, { description: 'Message not found.' })
   @ApiResponse(200, { description: 'Message successfully updated. Returns the message.' })
+  @UserRequired()
   @ValidatePathParam('messageId', { type: 'number' })
   @ValidateBody({ ...messageSchema, required: [] })
   async modifyMessage(ctx: Context<User>) {
@@ -140,6 +142,7 @@ export class MessageController {
   @ApiResponse(400, { description: 'Invalid message.' })
   @ApiResponse(404, { description: 'Message not found.' })
   @ApiResponse(200, { description: 'Message successfully updated. Returns the message.' })
+  @UserRequired()
   @ValidatePathParam('messageId', { type: 'number' })
   @ValidateBody(messageSchema)
   async replaceMessage(ctx: Context<User>) {
@@ -163,6 +166,7 @@ export class MessageController {
   @ApiOperationSummary('Delete a message.')
   @ApiResponse(404, { description: 'Message not found.' })
   @ApiResponse(204, { description: 'Message successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('messageId', { type: 'number' })
   async deleteMessage(ctx: Context<User>) {
     const message = await getRepository(Message).findOne({

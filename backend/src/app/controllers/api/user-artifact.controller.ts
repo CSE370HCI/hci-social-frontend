@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -103,6 +103,7 @@ export class UserArtifactController {
   @ApiOperationSummary('Create a new user artifact.')
   @ApiResponse(400, { description: 'Invalid user artifact.' })
   @ApiResponse(201, { description: 'UserArtifact successfully created. Returns the user artifact.' })
+  @UserRequired()
   @ValidateBody(userArtifactSchema)
   async createUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).save(
@@ -117,6 +118,7 @@ export class UserArtifactController {
   @ApiResponse(400, { description: 'Invalid user artifact.' })
   @ApiResponse(404, { description: 'UserArtifact not found.' })
   @ApiResponse(200, { description: 'UserArtifact successfully updated. Returns the user artifact.' })
+  @UserRequired()
   @ValidatePathParam('userArtifactId', { type: 'number' })
   @ValidateBody({ ...userArtifactSchema, required: [] })
   async modifyUserArtifact(ctx: Context<User>) {
@@ -141,6 +143,7 @@ export class UserArtifactController {
   @ApiResponse(400, { description: 'Invalid user artifact.' })
   @ApiResponse(404, { description: 'UserArtifact not found.' })
   @ApiResponse(200, { description: 'UserArtifact successfully updated. Returns the user artifact.' })
+  @UserRequired()
   @ValidatePathParam('userArtifactId', { type: 'number' })
   @ValidateBody(userArtifactSchema)
   async replaceUserArtifact(ctx: Context<User>) {
@@ -164,6 +167,7 @@ export class UserArtifactController {
   @ApiOperationSummary('Delete a user artifact.')
   @ApiResponse(404, { description: 'User artifact not found.' })
   @ApiResponse(204, { description: 'User artifact successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('userArtifactId', { type: 'number' })
   async deleteUserArtifact(ctx: Context<User>) {
     const userArtifact = await getRepository(UserArtifact).findOne({

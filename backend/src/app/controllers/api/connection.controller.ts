@@ -3,7 +3,7 @@ import {
   ApiOperationDescription, ApiOperationId, ApiOperationSummary, ApiResponse,
   ApiUseTag, Context, Delete, Get, HttpResponseCreated,
   HttpResponseNoContent, HttpResponseNotFound, HttpResponseOK, Patch, Post,
-  Put, ValidateBody, ValidatePathParam, ValidateQueryParam
+  Put, UserRequired, ValidateBody, ValidatePathParam, ValidateQueryParam
 } from '@foal/core';
 import { getRepository } from 'typeorm';
 
@@ -101,6 +101,7 @@ export class ConnectionController {
   @ApiOperationSummary('Create a new connection.')
   @ApiResponse(400, { description: 'Invalid connection.' })
   @ApiResponse(201, { description: 'Connection successfully created. Returns the connection.' })
+  @UserRequired()
   @ValidateBody(connectionSchema)
   async createConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).save(
@@ -115,6 +116,7 @@ export class ConnectionController {
   @ApiResponse(400, { description: 'Invalid connection.' })
   @ApiResponse(404, { description: 'Connection not found.' })
   @ApiResponse(200, { description: 'Connection successfully updated. Returns the connection.' })
+  @UserRequired()
   @ValidatePathParam('connectionId', { type: 'number' })
   @ValidateBody({ ...connectionSchema, required: [] })
   async modifyConnection(ctx: Context<User>) {
@@ -139,6 +141,7 @@ export class ConnectionController {
   @ApiResponse(400, { description: 'Invalid connection.' })
   @ApiResponse(404, { description: 'Connection not found.' })
   @ApiResponse(200, { description: 'Connection successfully updated. Returns the connection.' })
+  @UserRequired()
   @ValidatePathParam('connectionId', { type: 'number' })
   @ValidateBody(connectionSchema)
   async replaceConnection(ctx: Context<User>) {
@@ -163,6 +166,7 @@ export class ConnectionController {
   @ApiOperationSummary('Delete a connection.')
   @ApiResponse(404, { description: 'Connection not found.' })
   @ApiResponse(204, { description: 'Connection successfully deleted.' })
+  @UserRequired()
   @ValidatePathParam('connectionId', { type: 'number' })
   async deleteConnection(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
