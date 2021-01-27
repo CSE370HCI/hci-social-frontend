@@ -44,7 +44,7 @@ function getUserParams(params: any, resetDefaults = false) {
 @ApiDefineTag({
   name: 'User',
   description: 'These are the registered users of the social media platform. This API endpoint will manage ' +
-      'account creation and management by admins (self registration is done through the' +
+      'account creation and management by admins (self registration is done through the ' +
       '[Authentication](#/Authentication) api), profile updates, fetching user lists to add friends, etc.'
 })
 @ApiUseTag('User')
