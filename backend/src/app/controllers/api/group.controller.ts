@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Group, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 const groupSchema = {
   additionalProperties: false,
@@ -43,7 +43,7 @@ function getGroupParams(params: any, undefinedMode: 'remove' | 'default') {
     type: resetDefaults ? params.type ?? '' : params.type
   }
 
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({

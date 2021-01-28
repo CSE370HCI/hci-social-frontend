@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Post, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 const postSchema = {
   additionalProperties: false,
@@ -51,7 +51,7 @@ function getPostParams(params: any, undefinedMode: 'remove' | 'default') {
     thumbnailURL: resetDefaults ? params.thumbnailURL ?? '' : params.thumbnailURL
   }
 
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({

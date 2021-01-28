@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { UserPreference, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 const userPreferenceSchema = {
   additionalProperties: false,
@@ -33,7 +33,7 @@ function getUserPreferenceParams(params: any, undefinedMode: 'remove' | 'default
     value: params.value
   }
 
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({

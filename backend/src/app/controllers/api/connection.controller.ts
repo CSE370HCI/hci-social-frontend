@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Connection, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 const connectionSchema = {
   additionalProperties: false,
@@ -46,7 +46,7 @@ function getConnectionParams(params: any, undefinedMode: 'remove' | 'default') {
     status: resetDefaults ? params.status ?? '' : params.status
   }
 
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({
