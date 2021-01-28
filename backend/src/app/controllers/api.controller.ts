@@ -42,7 +42,7 @@ export class ApiController {
   options(ctx: Context) {
     const response = new HttpResponseNoContent();
     response.setHeader('Access-Control-Allow-Methods', 'HEAD, GET, POST, PUT, PATCH, DELETE');
-    response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return response;
   }
 }
