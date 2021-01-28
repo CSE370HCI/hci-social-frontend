@@ -2,16 +2,22 @@
 Backend/API layer for the UB CSE370 course project
 
 ## Getting Started
+First install the dependencies:
+- `npm install`
+
+From there, there are two different ways to start the app
+
+### Development
 The simplest way to get started is by running `npm run develop`. This will start the application
 in development mode, which configures the app appropriately for a local install,
-automatically syncs the DB schema, and reloads if any changes are made. The API will be
+automatically syncs the DB schema, and reloads itself if any changes are made. The API will be
 available at http://localhost:3001/api, and the Swagger UI documentation will be available at
 http://localhost:3001/swagger
 
-For production:
+### Production 
+- `npm run build` to build the typescript to javascript
 - `npm run migrations` to apply any new DB schema changes
-- `npm run build` to build the typescript
-- `npm start` to run the app
+- `npm start` to run the app in production mode
 
 ## Development Scripts
 - `npm run makemigrations` Creates new migration scripts with new DB schema changes. Run this
@@ -25,3 +31,9 @@ For production:
 ## Framework Documentation
 - [FoalTS](https://foalts.org/docs/) - API framework
 - [TypeORM](https://typeorm.io/) - ORM (DB interface)
+
+## Other Resources
+If you want to inspect the database manually, you might want to try either:
+- [SQLite Tools](https://www.sqlite.org/download.html), which provides the `sqlite3` command
+  to start a SQL shell
+- [SQLite Studio](https://sqlitestudio.pl/) if you want a graphical browser
