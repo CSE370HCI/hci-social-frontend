@@ -1,4 +1,4 @@
-s// 3p
+// 3p
 import { createApp } from '@foal/core';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
