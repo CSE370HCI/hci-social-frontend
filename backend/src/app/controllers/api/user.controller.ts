@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 function getUserSchema(withPassword) {
   return {
@@ -41,7 +41,7 @@ function getUserParams(params: any, undefinedMode: 'remove' | 'default') {
     role: resetDefaults ? params.role ?? '' : params.role
   }
   
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({

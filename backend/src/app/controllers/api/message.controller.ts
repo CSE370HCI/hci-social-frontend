@@ -9,7 +9,7 @@ import { getRepository } from 'typeorm';
 
 import { Message, User } from '../../entities';
 import { ValidateQuery } from '../../hooks';
-import { removeUndefined } from '../../utils';
+import { removeEmptyParams } from '../../utils';
 
 const messageSchema = {
   additionalProperties: false,
@@ -47,7 +47,7 @@ function getMessageParams(params: any, undefinedMode: 'remove' | 'default') {
     }
   }
 
-  return undefinedMode === 'remove' ? removeUndefined(res) : res;
+  return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
 @ApiDefineTag({

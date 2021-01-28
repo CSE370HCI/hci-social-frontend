@@ -1,6 +1,5 @@
-import { ApiDefineSecurityScheme, ApiInfo, ApiSecurityRequirement, ApiServer, controller, UseSessions } from '@foal/core';
+import { ApiDefineSecurityScheme, ApiInfo, ApiSecurityRequirement, ApiServer, Context, controller, Hook, HttpResponseNoContent, Options, UseSessions } from '@foal/core';
 import { fetchUser } from '@foal/typeorm';
-import { createConnection } from 'typeorm';
 import { User } from '../entities';
 
 import { ConnectionController, GroupController, GroupMemberController, MessageController, PostController, PostTagController, UserArtifactController, UserPreferenceController } from './api';
@@ -22,6 +21,9 @@ import { UserController } from './api/user.controller';
 @UseSessions({
   user: fetchUser(User)
 })
+@Hook(() => response => {
+  response.setHeader('Access-Control-Allow-Origin', '*');
+})
 export class ApiController {
   subControllers = [
     controller('/auth', AuthController),
@@ -35,4 +37,12 @@ export class ApiController {
     controller('/group-members', GroupMemberController),
     controller('/messages', MessageController)
   ];
+
+  @Options('*')
+  options(ctx: Context) {
+    const response = new HttpResponseNoContent();
+    response.setHeader('Access-Control-Allow-Methods', 'HEAD, GET, POST, PUT, PATCH, DELETE');
+    response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return response;
+  }
 }
