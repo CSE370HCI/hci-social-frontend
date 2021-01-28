@@ -56,7 +56,6 @@ export class UserPreferenceController {
   @ApiResponse(200, { description: 'Returns a list of user preferences.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...userPreferenceSchema, required: []})
   async findUserPreferences(ctx: Context<User>) {
     const userPreferences = await getRepository(UserPreference).findAndCount({

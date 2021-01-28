@@ -77,7 +77,6 @@ export class PostController {
   @ApiResponse(200, { description: 'Returns a list of posts.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
-  @ValidateQueryParam('userID', { type: 'number' }, { required: false })
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
     const posts = await getRepository(Post).findAndCount({
