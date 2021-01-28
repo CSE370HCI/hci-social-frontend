@@ -18,11 +18,11 @@ import { UserController } from './api/user.controller';
   type: 'http',
   scheme: 'bearer'
 })
-@UseSessions({
-  user: fetchUser(User)
-})
 @Hook(() => response => {
   response.setHeader('Access-Control-Allow-Origin', '*');
+})
+@UseSessions({
+  user: fetchUser(User)
 })
 export class ApiController {
   subControllers = [
