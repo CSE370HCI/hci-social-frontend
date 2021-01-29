@@ -80,6 +80,7 @@ export class PostController {
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
     const posts = await getRepository(Post).findAndCount({
+      relations: ['author'],
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getPostParams(ctx.request.query, 'remove')
@@ -95,7 +96,10 @@ export class PostController {
   @ValidatePathParam('postId', { type: 'number' })
   async findPostById(ctx: Context<User>) {
     const post = await getRepository(Post).findOne({
-      id: ctx.request.params.postId
+      relations: ['author'],
+      where: {
+        id: ctx.request.params.postId
+      }
     });
 
     if (!post) {
