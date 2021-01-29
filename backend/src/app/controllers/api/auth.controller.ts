@@ -45,7 +45,8 @@ export class AuthController {
     ctx.session.setUser(user);
 
     return new HttpResponseOK({
-      token: ctx.session.getToken()
+      token: ctx.session.getToken(),
+      userID: user.id
     });
   }
 
@@ -81,7 +82,8 @@ export class AuthController {
     ctx.session.setUser(user);
 
     return new HttpResponseOK({
-      token: ctx.session.getToken()
+      token: ctx.session.getToken(),
+      userID: user.id
     });
   }
 
