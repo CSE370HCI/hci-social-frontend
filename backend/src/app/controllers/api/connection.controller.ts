@@ -71,6 +71,7 @@ export class ConnectionController {
   @ValidateQuery({...connectionSchema, required: []})
   async findConnections(ctx: Context<User>) {
     const connections = await getRepository(Connection).findAndCount({
+      relations: ['user', 'connectedUser'],
       skip: ctx.request.query.skip,
       take: ctx.request.query.take,
       where: getConnectionParams(ctx.request.query, 'remove')
@@ -86,7 +87,10 @@ export class ConnectionController {
   @ValidatePathParam('connectionId', { type: 'number' })
   async findConnectionById(ctx: Context<User>) {
     const connection = await getRepository(Connection).findOne({
-      id: ctx.request.params.connectionId
+      relations: ['user', 'connectedUser'],
+      where: {
+        id: ctx.request.params.connectionId
+      }
     });
 
     if (!connection) {
