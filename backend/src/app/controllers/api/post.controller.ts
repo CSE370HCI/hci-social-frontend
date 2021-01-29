@@ -79,12 +79,17 @@ export class PostController {
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
-    const posts = await getRepository(Post).findAndCount({
-      relations: ['author'],
-      skip: ctx.request.query.skip,
-      take: ctx.request.query.take,
-      where: getPostParams(ctx.request.query, 'remove')
-    });
+    const posts = await getRepository(Post).createQueryBuilder('post')
+      .select('post')
+      .addSelect('author')
+      .addSelect('parent.id')
+      .leftJoin('post.author', 'author')
+      .leftJoin('post.parent', 'parent')
+      .where(getPostParams(ctx.request.query, 'remove'))
+      .skip(ctx.request.query.skip)
+      .take(ctx.request.query.take)
+      .getManyAndCount();
+
     return new HttpResponseOK(posts);
   }
 
@@ -95,12 +100,14 @@ export class PostController {
   @ApiResponse(200, { description: 'Returns the post.' })
   @ValidatePathParam('postId', { type: 'number' })
   async findPostById(ctx: Context<User>) {
-    const post = await getRepository(Post).findOne({
-      relations: ['author'],
-      where: {
-        id: ctx.request.params.postId
-      }
-    });
+    const post = await getRepository(Post).createQueryBuilder('post')
+      .select('post')
+      .addSelect('author')
+      .addSelect('parent.id')
+      .leftJoin('post.author', 'author')
+      .leftJoin('post.parent', 'parent')
+      .where({id: ctx.request.params.postId})
+      .getOne();
 
     if (!post) {
       return new HttpResponseNotFound();
