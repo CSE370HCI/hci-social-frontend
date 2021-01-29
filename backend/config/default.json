@@ -2,7 +2,10 @@
   "settings": {
     "loggerFormat": "tiny",
     "session": {
-      "store": "@foal/typeorm"
+      "store": "@foal/typeorm",
+      "expirationTimeouts": {
+        "inactivity": 86400
+      }
     }
   },
   "database": {
