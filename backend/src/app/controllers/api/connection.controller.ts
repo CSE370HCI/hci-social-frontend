@@ -40,7 +40,7 @@ function getConnectionParams(params: any, undefinedMode: 'remove' | 'default') {
       id: params.userID
     },
     connectedUser: {
-      id: params.userID
+      id: params.connectedUserID
     },
     type: resetDefaults ? params.type ?? '' : params.type,
     status: resetDefaults ? params.status ?? '' : params.status
