@@ -35,7 +35,7 @@ class Autocomplete extends Component {
     if (suggestions){
      filteredSuggestions = suggestions.filter(
         suggestion =>
-          suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+          suggestion.username.toLowerCase().indexOf(userInput.toLowerCase()) > -1
       );
     }else{
 
@@ -47,6 +47,7 @@ class Autocomplete extends Component {
       filteredSuggestions,
       showSuggestions: true,
       userInput: e.currentTarget.value
+
     });
   };
 
@@ -59,6 +60,9 @@ class Autocomplete extends Component {
       showSuggestions: false,
       userInput: e.currentTarget.innerText
     });
+    let selectedId = e.currentTarget.id;
+    this.props.selectAutocomplete(selectedId)
+    console.log ("Friend selected is "+selectedId);
   };
 
   // Event fired when the user presses a key down
@@ -116,8 +120,8 @@ class Autocomplete extends Component {
                 }
 
                 return (
-                  <li className={className} key={suggestion} onClick={onClick}>
-                    {suggestion}
+                  <li className={className} key={suggestion.id} id={suggestion.id} onClick={onClick}>
+                    {suggestion.username}
                   </li>
                 );
               })}

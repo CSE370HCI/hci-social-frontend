@@ -1,4 +1,5 @@
 import React from "react";
+
 import "../App.css";
 
 export default class LoginForm extends React.Component {
@@ -29,11 +30,13 @@ export default class LoginForm extends React.Component {
     event.preventDefault();
 
     //make the api call to the authentication page
-    fetch("http://stark.cse.buffalo.edu/hci/SocialAuth.php", {
+    fetch("http://localhost:3001/api/auth/login", {
       method: "post",
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        action: "login",
-        username: this.state.username,
+        email: this.state.username,
         password: this.state.password
       })
     })
@@ -41,14 +44,16 @@ export default class LoginForm extends React.Component {
       .then(
         result => {
           console.log("Testing");
-          if (result.user) {
-            sessionStorage.setItem("token", result.user.session_token);
-            sessionStorage.setItem("user", result.user.user_id);
+          if (result.userID) {
+            sessionStorage.setItem("token", result.token);
+            sessionStorage.setItem("user", result.userID);
 
             this.setState({
-              sessiontoken: result.user.session_token,
-              alanmessage: result.user.session_token
+              sessiontoken: result.token,
+              alanmessage: result.token
             });
+            console.log("Set new Token and User");
+            this.props.refreshOnLogin();
           } else {
             sessionStorage.removeItem("token");
             sessionStorage.removeItem("user");

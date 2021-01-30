@@ -17,14 +17,17 @@ export default class PostForm extends React.Component {
     event.preventDefault();
 
     //make the api call to post
-    fetch("http://stark.cse.buffalo.edu/hci/postcontroller.php", {
+    fetch("http://localhost:3001/api/posts", {
       method: "post",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
       body: JSON.stringify({
-        action: "addOrEditPosts",
-        user_id: sessionStorage.getItem("user"),
-        session_token: sessionStorage.getItem("token"),
-        posttext: this.state.post_text,
-        userid: sessionStorage.getItem("user")
+        authorID: sessionStorage.getItem("user"),
+        content: this.state.post_text,
+        thumbnailURL: "",
+        type: "post"
       })
     })
       .then(res => res.json())

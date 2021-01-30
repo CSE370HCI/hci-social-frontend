@@ -23,10 +23,10 @@ export default class Profile extends React.Component {
 
   prefChangeHandler(field, e) {
     console.log("pref field change " + field);
-    console.log(this.state.favoirtecolor);
+    console.log(this.state.favoritecolor);
     const prefs1 = JSON.parse(JSON.stringify(this.state.favoritecolor));
     console.log(prefs1);
-    prefs1.pref_value = e.target.value;
+    prefs1.value = e.target.value;
     console.log(prefs1);
 
     this.setState({
@@ -35,25 +35,54 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
-    //make the api call to the user API to get the user with all of their attached preferences
-    fetch("http://stark.cse.buffalo.edu/hci/usercontroller.php", {
-      method: "post",
-      body: JSON.stringify({
-        action: "getCompleteUsers",
-        userid: this.props.userid
-      })
+    // first fetch the user data to allow update of username
+    fetch("http://localhost:3001/api/users/"+sessionStorage.getItem("user"), {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      }
     })
       .then(res => res.json())
       .then(
         result => {
-          if (result.users) {
-            console.log(result.users);
+          if (result) {
+            console.log(result);
+
+            this.setState({
+              // IMPORTANT!  You need to guard against any of these values being null.  If they are, it will
+              // try and make the form component uncontrolled, which plays havoc with react
+              username: result.username || "",
+              firstname: result.firstName || "",
+              lastname: result.lastName || ""
+
+            });
+          }
+        },
+        error => {
+          alert("error!");
+        }
+      );
+
+    //make the api call to the user API to get the user with all of their attached preferences
+    fetch("http://localhost:3001/api/user-preferences?userID="+sessionStorage.getItem("user"), {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(
+        result => {
+          if (result) {
+            console.log(result);
             let favoritecolor = "";
 
             // read the user preferences and convert to an associative array for reference
 
-            result.users[0]["user_prefs"].forEach(function(pref) {
-              if (pref.pref_name === "FavoriteColor") {
+            result[0].forEach(function(pref) {
+              if (pref.name === "favoritecolor") {
                 favoritecolor = pref;
               }
             });
@@ -63,9 +92,6 @@ export default class Profile extends React.Component {
             this.setState({
               // IMPORTANT!  You need to guard against any of these values being null.  If they are, it will
               // try and make the form component uncontrolled, which plays havoc with react
-              username: result.users[0].username || "",
-              firstname: result.users[0].first_name || "",
-              lastname: result.users[0].last_name || "",
               favoritecolor: favoritecolor
             });
           }
@@ -81,15 +107,18 @@ export default class Profile extends React.Component {
     event.preventDefault();
 
     //make the api call to the user controller
-    fetch("http://stark.cse.buffalo.edu/hci/usercontroller.php", {
-      method: "post",
+    fetch("http://localhost:3001/api/users/"+sessionStorage.getItem("user"), {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
       body: JSON.stringify({
-        action: "addOrEditUsers",
+
         username: this.state.username,
-        firstname: this.state.firstname,
-        lastname: this.state.lastname,
-        user_id: sessionStorage.getItem("user"),
-        session_token: sessionStorage.getItem("token")
+        firstName: this.state.firstname,
+        lastName: this.state.lastname,
+
       })
     })
       .then(res => res.json())
@@ -104,16 +133,27 @@ export default class Profile extends React.Component {
         }
       );
 
+    let url = "http://localhost:3001/api/user-preferences";
+    let method = "POST";
+    let value = this.state.favoritecolor;
+
+    if (this.state.favoritecolor && this.state.favoritecolor.id){
+      url += "/"+this.state.favoritecolor.id;
+      method = "PATCH";
+      value = this.state.favoritecolor.value;
+    }
+
+
     //make the api call to the user prefs controller
-    fetch("http://stark.cse.buffalo.edu/hci/upcontroller.php", {
-      method: "post",
+    fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
       body: JSON.stringify({
-        action: "addOrEditUserPrefs",
-        prefname: "FavoriteColor",
-        prefvalue: this.state.favoritecolor.pref_value,
-        prefid: this.state.favoritecolor.pref_id,
-        user_id: sessionStorage.getItem("user"),
-        session_token: sessionStorage.getItem("token")
+        name: "favoritecolor",
+        value: value,
       })
     })
       .then(res => res.json())
@@ -127,6 +167,7 @@ export default class Profile extends React.Component {
           alert("error!");
         }
       );
+
   };
 
   render() {
@@ -163,7 +204,7 @@ export default class Profile extends React.Component {
             onChange={e => this.prefChangeHandler("favoritecolor", e)}
             value={
               this.state.favoritecolor
-                ? this.state.favoritecolor.pref_value
+                ? this.state.favoritecolor.value
                 : ""
             }
           />
