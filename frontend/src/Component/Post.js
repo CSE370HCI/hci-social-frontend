@@ -39,15 +39,17 @@ export default class Post extends React.Component {
   }
 
   conditionalDisplay() {
-    console.log("Parent is " + this.props.post.parent_id);
-    if (this.props.post.parent_id > 0) {
+    console.log("Comment count is " + this.props.post.commentCount);
+    if (this.props.post.commentCount <= 0) {
       return "";
-    } else {
+    }
+
+    else {
       return (
         <div className="comment-block">
           <div className="comment-indicator">
             <div className="comment-indicator-text">
-              {this.getCommentCount()} Comments
+              {this.props.post.commentCount} Comments
             </div>
             <img
               src={require("../comment.svg")}
@@ -59,23 +61,24 @@ export default class Post extends React.Component {
           <div className={this.showHideComments()}>
             <CommentForm
               onAddComment={this.setCommentCount}
-              parent={this.props.post.post_id}
+              parent={this.props.post.id}
               commentCount={this.getCommentCount()}
             />
           </div>
         </div>
       );
     }
+
   }
 
   render() {
     return (
       <div
-        key={this.props.post.post_id}
+        key={this.props.post.id}
         className={[this.props.type, "postbody"].join(" ")}
       >
-        {this.props.post.name} {this.props.post.timestamp} <br />{" "}
-        {this.props.post.post_text}
+        {this.props.post.author.username} {this.props.post.createdAt} <br />{" "}
+        {this.props.post.content}
         {this.conditionalDisplay()}
       </div>
     );

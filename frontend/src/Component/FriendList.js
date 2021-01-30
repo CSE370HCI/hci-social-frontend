@@ -15,20 +15,21 @@ export default class FriendList extends React.Component {
   }
 
   loadFriends() {
-    fetch("http://stark.cse.buffalo.edu/hci/connectioncontroller.php", {
-      method: "post",
-      body: JSON.stringify({
-        action: "getConnections",
-        user_id: this.state.userid
-      })
-    })
+
+    fetch("http://localhost:3001/api/connections?userID="+sessionStorage.getItem("user"), {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      }
+     })
       .then(res => res.json())
       .then(
         result => {
-          if (result.connections) {
+          if (result) {
             this.setState({
               isLoaded: true,
-              connections: result.connections
+              connections: result[0]
             });
           }
         },
@@ -54,7 +55,7 @@ export default class FriendList extends React.Component {
           <ul>
             {connections.map(connection => (
               <div key={connection.connection_id} className="userlist">
-                {connection.name} - {connection.connection_status}
+                {connection.connectedUser.username} - {connection.status}
               </div>
             ))}
           </ul>

@@ -14,7 +14,7 @@ import FriendForm from "./Component/FriendForm.js";
 import Modal from "./Component/Modal.js";
 import Navbar from "./Component/Navbar.js";
 import {
-  BrowserRouter as Router, Route, Switch, Link
+  BrowserRouter as Router, Route, Switch
 } from 'react-router-dom';
 
 // toggleModal will both show and hide the modal dialog, depending on current state.  Note that the
@@ -36,13 +36,17 @@ class App extends React.Component {
     this.state = {
       openModal: false
     };
-  }
-
-  render() {
 
     // in the event we need a handle back to the parent from a child component,
     // we can create a reference to this and pass it down.
-    let mainContent = React.createRef();
+    this.mainContent = React.createRef();
+  }
+
+
+
+  render() {
+
+
 
     return (
 
@@ -54,19 +58,17 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
 
-          // create the side navigation bar - this stays constant
-          // regardless of the routing
+
           <Navbar toggleModal={e => toggleModal(this, e)} />
 
-          // create the main content area.  This will change based on
-          // the routing.
+
           <div className="maincontent" id="mainContent">
             <Switch>
             <Route path="/posts">
               <div>
                 <p>Social Media Test Harness</p>
-                <LoginForm />
-                <PostForm />
+                <LoginForm refreshOnLogin={() => this.mainConent.current.loadPosts()} />
+                <PostForm ref={this.mainContent}/>
               </div>
             </Route>
             <Route path="/settings">
@@ -82,8 +84,7 @@ class App extends React.Component {
                 <FriendList userid={sessionStorage.getItem("user")} />
               </div>
             </Route>
-            // the "default" route - in our case, it mirrors the /posts route.
-            // this is a good place to put a login check.
+
             <Route path="/">
               <div>
                 <p>Social Media Home</p>
@@ -95,7 +96,7 @@ class App extends React.Component {
           </div>
         </header>
 
-        // the modal dialog
+
         <Modal show={this.state.openModal} onClose={e => toggleModal(this, e)}>
           This is a modal dialog!
         </Modal>

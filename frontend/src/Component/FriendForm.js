@@ -21,21 +21,30 @@ export default class FriendForm extends React.Component {
     });
   }
 
+  selectAutocomplete(friendID) {
+      this.setState({
+        friendid:friendID
+      })
+      console.log("Set Friend ID to "+friendID)
+  }
+
   componentDidMount() {
     //make the api call to the user API to get the user with all of their attached preferences
-    fetch("http://stark.cse.buffalo.edu/hci/usercontroller.php", {
-      method: "post",
-      body: JSON.stringify({
-        action: "getUsers"
-      })
+    fetch("http://localhost:3001/api/users/", {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      }
+
     })
       .then(res => res.json())
       .then(
         result => {
-          if (result.users) {
+          if (result) {
             let names = [];
 
-            result.users.forEach(element => {if (element.name){names.push(element.name)}});
+            result[0].forEach(element => {if (element.username){names.push(element)}});
 
             this.setState({
               users: names,
@@ -54,14 +63,22 @@ export default class FriendForm extends React.Component {
     //keep the form from actually submitting
     event.preventDefault();
 
+    console.log("friend is ");
+    console.log(this.state.friendid);
+
+
     //make the api call to the user controller
-    fetch("http://stark.cse.buffalo.edu/hci/connectioncontroller.php", {
-      method: "post",
+    fetch("http://localhost:3001/api/connections", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
       body: JSON.stringify({
-        action: "addOrEditConnections",
-        connectuserid: this.state.friendid,
-        user_id: sessionStorage.getItem("user"),
-        session_token: sessionStorage.getItem("token")
+        connectedUserID: this.state.friendid,
+        userID: sessionStorage.getItem("user"),
+        type:"friend",
+        status:"active"
       })
     })
       .then(res => res.json())
@@ -84,12 +101,10 @@ export default class FriendForm extends React.Component {
           Find a Friend!
           <br />
           <div className="autocomplete">
-            <Autocomplete suggestions={this.state.users} />
+            <Autocomplete suggestions={this.state.users} selectAutocomplete={e => this.selectAutocomplete(e)} />
           </div>
         </label>
-
         <input type="submit" value="submit" />
-
         {this.state.responseMessage}
       </form>
     );
