@@ -54,6 +54,20 @@ function getPostParams(params: any, undefinedMode: 'remove' | 'default') {
   return undefinedMode === 'remove' ? removeEmptyParams(res) : res;
 }
 
+enum Sort {
+  OLDEST = 'oldest',
+  NEWEST = 'newest'
+}
+
+function getOrderBy(sort: Sort) {
+  switch (sort) {
+    case Sort.OLDEST:
+      return { 'post.createdAt': 'ASC' as 'ASC' };
+    case Sort.NEWEST:
+      return { 'post.createdAt': 'DESC' as 'DESC' };
+  }
+}
+
 @ApiDefineTag({
   name: 'Post',
   description: 'The heart of any social media site is the posts that the users create. This dataset will contain ' +
@@ -77,6 +91,7 @@ export class PostController {
   @ApiResponse(200, { description: 'Returns a list of posts.' })
   @ValidateQueryParam('skip', { type: 'number' }, { required: false })
   @ValidateQueryParam('take', { type: 'number' }, { required: false })
+  @ValidateQueryParam('sort', { enum: Object.values(Sort), default: Sort.NEWEST }, { required: false })
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
     const posts = await getRepository(Post).createQueryBuilder('post')
@@ -86,6 +101,7 @@ export class PostController {
       .leftJoin('post.author', 'author')
       .leftJoin('post.parent', 'parent')
       .where(getPostParams(ctx.request.query, 'remove'))
+      .orderBy(getOrderBy(ctx.request.query.sort))
       .skip(ctx.request.query.skip)
       .take(ctx.request.query.take)
       .getManyAndCount();
