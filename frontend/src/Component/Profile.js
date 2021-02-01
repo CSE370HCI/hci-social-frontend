@@ -35,6 +35,9 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
+    console.log("In profile");
+    console.log(this.props);
+    
     // first fetch the user data to allow update of username
     fetch("http://localhost:3001/api/users/"+sessionStorage.getItem("user"), {
       method: "get",

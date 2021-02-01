@@ -10,6 +10,8 @@ export default class PostingList extends React.Component {
       posts: [],
       listType: props.listType
     };
+    this.postingList = React.createRef();
+    this.loadPosts = this.loadPosts.bind(this);
   }
 
   componentDidMount() {
@@ -18,9 +20,17 @@ export default class PostingList extends React.Component {
 
   }
 
+  componentDidUpdate(prevProps) {
+    console.log("PrevProps "+prevProps.refresh);
+    console.log("Props "+this.props.refresh);
+    if (prevProps.refresh !== this.props.refresh){
+      this.loadPosts();
+    }
+  }
+
   loadPosts() {
     let url = "http://localhost:3001/api/posts?parentID=";
-    if (this.props.parentid){
+    if (this.props && this.props.parentid){
       url += this.props.parentid;
     }
     fetch(url, {
@@ -66,7 +76,7 @@ export default class PostingList extends React.Component {
         <div className="posts">
 
           {posts.map(post => (
-            <Post key={post.post_id} post={post} type={this.props.type} />
+            <Post key={post.post_id} post={post} type={this.props.type} loadPosts={this.loadPosts}/>
           ))}
 
         </div>

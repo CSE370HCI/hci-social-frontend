@@ -34,19 +34,25 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openModal: false
+      openModal: false,
+      refreshPosts: false
     };
 
     // in the event we need a handle back to the parent from a child component,
     // we can create a reference to this and pass it down.
     this.mainContent = React.createRef();
+    this.doRefreshPosts = this.doRefreshPosts.bind(this);
+  }
+
+  doRefreshPosts() {
+    this.setState({
+      refreshPosts:true
+    });
   }
 
 
 
   render() {
-
-
 
     return (
 
@@ -64,11 +70,11 @@ class App extends React.Component {
 
           <div className="maincontent" id="mainContent">
             <Switch>
-            <Route path="/posts">
+            <Route path={["/posts","/"]}>
               <div>
                 <p>Social Media Test Harness</p>
-                <LoginForm refreshOnLogin={() => this.mainConent.current.loadPosts()} />
-                <PostForm ref={this.mainContent}/>
+                <LoginForm refreshPosts={this.doRefreshPosts}  />
+                <PostForm refresh={this.state.refreshPosts}/>
               </div>
             </Route>
             <Route path="/settings">
@@ -85,13 +91,7 @@ class App extends React.Component {
               </div>
             </Route>
 
-            <Route path="/">
-              <div>
-                <p>Social Media Home</p>
-                <LoginForm />
-                <PostForm />
-              </div>
-            </Route>
+            
             </Switch>
           </div>
         </header>

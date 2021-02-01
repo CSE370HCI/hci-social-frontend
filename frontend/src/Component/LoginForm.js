@@ -11,6 +11,11 @@ export default class LoginForm extends React.Component {
       alanmessage: "",
       sessiontoken: ""
     };
+    this.refreshPostsFromLogin = this.refreshPostsFromLogin.bind(this);
+  }
+
+  refreshPostsFromLogin(){
+    this.props.refreshPosts();
   }
 
   myChangeHandler = event => {
@@ -53,7 +58,7 @@ export default class LoginForm extends React.Component {
               alanmessage: result.token
             });
             console.log("Set new Token and User");
-            this.props.refreshOnLogin();
+            this.refreshPostsFromLogin();
           } else {
             sessionStorage.removeItem("token");
             sessionStorage.removeItem("user");
@@ -71,6 +76,9 @@ export default class LoginForm extends React.Component {
 
   render() {
     console.log("Rendering login, token is " + sessionStorage.getItem("token"));
+    console.log(this.props);
+    console.log(typeof(this.props.refreshPosts));
+
     if (!sessionStorage.getItem("token")) {
       return (
         <form onSubmit={this.submitHandler}>

@@ -10,8 +10,10 @@ export default class PostForm extends React.Component {
       postmessage: ""
     };
     this.postListing = React.createRef();
+console.log("Postform Props "+this.props.refresh);
   }
 
+  
   submitHandler = event => {
     //keep the form from actually submitting
     event.preventDefault();
@@ -65,7 +67,7 @@ export default class PostForm extends React.Component {
           <br />
           {this.state.postmessage}
         </form>
-        <PostingList ref={this.postListing} type="postlist" />
+        <PostingList ref={this.postListing} refresh={this.props.refresh} type="postlist" />
       </div>
     );
   }
