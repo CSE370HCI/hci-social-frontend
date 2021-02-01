@@ -2,7 +2,9 @@ import React from "react";
 import "../App.css";
 import PostingList from "./PostingList.js";
 
+//The post form component holds both a form for posting, and also the list of current posts in your feed
 export default class PostForm extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -10,12 +12,14 @@ export default class PostForm extends React.Component {
       postmessage: ""
     };
     this.postListing = React.createRef();
-console.log("Postform Props "+this.props.refresh);
   }
 
-  
+  // the handler for submitting a new post.  This will call the API to create a new post.
+  // while the test harness does not use images, if you had an image URL you would pass it
+  // in the thumbnailURL field.
   submitHandler = event => {
-    //keep the form from actually submitting
+
+    //keep the form from actually submitting via HTML - we want to handle it in react
     event.preventDefault();
 
     //make the api call to post
@@ -38,6 +42,7 @@ console.log("Postform Props "+this.props.refresh);
           this.setState({
             postmessage: result.Status
           });
+          // once a post is complete, reload the feed
           this.postListing.current.loadPosts();
         },
         error => {
@@ -46,6 +51,8 @@ console.log("Postform Props "+this.props.refresh);
       );
   };
 
+  // this method will keep the current post up to date as you type it,
+  // so that the submit handler can read the information from the state.
   myChangeHandler = event => {
     this.setState({
       post_text: event.target.value

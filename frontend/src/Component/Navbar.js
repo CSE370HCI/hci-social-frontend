@@ -4,11 +4,14 @@ import {
    Link
 } from 'react-router-dom';
 
-/* The Navbar class provides navigation through react router links.  Note that */
+/* The Navbar class provides navigation through react router links.  Note the callback
+   to the parent app class in the last entry... this is an example of calling a function
+   passed in via props from a parent component */
 class Navbar extends React.Component {
 
   render() {
 
+    // pull in the images for the menu items
     let post = require("../post.svg");
     let friend = require("../friends.svg");
     let setting = require("../settings.svg");

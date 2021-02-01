@@ -2,6 +2,8 @@ import React from "react";
 import "../App.css";
 import PropTypes from "prop-types";
 
+// This component is an example of a modal dialog.  The content can be swapped out for different uses, and
+// should be passed in from the parent class.
 export default class Modal extends React.Component {
   onClose = e => {
     this.props.onClose && this.props.onClose(e);

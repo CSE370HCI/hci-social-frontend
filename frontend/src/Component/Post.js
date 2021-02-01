@@ -10,7 +10,7 @@ export default class Post extends React.Component {
       comments: this.props.post.comment_flag
     };
     this.post = React.createRef();
-    
+
   }
 
   showModal = e => {
@@ -59,6 +59,7 @@ export default class Post extends React.Component {
   }
 
 
+  // we only want to display comment information if this is a post that accepts comments
   conditionalDisplay() {
     console.log("Comment count is " + this.props.post.commentCount);
 
@@ -94,8 +95,26 @@ export default class Post extends React.Component {
 
   }
 
+  // we only want to expose the delete post functionality if the user is
+  // author of the post
+  showDelete(){
+    let help = require("../delete.png");
+    if (this.props.post.author.id == sessionStorage.getItem("user")) {
+      return(
+      <img
+        src={help}
+        className="sidenav-icon deleteIcon"
+        alt="Delete Post"
+        title="Delete Post"
+        onClick={e => this.deletePost(this.props.post.id)}
+      />
+    );
+    }
+    return "";
+  }
+
   render() {
-      let help = require("../delete.png");
+
     return (
       <div>
 
@@ -104,15 +123,10 @@ export default class Post extends React.Component {
         className={[this.props.type, "postbody"].join(" ")}
       >
       <div className="deletePost">
-      <img
-        src={help}
-        className="sidenav-icon deleteIcon"
-        alt="Delete Post"
-        title="Delete Post"
-        onClick={e => this.deletePost(this.props.post.id)}
-      />
+      {this.props.post.author.username} ({this.props.post.createdAt})
+      {this.showDelete()}
       </div>
-        {this.props.post.author.username} {this.props.post.createdAt} <br />{" "}
+         <br />{" "}
         {this.props.post.content}
         {this.conditionalDisplay()}
       </div>

@@ -2,6 +2,10 @@ import React from "react";
 
 import "../App.css";
 
+// the login form will display if there is no session token stored.  This will display
+// the login form, and call the API to authenticate the user and store the token in
+// the session.
+
 export default class LoginForm extends React.Component {
   constructor(props) {
     super(props);
@@ -14,10 +18,15 @@ export default class LoginForm extends React.Component {
     this.refreshPostsFromLogin = this.refreshPostsFromLogin.bind(this);
   }
 
+  // once a user has successfully logged in, we want to refresh the post
+  // listing that is displayed.  To do that, we'll call the callback passed in
+  // from the parent.
   refreshPostsFromLogin(){
     this.props.refreshPosts();
   }
 
+  // change handlers keep the state current with the values as you type them, so
+  // the submit handler can read from the state to hit the API layer
   myChangeHandler = event => {
     this.setState({
       username: event.target.value
@@ -30,6 +39,7 @@ export default class LoginForm extends React.Component {
     });
   };
 
+  // when the user hits submit, process the login through the API
   submitHandler = event => {
     //keep the form from actually submitting
     event.preventDefault();
@@ -50,6 +60,8 @@ export default class LoginForm extends React.Component {
         result => {
           console.log("Testing");
           if (result.userID) {
+
+            // set the auth token and user ID in the session state
             sessionStorage.setItem("token", result.token);
             sessionStorage.setItem("user", result.userID);
 
@@ -57,9 +69,12 @@ export default class LoginForm extends React.Component {
               sessiontoken: result.token,
               alanmessage: result.token
             });
-            console.log("Set new Token and User");
+
+            // call refresh on the posting list
             this.refreshPostsFromLogin();
           } else {
+
+            // if the login failed, remove any infomation from the session state
             sessionStorage.removeItem("token");
             sessionStorage.removeItem("user");
             this.setState({
@@ -75,10 +90,8 @@ export default class LoginForm extends React.Component {
   };
 
   render() {
-    console.log("Rendering login, token is " + sessionStorage.getItem("token"));
-    console.log(this.props);
-    console.log(typeof(this.props.refreshPosts));
-
+    // console.log("Rendering login, token is " + sessionStorage.getItem("token"));
+    
     if (!sessionStorage.getItem("token")) {
       return (
         <form onSubmit={this.submitHandler}>

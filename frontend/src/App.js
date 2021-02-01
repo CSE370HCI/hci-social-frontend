@@ -44,13 +44,13 @@ class App extends React.Component {
     this.doRefreshPosts = this.doRefreshPosts.bind(this);
   }
 
+  // doRefreshPosts is called after the user logs in, to display relevant posts.
+  // there are probably more elegant ways to solve this problem, but this is... a way
   doRefreshPosts() {
     this.setState({
       refreshPosts:true
     });
   }
-
-
 
   render() {
 
@@ -59,24 +59,18 @@ class App extends React.Component {
       // the app is wrapped in a router component, that will render the
       // appropriate content based on the URL path.  Since this is a
       // single page app, it allows some degree of direct linking via the URL
-      // rather than by parameters
+      // rather than by parameters.  Note that the "empty" route "/", which has
+      // the same effect as /posts, needs to go last, because it uses regular
+      // expressions, and would otherwise capture all the routes.  Ask me how I
+      // know this.
       <Router>
       <div className="App">
         <header className="App-header">
 
-
           <Navbar toggleModal={e => toggleModal(this, e)} />
-
 
           <div className="maincontent" id="mainContent">
             <Switch>
-            <Route path={["/posts","/"]}>
-              <div>
-                <p>Social Media Test Harness</p>
-                <LoginForm refreshPosts={this.doRefreshPosts}  />
-                <PostForm refresh={this.state.refreshPosts}/>
-              </div>
-            </Route>
             <Route path="/settings">
               <div className="settings">
                 <p>Settings</p>
@@ -90,12 +84,16 @@ class App extends React.Component {
                 <FriendList userid={sessionStorage.getItem("user")} />
               </div>
             </Route>
-
-            
+            <Route path={["/posts","/"]}>
+              <div>
+                <p>Social Media Test Harness</p>
+                <LoginForm refreshPosts={this.doRefreshPosts}  />
+                <PostForm refresh={this.state.refreshPosts}/>
+              </div>
+            </Route>
             </Switch>
           </div>
         </header>
-
 
         <Modal show={this.state.openModal} onClose={e => toggleModal(this, e)}>
           This is a modal dialog!

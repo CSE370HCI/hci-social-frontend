@@ -76,7 +76,7 @@ export default class PostingList extends React.Component {
         <div className="posts">
 
           {posts.map(post => (
-            <Post key={post.post_id} post={post} type={this.props.type} loadPosts={this.loadPosts}/>
+            <Post key={post.id} post={post} type={this.props.type} loadPosts={this.loadPosts}/>
           ))}
 
         </div>
