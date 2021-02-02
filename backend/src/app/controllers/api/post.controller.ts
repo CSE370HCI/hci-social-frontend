@@ -16,8 +16,7 @@ const postSchema = {
   properties: {
     authorID: { type: 'number' },
     parentID: {
-      description: 'If this post is a comment, the id of the parent post that you are commenting on. ' +
-        'The API will automatically increment or decrement the commentCount in the parent record as appropriate',
+      description: 'If this post is a comment, the id of the parent post that you are commenting on.',
       oneOf: [{ type: 'number' }, { type: 'null' }]
     },
     content: { type: 'string' },
@@ -74,7 +73,6 @@ function getOrderBy(sort: Sort) {
     'the post data, and also any comments for those posts. This is handled in the DB via the Materialized Path ' +
     'pattern (aka Path Enumeration) where a path is stored on each post noting its chain of ancestors. ' +
     'For more information, see https://www.slideshare.net/billkarwin/models-for-hierarchical-data. ' +
-    'Adding a comment will automatically update the parent post as well, to increment the commentCount field. ' +
     'Tags (like, +1, etc) will be handled separately (Post Tags).'
 })
 @ApiUseTag('Post')
@@ -98,15 +96,24 @@ export class PostController {
       .select('post')
       .addSelect('author')
       .addSelect('parent.id')
+      .addSelect((subQuery) => {
+        return subQuery
+            .select('COUNT(comment.id)')
+            .from(Post, 'comment')
+            .where('comment.parent.id = post.id');
+        }, 'commentCount'
+      )
       .leftJoin('post.author', 'author')
       .leftJoin('post.parent', 'parent')
       .where(getPostParams(ctx.request.query, 'remove'))
       .orderBy(getOrderBy(ctx.request.query.sort))
       .skip(ctx.request.query.skip)
       .take(ctx.request.query.take)
-      .getManyAndCount();
+      .getRawAndEntities();
 
-    return new HttpResponseOK(posts);
+    const annotatedPosts = posts.entities.map((post, idx) => ({...post, commentCount: posts.raw[idx].commentCount }));
+
+    return new HttpResponseOK(annotatedPosts);
   }
 
   @Get('/:postId')
@@ -129,6 +136,12 @@ export class PostController {
       return new HttpResponseNotFound();
     }
 
+    post.commentCount = await getRepository(Post).count({
+      parent: {
+        id: post.id
+      }
+    });
+
     return new HttpResponseOK(post);
   }
 
@@ -143,7 +156,6 @@ export class PostController {
     const post: Post = await getRepository(Post).save(
       getPostParams(ctx.request.body, 'default')
     );
-    if (post.parent) await getRepository(Post).increment(post, 'commentCount', 1);
     return new HttpResponseCreated(post);
   }
 
@@ -171,17 +183,6 @@ export class PostController {
 
     await getRepository(Post).save(post);
 
-    if (
-      oldParent?.id !== post.parent?.id
-      // I'm not positive what will happen if the user doesn't provide an updated parent ID
-      // after we save, so I'm just going to be extra safe here
-      // TODO: Verify actual behavior
-      && !(post.parent?.id === undefined && (oldParent === null || oldParent?.id === null))
-    ) {
-      if (post.parent && post.parent.id) getRepository(Post).increment(post.parent, 'commentCount', 1);
-      if (oldParent && oldParent.id) getRepository(Post).decrement(oldParent, 'commentCount', 1);
-    }
-
     return new HttpResponseOK(post);
   }
 
@@ -208,17 +209,6 @@ export class PostController {
 
     Object.assign(post, getPostParams(ctx.request.body, 'default'));
 
-    if (
-      oldParent?.id !== post.parent?.id
-      // I'm not positive what will happen if this was blank before and we provide an explicit null
-      // after we save, so I'm just going to be extra safe here
-      // TODO: Verify actual behavior
-      && !(oldParent?.id === undefined && (post.parent === null || post.parent?.id === null))
-    ) {
-      if (post.parent && post.parent.id) getRepository(Post).increment(post.parent, 'commentCount', 1);
-      if (oldParent && oldParent.id) getRepository(Post).decrement(oldParent, 'commentCount', 1);
-    }
-
     await getRepository(Post).save(post);
 
     return new HttpResponseOK(post);
@@ -243,9 +233,6 @@ export class PostController {
     const parent = post.parent;
 
     await getRepository(Post).delete(ctx.request.params.postId);
-
-    // TODO: Is the parent.id check redundant?
-    if (parent && parent.id) getRepository(Post).decrement(parent, 'commentCount', 1)
 
     return new HttpResponseNoContent();
   }

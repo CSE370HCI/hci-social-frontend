@@ -34,7 +34,6 @@ export class Post extends BaseEntity {
   @OneToMany(() => Post, post => post.parent)
   children: Post[];
 
-  @Column({ name: 'post_comment_count', default: 0 })
   commentCount: number;
 
 }

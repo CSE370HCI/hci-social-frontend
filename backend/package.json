@@ -16,7 +16,7 @@
     "e2e": "npm run build:e2e && concurrently \"tsc -p tsconfig.e2e.json -w\" \"cross-env NODE_ENV=e2e mocha --file ./build/e2e.js -w \\\"./build/e2e/**/*.js\\\"\"",
     "lint": "eslint --ext ts src",
     "lint:fix": "eslint --ext ts --fix src",
-    "makemigrations": "shx rm -rf build && shx rm db.sqlite3 && npm run migrations && tsc -p tsconfig.app.json && npx typeorm migration:generate --name migration && tsc -p tsconfig.app.json",
+    "makemigrations": "shx rm -rf build && npm run migrations && tsc -p tsconfig.app.json && npx typeorm migration:generate --name migration && tsc -p tsconfig.app.json",
     "migrations": "npx typeorm migration:run",
     "revertmigration": "npx typeorm migration:revert"
   },
