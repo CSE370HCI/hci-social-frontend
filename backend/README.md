@@ -21,7 +21,9 @@ http://localhost:3001/swagger
 
 ## Development Scripts
 - `npm run makemigrations` Creates new migration scripts with new DB schema changes. Run this
-  whenever you make changes to entities.
+  whenever you make changes to entities. Note that if you run with development mode,
+  you'll need to remove your current db, run `migrations`, then run this otherwise it won't
+  work properly since your DB schema will already be up to date
 - `npm run lint` Run ESLint to find any code style problems
 - `npm run lint-fix` Run ESLint and automatically fix issues where possible
 - `npm run test` Run mocha unit tests

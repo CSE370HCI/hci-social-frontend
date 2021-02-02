@@ -27,7 +27,7 @@ export class Post extends BaseEntity {
   @Column({ name: 'post_thumbnail'})
   thumbnailURL: string;
 
-  @ManyToOne(() => Post, post => post.children)
+  @ManyToOne(() => Post, post => post.children, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_parent_id' })
   parent: Post;
 
