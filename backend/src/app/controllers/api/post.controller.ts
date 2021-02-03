@@ -92,7 +92,7 @@ export class PostController {
   @ValidateQueryParam('sort', { enum: Object.values(Sort), default: Sort.NEWEST }, { required: false })
   @ValidateQuery({...postSchema, required: []})
   async findPosts(ctx: Context<User>) {
-    const posts = await getRepository(Post).createQueryBuilder('post')
+    const query = getRepository(Post).createQueryBuilder('post')
       .select('post')
       .addSelect('author')
       .addSelect('parent.id')
@@ -108,12 +108,13 @@ export class PostController {
       .where(getPostParams(ctx.request.query, 'remove'))
       .orderBy(getOrderBy(ctx.request.query.sort))
       .skip(ctx.request.query.skip)
-      .take(ctx.request.query.take)
-      .getRawAndEntities();
+      .take(ctx.request.query.take);
+
+    const posts = await query.getRawAndEntities();
 
     const annotatedPosts = posts.entities.map((post, idx) => ({...post, commentCount: posts.raw[idx].commentCount }));
 
-    return new HttpResponseOK(annotatedPosts);
+    return new HttpResponseOK([annotatedPosts, await query.getCount()]);
   }
 
   @Get('/:postId')
