@@ -42,6 +42,60 @@ export default class FriendList extends React.Component {
       );
   }
 
+  updateConnection(id, status){
+    //make the api call to the user controller
+    fetch("http://localhost:3001/api/connections/"+id, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        status: status
+      })
+    })
+      .then(res => res.json())
+      .then(
+        result => {
+          this.setState({
+            responseMessage: result.Status
+          });
+          this.loadFriends();
+        },
+        error => {
+          alert("error!");
+        }
+      );
+  }
+
+  conditionalAction(status, id){
+    let block = require("../block_white_216x216.png");
+    let unblock = require("../thumbsup.jpg");
+
+    if (status == "active"){
+      return(
+
+      <img
+        src={block}
+        className="sidenav-icon deleteIcon"
+        alt="Block User"
+        title="Block User"
+        onClick={e => this.updateConnection(id, "blocked")}
+      />
+    )
+    }else{
+      return(
+      <img
+        src={unblock}
+        className="sidenav-icon deleteIcon"
+        alt="Unblock User"
+        title="Unblock User"
+        onClick={e => this.updateConnection(id, "active")}
+      />
+    )
+    }
+  }
+
   render() {
     //this.loadPosts();
     const {error, isLoaded, connections} = this.state;
@@ -54,8 +108,11 @@ export default class FriendList extends React.Component {
         <div className="post">
           <ul>
             {connections.map(connection => (
-              <div key={connection.connection_id} className="userlist">
+              <div key={connection.id} className="userlist">
                 {connection.connectedUser.username} - {connection.status}
+                <div className="deletePost">
+                {this.conditionalAction(connection.status, connection.id)}
+                </div>
               </div>
             ))}
           </ul>

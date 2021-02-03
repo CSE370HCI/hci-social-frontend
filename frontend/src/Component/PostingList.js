@@ -47,7 +47,7 @@ export default class PostingList extends React.Component {
           if (result) {
             this.setState({
               isLoaded: true,
-              posts: result[0]
+              posts: result
             });
             console.log("Got Posts");
           }
@@ -71,6 +71,7 @@ export default class PostingList extends React.Component {
       return <div> Loading... </div>;
     } else if (posts) {
 
+      if (posts.length > 0){
       return (
 
         <div className="posts">
@@ -82,6 +83,9 @@ export default class PostingList extends React.Component {
         </div>
 
       );
+    }else{
+      return (<div> No Posts Found </div>);
+    }
     } else {
       return <div> Please Log In... </div>;
     }

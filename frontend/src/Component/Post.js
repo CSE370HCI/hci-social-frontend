@@ -7,7 +7,7 @@ export default class Post extends React.Component {
     super(props);
     this.state = {
       showModal: false,
-      comments: this.props.post.comment_flag
+      comments: this.props.post.commentCount
     };
     this.post = React.createRef();
 
@@ -73,7 +73,7 @@ export default class Post extends React.Component {
 
           <div className="comment-indicator">
             <div className="comment-indicator-text">
-              {this.props.post.commentCount} Comments
+              {this.getCommentCount()} Comments
             </div>
             <img
               src={require("../comment.svg")}
