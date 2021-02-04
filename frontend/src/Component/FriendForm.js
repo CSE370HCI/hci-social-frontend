@@ -30,7 +30,7 @@ export default class FriendForm extends React.Component {
 
   componentDidMount() {
     //make the api call to the user API to get the user with all of their attached preferences
-    fetch("http://localhost:3001/api/users/", {
+    fetch(process.env.REACT_APP_API_PATH+"/users/", {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export default class FriendForm extends React.Component {
 
 
     //make the api call to the user controller
-    fetch("http://localhost:3001/api/connections", {
+    fetch(process.env.REACT_APP_API_PATH+"/connections", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

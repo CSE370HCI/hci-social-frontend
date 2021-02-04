@@ -16,7 +16,7 @@ export default class FriendList extends React.Component {
 
   loadFriends() {
 
-    fetch("http://localhost:3001/api/connections?userID="+sessionStorage.getItem("user"), {
+    fetch(process.env.REACT_APP_API_PATH+"/connections?userID="+sessionStorage.getItem("user"), {
       method: "get",
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export default class FriendList extends React.Component {
 
   updateConnection(id, status){
     //make the api call to the user controller
-    fetch("http://localhost:3001/api/connections/"+id, {
+    fetch(process.env.REACT_APP_API_PATH+"/connections/"+id, {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json',

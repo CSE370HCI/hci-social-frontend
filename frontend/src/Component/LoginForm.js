@@ -45,7 +45,7 @@ export default class LoginForm extends React.Component {
     event.preventDefault();
 
     //make the api call to the authentication page
-    fetch("http://localhost:3001/api/auth/login", {
+    fetch(process.env.REACT_APP_API_PATH+"/auth/login", {
       method: "post",
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export default class LoginForm extends React.Component {
 
   render() {
     // console.log("Rendering login, token is " + sessionStorage.getItem("token"));
-    
+
     if (!sessionStorage.getItem("token")) {
       return (
         <form onSubmit={this.submitHandler}>

@@ -29,7 +29,7 @@ export default class PostingList extends React.Component {
   }
 
   loadPosts() {
-    let url = "http://localhost:3001/api/posts?parentID=";
+    let url = process.env.REACT_APP_API_PATH+"/posts?parentID=";
     if (this.props && this.props.parentid){
       url += this.props.parentid;
     }
@@ -47,7 +47,7 @@ export default class PostingList extends React.Component {
           if (result) {
             this.setState({
               isLoaded: true,
-              posts: result
+              posts: result[0]
             });
             console.log("Got Posts");
           }

@@ -37,9 +37,9 @@ export default class Profile extends React.Component {
   componentDidMount() {
     console.log("In profile");
     console.log(this.props);
-    
+
     // first fetch the user data to allow update of username
-    fetch("http://localhost:3001/api/users/"+sessionStorage.getItem("user"), {
+    fetch(process.env.REACT_APP_API_PATH+"/users/"+sessionStorage.getItem("user"), {
       method: "get",
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export default class Profile extends React.Component {
       );
 
     //make the api call to the user API to get the user with all of their attached preferences
-    fetch("http://localhost:3001/api/user-preferences?userID="+sessionStorage.getItem("user"), {
+    fetch(process.env.REACT_APP_API_PATH+"/user-preferences?userID="+sessionStorage.getItem("user"), {
       method: "get",
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default class Profile extends React.Component {
     event.preventDefault();
 
     //make the api call to the user controller
-    fetch("http://localhost:3001/api/users/"+sessionStorage.getItem("user"), {
+    fetch(process.env.REACT_APP_API_PATH+"/users/"+sessionStorage.getItem("user"), {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export default class Profile extends React.Component {
         }
       );
 
-    let url = "http://localhost:3001/api/user-preferences";
+    let url = process.env.REACT_APP_API_PATH+"/user-preferences";
     let method = "POST";
     let value = this.state.favoritecolor;
 

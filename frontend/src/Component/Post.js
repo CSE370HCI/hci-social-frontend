@@ -41,7 +41,7 @@ export default class Post extends React.Component {
 
   deletePost(postID) {
     //make the api call to post
-    fetch("http://localhost:3001/api/posts/"+postID, {
+    fetch(process.env.REACT_APP_API_PATH+"/posts/"+postID, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
