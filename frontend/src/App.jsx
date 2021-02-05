@@ -6,13 +6,13 @@
 
 import React from "react";
 import "./App.css";
-import PostForm from "./Component/PostForm.js";
-import FriendList from "./Component/FriendList.js";
-import LoginForm from "./Component/LoginForm.js";
-import Profile from "./Component/Profile.js";
-import FriendForm from "./Component/FriendForm.js";
-import Modal from "./Component/Modal.js";
-import Navbar from "./Component/Navbar.js";
+import PostForm from "./Component/PostForm.jsx";
+import FriendList from "./Component/FriendList.jsx";
+import LoginForm from "./Component/LoginForm.jsx";
+import Profile from "./Component/Profile.jsx";
+import FriendForm from "./Component/FriendForm.jsx";
+import Modal from "./Component/Modal.jsx";
+import Navbar from "./Component/Navbar.jsx";
 import {
   BrowserRouter as Router, Route, Switch
 } from 'react-router-dom';

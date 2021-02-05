@@ -69,8 +69,8 @@ export default class FriendList extends React.Component {
   }
 
   conditionalAction(status, id){
-    let block = require("../block_white_216x216.png");
-    let unblock = require("../thumbsup.jpg");
+    let block = require("../assets/block_white_216x216.png");
+    let unblock = require("../assets/thumbsup.jpg");
 
     if (status == "active"){
       return(

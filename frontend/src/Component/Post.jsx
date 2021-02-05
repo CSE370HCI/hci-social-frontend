@@ -1,6 +1,6 @@
 import React from "react";
 import "../App.css";
-import CommentForm from "./CommentForm.js";
+import CommentForm from "./CommentForm.jsx";
 
 export default class Post extends React.Component {
   constructor(props) {
@@ -76,7 +76,7 @@ export default class Post extends React.Component {
               {this.getCommentCount()} Comments
             </div>
             <img
-              src={require("../comment.svg")}
+              src={require("../assets/comment.svg")}
               className="comment-icon"
               onClick={e => this.showModal()}
               alt="View Comments"
@@ -98,7 +98,7 @@ export default class Post extends React.Component {
   // we only want to expose the delete post functionality if the user is
   // author of the post
   showDelete(){
-    let help = require("../delete.png");
+    let help = require("../assets/delete.png");
     if (this.props.post.author.id == sessionStorage.getItem("user")) {
       return(
       <img

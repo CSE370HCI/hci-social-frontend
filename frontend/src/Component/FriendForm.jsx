@@ -1,6 +1,6 @@
 import React from "react";
 import "../App.css";
-import Autocomplete from "./Autocomplete.js";
+import Autocomplete from "./Autocomplete.jsx";
 
 export default class FriendForm extends React.Component {
   constructor(props) {

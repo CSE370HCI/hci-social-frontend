@@ -12,10 +12,10 @@ class Navbar extends React.Component {
   render() {
 
     // pull in the images for the menu items
-    let post = require("../post.svg");
-    let friend = require("../friends.svg");
-    let setting = require("../settings.svg");
-    let help = require("../help.svg");
+    let post = require("../assets/post.svg");
+    let friend = require("../assets/friends.svg");
+    let setting = require("../assets/settings.svg");
+    let help = require("../assets/help.svg");
 
     return (
     <div id="sidenav" className="sidenav">

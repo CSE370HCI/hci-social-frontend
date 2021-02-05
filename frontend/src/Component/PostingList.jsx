@@ -1,5 +1,5 @@
 import React from "react";
-import Post from "./Post.js";
+import Post from "./Post.jsx";
 
 export default class PostingList extends React.Component {
   constructor(props) {

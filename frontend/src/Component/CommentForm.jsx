@@ -1,6 +1,6 @@
 import React from "react";
 import "../App.css";
-import PostingList from "./PostingList.js";
+import PostingList from "./PostingList.jsx";
 
 export default class CommentForm extends React.Component {
   constructor(props) {
