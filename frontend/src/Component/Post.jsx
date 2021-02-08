@@ -1,6 +1,8 @@
 import React from "react";
 import "../App.css";
 import CommentForm from "./CommentForm.jsx";
+import helpIcon from "../assets/delete.png";
+import commentIcon from "../assets/comment.svg";
 
 export default class Post extends React.Component {
   constructor(props) {
@@ -76,7 +78,7 @@ export default class Post extends React.Component {
               {this.getCommentCount()} Comments
             </div>
             <img
-              src={require("../assets/comment.svg")}
+              src={commentIcon}
               className="comment-icon"
               onClick={e => this.showModal()}
               alt="View Comments"
@@ -98,11 +100,10 @@ export default class Post extends React.Component {
   // we only want to expose the delete post functionality if the user is
   // author of the post
   showDelete(){
-    let help = require("../assets/delete.png");
     if (this.props.post.author.id == sessionStorage.getItem("user")) {
       return(
       <img
-        src={help}
+        src={helpIcon}
         className="sidenav-icon deleteIcon"
         alt="Delete Post"
         title="Delete Post"

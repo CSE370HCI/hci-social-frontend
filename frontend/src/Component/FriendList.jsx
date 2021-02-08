@@ -1,5 +1,7 @@
 import React from "react";
 import "../App.css";
+import blockIcon from "../assets/block_white_216x216.png";
+import unblockIcon from "../assets/thumbsup.jpg";
 
 export default class FriendList extends React.Component {
   constructor(props) {
@@ -69,14 +71,11 @@ export default class FriendList extends React.Component {
   }
 
   conditionalAction(status, id){
-    let block = require("../assets/block_white_216x216.png");
-    let unblock = require("../assets/thumbsup.jpg");
-
     if (status == "active"){
       return(
 
       <img
-        src={block}
+        src={blockIcon}
         className="sidenav-icon deleteIcon"
         alt="Block User"
         title="Block User"
@@ -86,7 +85,7 @@ export default class FriendList extends React.Component {
     }else{
       return(
       <img
-        src={unblock}
+        src={unblockIcon}
         className="sidenav-icon deleteIcon"
         alt="Unblock User"
         title="Unblock User"

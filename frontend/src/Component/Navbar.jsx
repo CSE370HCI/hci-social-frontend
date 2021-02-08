@@ -3,6 +3,11 @@ import "../App.css";
 import {
    Link
 } from 'react-router-dom';
+// pull in the images for the menu items
+import postIcon from "../assets/post.svg";
+import friendIcon from "../assets/friends.svg";
+import settingIcon from "../assets/settings.svg";
+import helpIcon from "../assets/help.svg";
 
 /* The Navbar class provides navigation through react router links.  Note the callback
    to the parent app class in the last entry... this is an example of calling a function
@@ -10,20 +15,13 @@ import {
 class Navbar extends React.Component {
 
   render() {
-
-    // pull in the images for the menu items
-    let post = require("../assets/post.svg");
-    let friend = require("../assets/friends.svg");
-    let setting = require("../assets/settings.svg");
-    let help = require("../assets/help.svg");
-
     return (
     <div id="sidenav" className="sidenav">
       <ul id="side-menu-items">
         <li className="pm admin student">
           <Link to="/posts">
             <img
-              src={post}
+              src={postIcon}
               className="sidenav-icon"
               alt="Posts"
               title="Posts"
@@ -33,7 +31,7 @@ class Navbar extends React.Component {
         <li className="pm admin">
           <Link to="/friends">
             <img
-              src={friend}
+              src={friendIcon}
               className="sidenav-icon"
               alt="Friends"
               title="Friends"
@@ -43,7 +41,7 @@ class Navbar extends React.Component {
         <li className="pm admin">
           <Link to="/settings">
             <img
-              src={setting}
+              src={settingIcon}
               className="sidenav-icon"
               alt="Settings"
               title="Settings"
@@ -56,7 +54,7 @@ class Navbar extends React.Component {
             onClick={e => this.props.toggleModal(e)}
           >
             <img
-              src={help}
+              src={helpIcon}
               className="sidenav-icon"
               alt="Settings"
               title="Settings"
