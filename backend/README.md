@@ -16,7 +16,6 @@ http://localhost:3001/swagger
 
 ### Production 
 - `npm run build` to build the typescript to javascript
-- `npm run migrations` to apply any new DB schema changes
 - `npm start` to run the app in production mode
 
 ## Development Scripts
