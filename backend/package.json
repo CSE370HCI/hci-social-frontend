@@ -27,6 +27,7 @@
     "@foal/core": "^2.1.2",
     "@foal/swagger": "^2.1.2",
     "@foal/typeorm": "^2.1.2",
+    "mysql": "^2.18.1",
     "source-map-support": "~0.5.19",
     "sqlite3": "~5.0.1",
     "typeorm": "^0.2.30"
