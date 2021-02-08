@@ -10,6 +10,7 @@
   },
   "database": {
     "type": "sqlite",
-    "database": "./db.sqlite3"
+    "database": "./db.sqlite3",
+    "synchronize": true
   }
 }
