@@ -2,7 +2,7 @@
   "name": "hci-social-frontend",
   "description": "Frontend for UB CSE370 course project",
   "version": "0.1.0",
-  "homepage": "./",
+  "homepage": "http://./",
   "private": true,
   "dependencies": {
     "react": "^17.0.1",
@@ -31,5 +31,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanhunt1/hci-social.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alanhunt1/hci-social/issues"
   }
 }
