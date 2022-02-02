@@ -3,21 +3,28 @@ import "../App.css";
 import CommentForm from "./CommentForm.jsx";
 import helpIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.svg";
+import likeIcon from "../assets/thumbsup.png";
 
 export default class Post extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
-      comments: this.props.post.commentCount
+      comments: this.props.post.commentCount,
+      showTags: false
     };
     this.post = React.createRef();
-
   }
 
   showModal = e => {
     this.setState({
       showModal: !this.state.showModal
+    });
+  };
+
+  showTags = e => {
+    this.setState({
+      showTags: !this.state.showTags
     });
   };
 
@@ -34,12 +41,47 @@ export default class Post extends React.Component {
     return parseInt(this.state.comments);
   }
 
+  tagPost(tag, thisPostID){
+     //make the api call to post
+     fetch(process.env.REACT_APP_API_PATH+"/post-tags", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        userID: sessionStorage.getItem("user"),
+        postID: thisPostID,
+        name: "tag",
+        value: "like"
+      })
+      })
+      .then(
+        result => {
+          this.props.loadPosts();
+        },
+        error => {
+          alert("error!"+error);
+        }
+      );
+  }
+
+  // this will toggle the CSS classnames that will either show or hide the comment block
   showHideComments() {
     if (this.state.showModal) {
       return "comments show";
     }
     return "comments hide";
   }
+
+  // this will toggle the CSS classnames that will either show or hide the comment block
+  showHideTags() {
+    if (this.state.showTags) {
+      return "tagss show";
+    }
+    return "tags hide";
+  }
+
 
   deletePost(postID) {
     //make the api call to post
@@ -61,8 +103,7 @@ export default class Post extends React.Component {
   }
 
 
-  // we only want to display comment information if this is a post that accepts comments
-  conditionalDisplay() {
+  commentDisplay() {
     console.log("Comment count is " + this.props.post.commentCount);
 
     //if (this.props.post.commentCount <= 0) {
@@ -72,7 +113,19 @@ export default class Post extends React.Component {
     //else {
       return (
         <div className="comment-block">
-
+          <div className="tag-block">
+            <button value="tag post" onClick={e => this.showTags()}>
+            tag post
+            </button>
+          </div>
+          <div name="tagDiv" className={this.showHideTags()}>
+          <img
+              src={likeIcon}
+              className="comment-icon"
+              onClick={e => this.tagPost("like",this.props.post.id)}
+              alt="Like Post"
+            />
+          </div>
           <div className="comment-indicator">
             <div className="comment-indicator-text">
               {this.getCommentCount()} Comments
@@ -124,12 +177,12 @@ export default class Post extends React.Component {
         className={[this.props.type, "postbody"].join(" ")}
       >
       <div className="deletePost">
-      {this.props.post.author.username} ({this.props.post.createdAt})
+      {this.props.post.author.attributes.username} ({this.props.post.created})
       {this.showDelete()}
       </div>
          <br />{" "}
         {this.props.post.content}
-        {this.conditionalDisplay()}
+        {this.commentDisplay()}
       </div>
       </div>
     );

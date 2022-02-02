@@ -1,7 +1,7 @@
 import React from "react";
 import "../App.css";
 import blockIcon from "../assets/block_white_216x216.png";
-import unblockIcon from "../assets/thumbsup.jpg";
+import unblockIcon from "../assets/thumbsup.png";
 
 export default class FriendList extends React.Component {
   constructor(props) {

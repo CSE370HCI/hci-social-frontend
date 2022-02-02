@@ -2,7 +2,8 @@ import React from "react";
 import "../App.css";
 import PostingList from "./PostingList.jsx";
 
-//The post form component holds both a form for posting, and also the list of current posts in your feed
+// The post form component holds both a form for posting, and also the list of current posts in your feed.  This is primarily to 
+// make updating the list simpler.  If the post form was contained entirely in a separate component, you would have to do a lot of calling around 
 export default class PostForm extends React.Component {
 
   constructor(props) {
@@ -42,6 +43,7 @@ export default class PostForm extends React.Component {
           this.setState({
             postmessage: result.Status
           });
+          alert("Post was successful");
           // once a post is complete, reload the feed
           this.postListing.current.loadPosts();
         },

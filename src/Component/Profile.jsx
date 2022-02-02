@@ -34,22 +34,7 @@ export default class Profile extends React.Component {
     });
   }
 
-  // This is the function that will get called every time we change one of the fields tied to the user_preferences data source (favoritecolor).
-  // It's a separate function fom fieldChangeHandler, because the objects we're maintaining are objects rather than just strings, so that
-  // we can track which user_preference id we want to change.
-  prefChangeHandler(field, e) {
-    console.log("pref field change " + field);
-    console.log(this.state.favoritecolor);
-    const prefs1 = JSON.parse(JSON.stringify(this.state.favoritecolor));
-    console.log(prefs1);
-    prefs1.value = e.target.value;
-    console.log(prefs1);
-
-    this.setState({
-      [field]: prefs1
-    });
-  }
-
+  
   // This is the function that will get called the first time that the component gets rendered.  This is where we load the current
   // values from the database via the API, and put them in the state so that they can be rendered to the screen.  
   componentDidMount() {
@@ -69,15 +54,17 @@ export default class Profile extends React.Component {
         result => {
           if (result) {
             console.log(result);
-
+            if (result.attributes){
             this.setState({
               // IMPORTANT!  You need to guard against any of these values being null.  If they are, it will
               // try and make the form component uncontrolled, which plays havoc with react
-              username: result.username || "",
-              firstname: result.firstName || "",
-              lastname: result.lastName || ""
+              username: result.attributes.username || "",
+              firstname: result.attributes.firstName || "",
+              lastname: result.attributes.lastName || "",
+              favoritecolor: result.attributes.favoritecolor || ""
 
             });
+          }
           }
         },
         error => {
@@ -85,46 +72,7 @@ export default class Profile extends React.Component {
         }
       );
 
-    //make the api call to the user_preference API to get the user preferences (in this case, we only care about favoritecolor).
-    fetch(process.env.REACT_APP_API_PATH+"/user-preferences?userID="+sessionStorage.getItem("user"), {
-      method: "get",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+sessionStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(
-        result => {
-          if (result) {
-            console.log(result);
-            let favoritecolor = "";
-            // NOTE : if you wanted to add another user preference to the profile, you would declare a default placeholder here,
-            // like we declare favoritecolor above.
-
-            // read the user preferences and convert to an associative array for reference
-            result[0].forEach(function(pref) {
-              if (pref.name === "favoritecolor") {
-                favoritecolor = pref;
-              }
-              // NOTE : if you wanted to add another user preference to the profile, you would have another conditional block here
-              // looking for that preference name, just like we're looking for favoritecolor above.
-            });
-
-            console.log(favoritecolor);
-
-            this.setState({
-              // IMPORTANT!  You need to guard against any of these values being null.  If they are, it will
-              // try and make the form component uncontrolled, which plays havoc with react
-              favoritecolor: favoritecolor
-              // NOTE : if you wanted to add another user preference to the profile, you would set the value in the state here.
-            });
-          }
-        },
-        error => {
-          alert("error!");
-        }
-      );
+    
   }
 
   // This is the function that will get called when the submit button is clicked, and it stores
@@ -143,11 +91,12 @@ export default class Profile extends React.Component {
         'Authorization': 'Bearer '+sessionStorage.getItem("token")
       },
       body: JSON.stringify({
-
-        username: this.state.username,
-        firstName: this.state.firstname,
-        lastName: this.state.lastname,
-
+        attributes: {
+          username: this.state.username,
+          firstName: this.state.firstname,
+          lastName: this.state.lastname,
+          favoritecolor: this.state.favoritecolor
+        }
       })
     })
       .then(res => res.json())
@@ -161,48 +110,6 @@ export default class Profile extends React.Component {
           alert("error!");
         }
       );
-
-
-    // NOTE : If you wanted to add additional user preferences to the profile, 
-    // you would need to make an additional fetch call below for each one that
-    // you added.  Creating a new function for this would be a good plan if you added
-    // a lot of additional fields. 
-    let url = process.env.REACT_APP_API_PATH+"/user-preferences";
-    let method = "POST";  // default to post, because the first time there will be no id to update
-    let value = this.state.favoritecolor;
-
-    // if we did read a value from the API, switch from POST to PATCH, and add the id of the 
-    // preference to the URL.
-    if (this.state.favoritecolor && this.state.favoritecolor.id){
-      url += "/"+this.state.favoritecolor.id;
-      method = "PATCH";
-      value = this.state.favoritecolor.value;
-    }
-
-    //make the api call to the user prefs controller
-    fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+sessionStorage.getItem("token")
-      },
-      body: JSON.stringify({
-        name: "favoritecolor",
-        value: value,
-      })
-    })
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            responseMessage: result.Status
-          });
-        },
-        error => {
-          alert("error!");
-        }
-      );
-
   };
 
   // This is the function that draws the component to the screen.  It will get called every time the
@@ -239,12 +146,8 @@ export default class Profile extends React.Component {
           Favorite Color
           <input
             type="text"
-            onChange={e => this.prefChangeHandler("favoritecolor", e)}
-            value={
-              this.state.favoritecolor
-                ? this.state.favoritecolor.value
-                : ""
-            }
+            onChange={e => this.fieldChangeHandler("favoritecolor", e)}
+            value={this.state.favoritecolor}
           />
         </label>
         <input type="submit" value="submit" />

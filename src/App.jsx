@@ -91,7 +91,7 @@ class App extends React.Component {
             </Route>
             <Route path={["/posts","/"]}>
               <div>
-                <p>Social Media Test Harness</p>
+                <p>CSE 370 Social Media Test Harness</p>
                 <LoginForm refreshPosts={this.doRefreshPosts}  />
                 <PostForm refresh={this.state.refreshPosts}/>
               </div>
