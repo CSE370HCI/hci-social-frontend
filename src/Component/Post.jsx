@@ -11,7 +11,7 @@ export default class Post extends React.Component {
     this.state = {
       showModal: false,
       comments: this.props.post.commentCount,
-      showTags: false
+      showTags: this.props.post.reactions.length > 0
     };
     this.post = React.createRef();
   }
@@ -42,18 +42,35 @@ export default class Post extends React.Component {
   }
 
   tagPost(tag, thisPostID){
+     if (this.props.post.reactions.length > 0){
+      //make the api call to post
+      fetch(process.env.REACT_APP_API_PATH+"/post-reactions/"+this.props.post.reactions[0].id, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+sessionStorage.getItem("token")
+        },
+      })
+        .then(
+          result => {
+            this.props.loadPosts();
+          },
+          error => {
+            alert("error!"+error);
+          }
+        );
+     }else{
      //make the api call to post
-     fetch(process.env.REACT_APP_API_PATH+"/post-tags", {
+     fetch(process.env.REACT_APP_API_PATH+"/post-reactions", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer '+sessionStorage.getItem("token")
       },
       body: JSON.stringify({
-        userID: sessionStorage.getItem("user"),
+        reactorID: sessionStorage.getItem("user"),
         postID: thisPostID,
-        name: "tag",
-        value: "like"
+        name: "like"
       })
       })
       .then(
@@ -64,6 +81,7 @@ export default class Post extends React.Component {
           alert("error!"+error);
         }
       );
+     }
   }
 
   // this will toggle the CSS classnames that will either show or hide the comment block
@@ -77,7 +95,11 @@ export default class Post extends React.Component {
   // this will toggle the CSS classnames that will either show or hide the comment block
   showHideTags() {
     if (this.state.showTags) {
-      return "tagss show";
+      if (this.props.post.reactions.length > 0){
+        console.log("Had a reaaction");
+        return "tags show tag-active"
+      }
+      return "tags show";
     }
     return "tags hide";
   }

@@ -197,6 +197,12 @@
   background-color: blue;
 }
 
+.tag-active{
+  border:red;
+  border-width:thick;
+  border-style: solid;
+}
+
 .sidenav ul{
    list-style-type: none;
    padding:10px;
