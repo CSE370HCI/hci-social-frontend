@@ -14,7 +14,7 @@ import FriendForm from "./Component/FriendForm.jsx";
 import Modal from "./Component/Modal.jsx";
 import Navbar from "./Component/Navbar.jsx";
 import {
-  BrowserRouter as Router, Route, Switch
+  BrowserRouter as Router, Route, Routes
 } from 'react-router-dom';
 
 // toggleModal will both show and hide the modal dialog, depending on current state.  Note that the
@@ -75,28 +75,12 @@ class App extends React.Component {
           <Navbar toggleModal={e => toggleModal(this, e)} />
 
           <div className="maincontent" id="mainContent">
-            <Switch>
-            <Route path="/settings">
-              <div className="settings">
-                <p>Settings</p>
-                <Profile userid={sessionStorage.getItem("user")} />
-              </div>
-            </Route>
-            <Route path="/friends">
-              <div>
-                <p>Friends</p>
-                <FriendForm userid={sessionStorage.getItem("user")} />
-                <FriendList userid={sessionStorage.getItem("user")} />
-              </div>
-            </Route>
-            <Route path={["/posts","/"]}>
-              <div>
-                <p>CSE 370 Social Media Test Harness</p>
-                <LoginForm refreshPosts={this.doRefreshPosts}  />
-                <PostForm refresh={this.state.refreshPosts}/>
-              </div>
-            </Route>
-            </Switch>
+            <Routes>
+              <Route path="/settings" element={<Settings  />} />
+              <Route path="/friends" element={<Friends  />} />        
+              <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} apprefresh={this.state.refreshPosts} />} />
+              <Route path="/" element={<Posts doRefreshPosts={this.doRefreshPosts} apprefresh={this.state.refreshPosts} />} />
+            </Routes>
           </div>
         </header>
 
@@ -107,6 +91,35 @@ class App extends React.Component {
       </Router>
     );
   }
+}
+
+function Settings() {
+  return (
+    <div className="settings">
+    <p>Settings</p>
+    <Profile userid={sessionStorage.getItem("user")} />
+  </div>
+  );
+}
+
+function Friends(){
+   return (
+    <div>
+      <p>Friends</p>
+        <FriendForm userid={sessionStorage.getItem("user")} />
+        <FriendList userid={sessionStorage.getItem("user")} />
+    </div>
+   );
+}
+
+function Posts(doRefreshPosts, apprefresh){
+  return (
+    <div>
+    <p>CSE 370 Social Media Test Harness</p>
+    <LoginForm refreshPosts={doRefreshPosts}  />
+    <PostForm refresh={apprefresh}/>
+  </div>
+  );
 }
 
 // export the app for use in index.js
