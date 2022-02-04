@@ -9,6 +9,7 @@ import friendIcon from "../assets/friends.svg";
 import settingIcon from "../assets/settings.svg";
 import helpIcon from "../assets/help.svg";
 import exitIcon from "../assets/exit.png";
+import groupIcon from "../assets/group.png";
 
 /* The Navbar class provides navigation through react router links.  Note the callback
    to the parent app class in the last entry... this is an example of calling a function
@@ -74,6 +75,16 @@ class Navbar extends React.Component {
               title="Settings"
             />
           </button>
+        </li>
+        <li className="pm admin">
+          <Link to="/groups">
+            <img
+              src={groupIcon}
+              className="sidenav-icon"
+              alt="groups"
+              title="groups"
+            />
+          </Link>
         </li>
       </ul>
     </div>

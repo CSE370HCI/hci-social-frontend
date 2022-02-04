@@ -8,6 +8,7 @@ import React from "react";
 import "./App.css";
 import PostForm from "./Component/PostForm.jsx";
 import FriendList from "./Component/FriendList.jsx";
+import GroupList from "./Component/GroupList.jsx";
 import LoginForm from "./Component/LoginForm.jsx";
 import Profile from "./Component/Profile.jsx";
 import FriendForm from "./Component/FriendForm.jsx";
@@ -107,7 +108,8 @@ class App extends React.Component {
           <div className="maincontent" id="mainContent">
             <Routes>
               <Route path="/settings" element={<Settings login={this.login}  />} />
-              <Route path="/friends" element={<Friends  login={this.login} />} />        
+              <Route path="/friends" element={<Friends  login={this.login} />} />   
+              <Route path="/groups" element={<Groups  login={this.login} />} />     
               <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} />
               <Route path="/" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} />
             </Routes>
@@ -160,6 +162,25 @@ const Friends = (props) => {
         <FriendList userid={sessionStorage.getItem("user")} />
     </div>
    );
+}
+
+const Groups = (props) => {
+  // if the user is not logged in, show the login form.  Otherwise, show the post form
+  if (!sessionStorage.getItem("token")){
+   console.log("LOGGED OUT");
+   return(
+     <div>
+     <p>CSE 370 Social Media Test Harness</p>
+     <LoginForm login={props.login}  />
+     </div>
+   );
+ }
+  return (
+   <div>
+     <p>Join a Group!</p>
+       <GroupList userid={sessionStorage.getItem("user")} />
+   </div>
+  );
 }
 
 const Posts = (props) => {
