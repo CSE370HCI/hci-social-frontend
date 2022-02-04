@@ -44,7 +44,7 @@ export default class FriendForm extends React.Component {
           if (result) {
             let names = [];
 
-            result[0].forEach(element => {if (element.username){names.push(element)}});
+            result[0].forEach(element => {if (element.attributes.username){names.push(element)}});
 
             this.setState({
               users: names,
@@ -75,10 +75,9 @@ export default class FriendForm extends React.Component {
         'Authorization': 'Bearer '+sessionStorage.getItem("token")
       },
       body: JSON.stringify({
-        connectedUserID: this.state.friendid,
-        userID: sessionStorage.getItem("user"),
-        type:"friend",
-        status:"active"
+        toUserID: this.state.friendid,
+        fromUserID: sessionStorage.getItem("user"),
+        attributes:{type:"friend", status:"active"}
       })
     })
       .then(res => res.json())

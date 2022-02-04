@@ -35,7 +35,7 @@ class Autocomplete extends Component {
     if (suggestions){
      filteredSuggestions = suggestions.filter(
         suggestion =>
-          suggestion.username.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+          suggestion.attributes.username.toLowerCase().indexOf(userInput.toLowerCase()) > -1
       );
     }else{
 
@@ -121,7 +121,7 @@ class Autocomplete extends Component {
 
                 return (
                   <li className={className} key={suggestion.id} id={suggestion.id} onClick={onClick}>
-                    {suggestion.username}
+                    {suggestion.attributes.username}
                   </li>
                 );
               })}

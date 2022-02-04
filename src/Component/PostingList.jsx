@@ -29,6 +29,8 @@ export default class PostingList extends React.Component {
   }
 
   loadPosts() {
+    // if the user is not logged in, we don't want to try loading posts, because it will just error out.  
+    if (sessionStorage.getItem("token")){
     let url = process.env.REACT_APP_API_PATH+"/posts?parentID=";
     if (this.props && this.props.parentid){
       url += this.props.parentid;
@@ -60,6 +62,7 @@ export default class PostingList extends React.Component {
           console.log("ERROR loading Posts")
         }
       );
+    }
   }
 
   render() {
@@ -83,9 +86,9 @@ export default class PostingList extends React.Component {
         </div>
 
       );
-    }else{
-      return (<div> No Posts Found </div>);
-    }
+      }else{
+        return (<div> No Posts Found </div>);
+      }
     } else {
       return <div> Please Log In... </div>;
     }

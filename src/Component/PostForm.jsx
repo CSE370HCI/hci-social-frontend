@@ -3,7 +3,8 @@ import "../App.css";
 import PostingList from "./PostingList.jsx";
 
 // The post form component holds both a form for posting, and also the list of current posts in your feed.  This is primarily to 
-// make updating the list simpler.  If the post form was contained entirely in a separate component, you would have to do a lot of calling around 
+// make updating the list simpler.  If the post form was contained entirely in a separate component, you would have to do a lot of calling around
+// in order to have the list update.  Communication between components in react is ... fun. 
 export default class PostForm extends React.Component {
 
   constructor(props) {
@@ -62,6 +63,13 @@ export default class PostForm extends React.Component {
   };
 
   render() {
+    if (!sessionStorage.getItem("token")) {
+      console.log("NO TOKEN");
+      return ("Please log in to make and view posts");
+
+    }else{
+      console.log("Rendering postings ",this.props.refresh);
+    }
     return (
       <div>
         <form onSubmit={this.submitHandler}>

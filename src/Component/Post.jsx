@@ -175,7 +175,7 @@ export default class Post extends React.Component {
   // we only want to expose the delete post functionality if the user is
   // author of the post
   showDelete(){
-    if (this.props.post.author.id == sessionStorage.getItem("user")) {
+    if (this.props.post.author.id === sessionStorage.getItem("user")) {
       return(
       <img
         src={helpIcon}

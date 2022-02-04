@@ -53,7 +53,7 @@ export default class FriendList extends React.Component {
         'Authorization': 'Bearer '+sessionStorage.getItem("token")
       },
       body: JSON.stringify({
-        status: status
+        attributes: {status: status, type: "friend"}
       })
     })
       .then(res => res.json())
@@ -71,7 +71,7 @@ export default class FriendList extends React.Component {
   }
 
   conditionalAction(status, id){
-    if (status == "active"){
+    if (status === "active"){
       return(
 
       <img
@@ -108,9 +108,9 @@ export default class FriendList extends React.Component {
           <ul>
             {connections.map(connection => (
               <div key={connection.id} className="userlist">
-                {connection.connectedUser.username} - {connection.status}
+                {connection.toUser.attributes.username} - {connection.attributes.status}
                 <div className="deletePost">
-                {this.conditionalAction(connection.status, connection.id)}
+                {this.conditionalAction(connection.attributes.status, connection.id)}
                 </div>
               </div>
             ))}

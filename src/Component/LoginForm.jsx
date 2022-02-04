@@ -22,7 +22,8 @@ export default class LoginForm extends React.Component {
   // listing that is displayed.  To do that, we'll call the callback passed in
   // from the parent.
   refreshPostsFromLogin(){
-    this.props.refreshPosts();
+    console.log("CALLING LOGIN IN LOGINFORM");
+    this.props.login();
   }
 
   // change handlers keep the state current with the values as you type them, so
