@@ -83,11 +83,16 @@ class App extends React.Component {
     });
   }
 
+  // This doesn't really do anything, but I included it as a placeholder, as you are likely to
+  // want to do something when the app loads.  You can define listeners here, set state, load data, etc.
   componentDidMount(){
     window.addEventListener('click', e => {console.log("TESTING EVENT LISTENER")});
-  
   }
 
+  // As with all react files, render is in charge of determining what shows up on the screen, 
+  // and it gets called whenever an element in the state changes.  There are three main areas of the app, 
+  // the navbar, the main content area, and a modal dialog that you can use for ... you know, modal
+  // stuff.  It's declared at this level so that it can overlay the entire screen.
   render() {
 
     return (
@@ -125,8 +130,13 @@ class App extends React.Component {
   }
 }
 
+/*  BEGIN ROUTE ELEMENT DEFINITIONS */
+// with the latest version of react router, you need to define the contents of the route as an element.  The following define functional components
+// that will appear in the routes.  
+
+
 const Settings = (props) => {
-   // if the user is not logged in, show the login form.  Otherwise, show the post form
+   // if the user is not logged in, show the login form.  Otherwise, show the settings page
    if (!sessionStorage.getItem("token")){
     console.log("LOGGED OUT");
     return(
@@ -145,7 +155,7 @@ const Settings = (props) => {
 }
 
 const Friends = (props) => {
-   // if the user is not logged in, show the login form.  Otherwise, show the post form
+   // if the user is not logged in, show the login form.  Otherwise, show the friends page
    if (!sessionStorage.getItem("token")){
     console.log("LOGGED OUT");
     return(
@@ -165,7 +175,7 @@ const Friends = (props) => {
 }
 
 const Groups = (props) => {
-  // if the user is not logged in, show the login form.  Otherwise, show the post form
+  // if the user is not logged in, show the login form.  Otherwise, show the groups form
   if (!sessionStorage.getItem("token")){
    console.log("LOGGED OUT");
    return(
@@ -209,6 +219,7 @@ const Posts = (props) => {
     );
   }
 }
+/* END ROUTE ELEMENT DEFINITIONS */
 
 // export the app for use in index.js
 export default App;

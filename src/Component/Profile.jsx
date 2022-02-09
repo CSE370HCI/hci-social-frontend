@@ -1,10 +1,9 @@
 import React from "react";
 import "../App.css";
 
-// The Profile component combines data from two sources, user and user_preferences.  You'll notice that there are 
-// two fetch calls to load the information in componentDidMount, and two to save it in the submitHandler, one for 
-// each of those data sources.  Note that there are many write outs to the console to help you track what's happening
-// feel free to comment those out or delete them when you're ready to go to "production".
+// The Profile component shows data from the user table.  This is set up fairly generically to allow for you to customize
+// user data by adding it to the attributes for each user, which is just a set of name value pairs that you can add things to
+// in order to support your group specific functionality.  In this example, we store basic profile information for the user
 
 export default class Profile extends React.Component {
   
@@ -18,12 +17,12 @@ export default class Profile extends React.Component {
       lastname: "",
       favoritecolor: "",
       responseMessage: ""
-      // NOTE : if you wanted to add another user preference object to the profile, you would add a corresponding state element here
+      // NOTE : if you wanted to add another user attribute to the profile, you would add a corresponding state element here
     };
     this.fieldChangeHandler.bind(this);
   }
 
-  // This is the function that will get called every time we change one of the fields tied to the user data source (username, firstname, lastname).
+  // This is the function that will get called every time we change one of the fields tied to the user data source.
   // it keeps the state current so that when we submit the form, we can pull the value to update from the state.  Note that
   // we manage multiple fields with one function and no conditional logic, because we are passing in the name of the state
   // object as an argument to this method.  
@@ -41,7 +40,7 @@ export default class Profile extends React.Component {
     console.log("In profile");
     console.log(this.props);
 
-    // first fetch the user data to allow update of username, firstname, and lastname
+    // fetch the user data, and extract out the attributes to load and display
     fetch(process.env.REACT_APP_API_PATH+"/users/"+sessionStorage.getItem("user"), {
       method: "get",
       headers: {
