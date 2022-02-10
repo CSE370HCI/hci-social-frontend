@@ -1,6 +1,9 @@
 import React from "react";
 import Post from "./Post.jsx";
 
+/* The PostingList is going to load all the posts in the system.  This model won't work well if you have a lot of 
+  posts - you would want to find a way to limit the posts shown. */
+
 export default class PostingList extends React.Component {
   constructor(props) {
     super(props);
@@ -14,12 +17,13 @@ export default class PostingList extends React.Component {
     this.loadPosts = this.loadPosts.bind(this);
   }
 
+  // the first thing we do when the component is ready is load the posts.  This updates the props, which will render the posts  
   componentDidMount() {
-
     this.loadPosts();
-
   }
 
+  // if a parent component wants us to refresh, they can update the refresh value in the props passed in; this should also trigger a 
+  // reload of the posting list
   componentDidUpdate(prevProps) {
     console.log("PrevProps "+prevProps.refresh);
     console.log("Props "+this.props.refresh);
@@ -32,6 +36,9 @@ export default class PostingList extends React.Component {
     // if the user is not logged in, we don't want to try loading posts, because it will just error out.  
     if (sessionStorage.getItem("token")){
     let url = process.env.REACT_APP_API_PATH+"/posts?parentID=";
+    
+    // if there is a parentid passed in, then we are trying to get all the comments for a particular post or comment, so
+    // we will restrict the fetch accordingly.
     if (this.props && this.props.parentid){
       url += this.props.parentid;
     }
@@ -66,7 +73,7 @@ export default class PostingList extends React.Component {
   }
 
   render() {
-    //this.loadPosts();
+    
     const {error, isLoaded, posts} = this.state;
     if (error) {
       return <div> Error: {error.message} </div>;

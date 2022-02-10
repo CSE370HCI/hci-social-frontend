@@ -18,7 +18,11 @@ export default class PostForm extends React.Component {
 
   // the handler for submitting a new post.  This will call the API to create a new post.
   // while the test harness does not use images, if you had an image URL you would pass it
-  // in the thumbnailURL field.
+  // in the attributes field.  Posts also does double duty as a message; if you want in-app messaging
+  // you would add a recipientUserID for a direct message, or a recipientGroupID for a group chat message.
+  // if the post is a comment on another post (or comment) you would pass in a parentID of the thing
+  // being commented on.  Attributes is an open ended name/value segment that you can use to add 
+  // whatever custom tuning you need, like category, type, rating, etc.
   submitHandler = event => {
 
     //keep the form from actually submitting via HTML - we want to handle it in react
@@ -33,9 +37,7 @@ export default class PostForm extends React.Component {
       },
       body: JSON.stringify({
         authorID: sessionStorage.getItem("user"),
-        content: this.state.post_text,
-        thumbnailURL: "",
-        type: "post"
+        content: this.state.post_text
       })
     })
       .then(res => res.json())
@@ -62,6 +64,8 @@ export default class PostForm extends React.Component {
     });
   };
 
+  // the login check here is redundant, since the top level routing also is checking,
+  // but this could catch tokens that were removed while still on this page, perhaps due to a timeout?
   render() {
     if (!sessionStorage.getItem("token")) {
       console.log("NO TOKEN");

@@ -5,6 +5,8 @@ import helpIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.svg";
 import likeIcon from "../assets/thumbsup.png";
 
+/* This will render a single post, with all of the options like comments, delete, tags, etc.  In the harness, it's only called from PostingList, but you could
+  also have it appear in a popup where they edit a post, etc. */
 export default class Post extends React.Component {
   constructor(props) {
     super(props);
@@ -40,6 +42,11 @@ export default class Post extends React.Component {
     }
     return parseInt(this.state.comments);
   }
+
+  // this is the simplest version of reactions; it's only mananging one reaction, liking a post.  If you unlike the post, 
+  // it deletes the reaction.  If you like it, it posts the reaction.  This will almost certainly be made more complex
+  // by you, where you will account for multiple different reactions.  Note that in both cases, we reload the post afterwards to
+  // show the updated reactions.
 
   tagPost(tag, thisPostID){
      if (this.props.post.reactions.length > 0){
@@ -124,7 +131,9 @@ export default class Post extends React.Component {
       );
   }
 
-
+  // this is showing both tags and comments... but used to show only comments.  That's a 
+  // frequent cause of names being out of sync with the way things work; do you really want to 
+  // risk breaking stuff by changing the name and not knowing everywhere it is called?  
   commentDisplay() {
     console.log("Comment count is " + this.props.post.commentCount);
 
