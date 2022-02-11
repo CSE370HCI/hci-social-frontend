@@ -204,7 +204,7 @@ const Posts = (props) => {
   if (!sessionStorage.getItem("token")){
     console.log("LOGGED OUT");
     return(
-      <div class="test">
+      <div>
       <p>CSE 370 Social Media Test Harness</p>
       <LoginForm login={props.login}  />
       </div>
