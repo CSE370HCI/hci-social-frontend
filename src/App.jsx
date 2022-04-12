@@ -31,8 +31,9 @@ function toggleModal(app) {
 // the App class defines the main rendering method and state information for the app
 class App extends React.Component {
 
-  // the only state held at the app level is whether or not the modal dialog
-  // is currently displayed - it is hidden by default when the app is started.
+  // the app holds a few state items : whether or not the modal dialog is open, whether or not we need to refresh 
+  // the post list, and whether or not the login or logout actions have been triggered, which will change what the 
+  // user can see (many features are only available when you are logged in)
   constructor(props) {
     super(props);
     this.state = {
@@ -46,13 +47,14 @@ class App extends React.Component {
     // we can create a reference to this and pass it down.
     this.mainContent = React.createRef();
 
-    // since we are passing the doRefreshPosts method to a child component, we need to 
-    // bind it 
+    // since we are passing the following methods to a child component, we need to 
+    // bind them, otherwise the value of "this" will mean the child, and not the app 
     this.doRefreshPosts = this.doRefreshPosts.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
   }
 
+  // on logout, pull the session token and user from session storage and update state
   logout = () =>{
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
@@ -63,9 +65,8 @@ class App extends React.Component {
     
   }
   
+  // on login, update state and refresh the posts
   login = () => {
-    console.log("CALLING LOGIN IN APP");
-    
     this.setState({
       login: true,
       logout: false,
@@ -83,16 +84,11 @@ class App extends React.Component {
     });
   }
 
-  // This doesn't really do anything, but I included it as a placeholder, as you are likely to
-  // want to do something when the app loads.  You can define listeners here, set state, load data, etc.
   componentDidMount(){
     window.addEventListener('click', e => {console.log("TESTING EVENT LISTENER")});
+  
   }
 
-  // As with all react files, render is in charge of determining what shows up on the screen, 
-  // and it gets called whenever an element in the state changes.  There are three main areas of the app, 
-  // the navbar, the main content area, and a modal dialog that you can use for ... you know, modal
-  // stuff.  It's declared at this level so that it can overlay the entire screen.
   render() {
 
     return (
@@ -130,13 +126,8 @@ class App extends React.Component {
   }
 }
 
-/*  BEGIN ROUTE ELEMENT DEFINITIONS */
-// with the latest version of react router, you need to define the contents of the route as an element.  The following define functional components
-// that will appear in the routes.  
-
-
 const Settings = (props) => {
-   // if the user is not logged in, show the login form.  Otherwise, show the settings page
+   // if the user is not logged in, show the login form.  Otherwise, show the post form
    if (!sessionStorage.getItem("token")){
     console.log("LOGGED OUT");
     return(
@@ -155,7 +146,7 @@ const Settings = (props) => {
 }
 
 const Friends = (props) => {
-   // if the user is not logged in, show the login form.  Otherwise, show the friends page
+   // if the user is not logged in, show the login form.  Otherwise, show the post form
    if (!sessionStorage.getItem("token")){
     console.log("LOGGED OUT");
     return(
@@ -175,7 +166,7 @@ const Friends = (props) => {
 }
 
 const Groups = (props) => {
-  // if the user is not logged in, show the login form.  Otherwise, show the groups form
+  // if the user is not logged in, show the login form.  Otherwise, show the post form
   if (!sessionStorage.getItem("token")){
    console.log("LOGGED OUT");
    return(
@@ -219,7 +210,6 @@ const Posts = (props) => {
     );
   }
 }
-/* END ROUTE ELEMENT DEFINITIONS */
 
 // export the app for use in index.js
 export default App;

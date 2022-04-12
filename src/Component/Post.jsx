@@ -49,9 +49,20 @@ export default class Post extends React.Component {
   // show the updated reactions.
 
   tagPost(tag, thisPostID){
-     if (this.props.post.reactions.length > 0){
+     
+      //find the appropriate reaction to delete - namely, the one from the current user
+      let userReaction = -1;
+      this.props.post.reactions.forEach(reaction => {
+        if (reaction.reactorID == sessionStorage.getItem("user")){
+          userReaction = reaction.id;
+        }
+      });
+       
+      // if there is one, delete it.
+      if (userReaction >= 0){
+
       //make the api call to post
-      fetch(process.env.REACT_APP_API_PATH+"/post-reactions/"+this.props.post.reactions[0].id, {
+      fetch(process.env.REACT_APP_API_PATH+"/post-reactions/"+userReaction, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +77,7 @@ export default class Post extends React.Component {
             alert("error!"+error);
           }
         );
-     }else{
+      }else{
      //make the api call to post
      fetch(process.env.REACT_APP_API_PATH+"/post-reactions", {
       method: "POST",
@@ -89,6 +100,7 @@ export default class Post extends React.Component {
         }
       );
      }
+    
   }
 
   // this will toggle the CSS classnames that will either show or hide the comment block
@@ -102,9 +114,14 @@ export default class Post extends React.Component {
   // this will toggle the CSS classnames that will either show or hide the comment block
   showHideTags() {
     if (this.state.showTags) {
+      
       if (this.props.post.reactions.length > 0){
-        console.log("Had a reaaction");
-        return "tags show tag-active"
+        for (let i = 0; i < this.props.post.reactions.length; i++){
+          if (this.props.post.reactions[i].reactorID == sessionStorage.getItem("user")){ 
+            console.log("Had a reaaction");
+            return "tags show tag-active"
+          }
+        }
       }
       return "tags show";
     }
@@ -157,6 +174,7 @@ export default class Post extends React.Component {
               alt="Like Post"
             />
           </div>
+          <p>({this.props.post.reactions.length})</p>
           <div className="comment-indicator">
             <div className="comment-indicator-text">
               {this.getCommentCount()} Comments
