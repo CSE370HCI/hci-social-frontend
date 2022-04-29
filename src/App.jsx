@@ -14,6 +14,8 @@ import Profile from "./Component/Profile.jsx";
 import FriendForm from "./Component/FriendForm.jsx";
 import Modal from "./Component/Modal.jsx";
 import Navbar from "./Component/Navbar.jsx";
+import Promise from "./Component/Promise.jsx";
+
 import {
   BrowserRouter as Router, Route, Routes
 } from 'react-router-dom';
@@ -116,7 +118,9 @@ class App extends React.Component {
               <Route path="/friends" element={<Friends  login={this.login} />} />   
               <Route path="/groups" element={<Groups  login={this.login} />} />     
               <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} />
+              <Route path="/promise" element={<Promise />} />
               <Route path="/" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} />
+
             </Routes>
           </div>
         </header>

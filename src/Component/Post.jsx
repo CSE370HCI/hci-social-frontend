@@ -12,7 +12,7 @@ export default class Post extends React.Component {
     super(props);
     this.state = {
       showModal: false,
-      comments: this.props.post.commentCount,
+      comments: this.props.post._count.children,
       showTags: this.props.post.reactions.length > 0
     };
     this.post = React.createRef();
