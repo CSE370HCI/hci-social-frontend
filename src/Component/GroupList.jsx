@@ -2,6 +2,7 @@ import React from "react";
 import "../App.css";
 import blockIcon from "../assets/block_white_216x216.png";
 import unblockIcon from "../assets/thumbsup.png";
+import deleteIcon from "../assets/delete.png";
 
 export default class GroupList extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export default class GroupList extends React.Component {
     this.loadGroups();
   }
 
+  // This will load all the available groups.
   loadGroups() {
 
     fetch(process.env.REACT_APP_API_PATH+"/groups", {
@@ -38,6 +40,8 @@ export default class GroupList extends React.Component {
               groups: result[0]
             });
           }
+          // now, pull all the groups that the current user belongs to.  This allows us to mark each groups
+          // membership status
           fetch(process.env.REACT_APP_API_PATH+"/group-members?userID="+sessionStorage.getItem("user"), {
             method: "get",
             headers: {
@@ -84,6 +88,71 @@ export default class GroupList extends React.Component {
       );
   }
 
+  // THIS IS AN EXAMPLE CALL ONLY
+  // if you want to update a group, this will update the name of group 1 to "test".  
+  // Naturally, you would want to make sure that the user was the owner of the
+  // group, and allow them to type in new information, etc.
+  testGroupUpdate = () => {
+    fetch(process.env.REACT_APP_API_PATH+"/groups/1", {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        name:"test",
+        attributes:{test:"test"}
+      })
+     })
+      .then(res => res.json())
+      .then(
+        result => {
+          this.loadGroups();
+        }
+      )
+  }
+
+  // THIS IS AN EXAMPLE CALL ONLY
+  // if you want to add a group, you would probably want to let the user define all of this!
+ 
+  testGroupAdd = () => {
+    fetch(process.env.REACT_APP_API_PATH+"/groups", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        name:"Test ADD Group",
+        attributes:{test:"test"}
+      })
+     })
+      .then(res => res.json())
+      .then(
+        result => {
+          this.loadGroups();
+        }
+      )
+  }
+
+  // THIS IS AN EXAMPLE CALL ONLY - it lets anyone delete the group, and it doesn't do any 
+  // clean up of group members... 
+  deleteGroup = (gid) => {
+    fetch(process.env.REACT_APP_API_PATH+"/groups/"+gid, {
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+sessionStorage.getItem("token")
+      }
+     })
+     .then(
+      result => {
+        this.loadGroups();
+      }
+    )
+  }
+
+
   getGroupMemberId = (groupid) => {
     console.log("LOOKING FOR GROUP", groupid);
     for (const membership of this.state.mygroups) {
@@ -98,8 +167,10 @@ export default class GroupList extends React.Component {
     return -1;
   }
 
+  // updateConnection will toggle the membership of the current user in the selected group.
+  // if they are active, this makes them inactive, and vice-versa.
   updateConnection(id, status){
-    //make the api call to the user controller
+    //make the api call to the group-members list
     if (status === "inactive"){
       fetch(process.env.REACT_APP_API_PATH+"/group-members/"+this.getGroupMemberId(id), {
         method: "DELETE",
@@ -149,6 +220,10 @@ export default class GroupList extends React.Component {
     }
   }
 
+  // This method will render the icon indicating group membership.  If the list of current groups
+  // for the logged in user includes this group, we'll show the block icon (you will naturally want to pick a better one)
+  // and if not, it shows the unblock icon.  It also sets the clickhandler for the icons to the 
+  // appropriate update call, to either add or remove the current user from that group.
   conditionalAction(id){
     if (this.state.mygroupIDs.includes(id)){
       return(
@@ -174,8 +249,12 @@ export default class GroupList extends React.Component {
     }
   }
 
+  // Draw the list of available groups to the screen, and for each one, 
+  // indicate if the current user is a member or not.  Note that this uses 
+  // poorly named styles borrowed from other screens - you would probably want
+  // to update those to be specific to the way you manage groups.
   render() {
-    //this.loadPosts();
+   
     const {error, isLoaded, groups} = this.state;
     if (error) {
       return <div> Error: {error.message} </div>;
@@ -183,17 +262,26 @@ export default class GroupList extends React.Component {
       return <div> Loading... </div>;
     } else {
       return (
-        <div className="post">
+        <div>
           <ul>
             {groups.map(group => (
               <div key={group.id} className="userlist">
                 {group.name} 
                 <div className="deletePost">
                   {this.conditionalAction(group.id)}
+                  <img
+                    src={deleteIcon}
+                    className="sidenav-icon deleteIcon"
+                    alt="Delete Group"
+                    title="Delete Group"
+                    onClick={e => this.deleteGroup(group.id)}
+                  />
                 </div>
               </div>
             ))}
           </ul>
+          <button onClick={this.testGroupUpdate}>Test Update</button>
+          <button onClick={this.testGroupAdd}>Test Add</button>
         </div>
       );
     }

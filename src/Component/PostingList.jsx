@@ -25,8 +25,8 @@ export default class PostingList extends React.Component {
   // if a parent component wants us to refresh, they can update the refresh value in the props passed in; this should also trigger a 
   // reload of the posting list
   componentDidUpdate(prevProps) {
-    console.log("PrevProps "+prevProps.refresh);
-    console.log("Props "+this.props.refresh);
+    //console.log("PrevProps "+prevProps.refresh);
+    //console.log("Props "+this.props.refresh);
     if (prevProps.refresh !== this.props.refresh){
       this.loadPosts();
     }

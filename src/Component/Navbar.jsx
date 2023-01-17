@@ -58,8 +58,8 @@ class Navbar extends React.Component {
             <img
               src={helpIcon}
               className="sidenav-icon"
-              alt="Settings"
-              title="Settings"
+              alt="Modal"
+              title="Modal"
             />
           </button>
         </li>
@@ -71,8 +71,8 @@ class Navbar extends React.Component {
             <img
               src={exitIcon}
               className="sidenav-icon"
-              alt="Settings"
-              title="Settings"
+              alt="Logout"
+              title="Logout"
             />
           </button>
         </li>
