@@ -53,7 +53,7 @@ export default class Post extends React.Component {
       //find the appropriate reaction to delete - namely, the one from the current user
       let userReaction = -1;
       this.props.post.reactions.forEach(reaction => {
-        if (reaction.reactorID == sessionStorage.getItem("user")){
+        if (reaction.reactorID === sessionStorage.getItem("user")){
           userReaction = reaction.id;
         }
       });
@@ -117,7 +117,7 @@ export default class Post extends React.Component {
       
       if (this.props.post.reactions.length > 0){
         for (let i = 0; i < this.props.post.reactions.length; i++){
-          if (this.props.post.reactions[i].reactorID == sessionStorage.getItem("user")){ 
+          if (this.props.post.reactions[i].reactorID === sessionStorage.getItem("user")){ 
             console.log("Had a reaaction");
             return "tags show tag-active"
           }
