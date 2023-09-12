@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Settings from "./Component/Settings";
 import HomePage from "./Component/HomePage";
+import Navbar from "./Component/Navbar";
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
   // initially set to false
   const [loggedIn, setLoggedIn] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
 
   // basic login functions, keeps track if the user is logged in throughout the app
   const login = () => {
@@ -14,10 +16,19 @@ function App() {
   }
 
   // basic logout function, removes token and user id from session storage
-  const logout = () => {
+  const logout = (e) => {
+    e.preventDefault()
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
     setLoggedIn(false)
+  }
+
+  const toggleModal = (e) => {
+    e.preventDefault()
+    // Take the current state of openModal, and update it to be the negated value of that
+    // ex) if openModal == false, this will update openModal to true
+    setOpenModal(prev => !prev)
+    console.log(openModal)
   }
 
   return (
@@ -30,7 +41,7 @@ function App() {
     <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         <header className="App-header">
-          {/* <Navbar toggleModal={e => toggleModal(this, e)} logout={this.logout}/> */}
+          <Navbar toggleModal={(e) => toggleModal(e)} logout={(e) => logout(e)}/>
           <div className="maincontent" id="mainContent">
             <Routes>
               <Route path="/settings" element={<Settings />} />
@@ -44,7 +55,7 @@ function App() {
             </Routes>
           </div>
         </header>
-
+        
         {/* <Modal show={this.state.openModal} onClose={e => toggleModal(this, e)}> */}
         {/* This is a modal dialog! */}
         {/* </Modal> */}

@@ -1,8 +1,6 @@
 import React from "react";
-import "../App.css";
-import {
-   Link
-} from 'react-router-dom';
+import { Link } from "react-router-dom";
+
 // pull in the images for the menu items
 import postIcon from "../assets/post.svg";
 import friendIcon from "../assets/friends.svg";
@@ -11,13 +9,12 @@ import helpIcon from "../assets/help.svg";
 import exitIcon from "../assets/exit.png";
 import groupIcon from "../assets/group.png";
 
+
 /* The Navbar class provides navigation through react router links.  Note the callback
    to the parent app class in the last entry... this is an example of calling a function
    passed in via props from a parent component */
-class Navbar extends React.Component {
-
-  render() {
-    return (
+const Navbar = ({ toggleModal, logout }) => {
+  return (
     <div id="sidenav" className="sidenav">
       <ul id="side-menu-items">
         <li className="pm admin student">
@@ -53,7 +50,7 @@ class Navbar extends React.Component {
         <li className="pm admin">
           <button
             className="link-button"
-            onClick={e => this.props.toggleModal(e)}
+            onClick={toggleModal}
           >
             <img
               src={helpIcon}
@@ -64,10 +61,7 @@ class Navbar extends React.Component {
           </button>
         </li>
         <li className="pm admin">
-        <button
-            className="link-button"
-            onClick={e => this.props.logout(e)}
-          >
+          <button className="link-button" onClick={logout}>
             <img
               src={exitIcon}
               className="sidenav-icon"
@@ -89,7 +83,6 @@ class Navbar extends React.Component {
       </ul>
     </div>
   );
-  }
+};
 
-}
 export default Navbar;
