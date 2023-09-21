@@ -21,6 +21,8 @@ function App() {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
     setLoggedIn(false)
+    // reloads the window, so we get back to the login form
+    window.location.reload()
   }
 
   const toggleModal = (e) => {

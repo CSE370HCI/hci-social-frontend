@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css"
+import "../App.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sessionToken, setSessionToken] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const submitHandler = (event) => {
     // event.preventDefault() prevents the browser from performing its default action
@@ -25,51 +25,46 @@ const LoginForm = () => {
       }),
     })
       .then((res) => res.json())
-      .then(result => {
-        if(result.userID){
+      .then((result) => {
+        if (result.userID) {
           // Successfully logged in
-          console.log(result)
+          console.log(result);
           // set the auth token and user ID in the session state
           sessionStorage.setItem("token", result.token);
           sessionStorage.setItem("user", result.userID);
-          setSessionToken(result.token)
-          console.log(sessionToken, " SESSION TOKEN")
-          navigate("/")
+          setSessionToken(result.token);
+          console.log(sessionToken, " SESSION TOKEN");
+          navigate("/");
+          window.location.reload();
         }
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <>
-      {!sessionStorage.getItem("token") ? (
-        <form onSubmit={submitHandler}>
-          <label>
-            Username
-            <input
-              type="email"
-              // event.target refers to the DOM that is triggered from an event, such as onChange, onClick, etc.
-              // event.target.value holds the value that is passed in to the input field from the onChange
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </label>
-          <br />
-          <label>
-            Password
-            <input
-              type="password"
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </label>
-          <input type="submit" className="submitbutton" value="submit" />
-        </form>
-      ) : email ? (
-        <p>Welcome, {email}</p>
-      ) : (
-        <p>Something</p>
-      )}
+      <form onSubmit={submitHandler}>
+        <label>
+          Username
+          <input
+            type="email"
+            // event.target refers to the DOM that is triggered from an event, such as onChange, onClick, etc.
+            // event.target.value holds the value that is passed in to the input field from the onChange
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          Password
+          <input
+            type="password"
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </label>
+        <input type="submit" className="submitbutton" value="submit" />
+      </form>
     </>
   );
 };
@@ -140,9 +135,9 @@ export default LoginForm;
 //           console.log("Testing");
 //           if (result.userID) {
 
-            // // set the auth token and user ID in the session state
-            // sessionStorage.setItem("token", result.token);
-            // sessionStorage.setItem("user", result.userID);
+// // set the auth token and user ID in the session state
+// sessionStorage.setItem("token", result.token);
+// sessionStorage.setItem("user", result.userID);
 
 //             this.setState({
 //               sessiontoken: result.token,
