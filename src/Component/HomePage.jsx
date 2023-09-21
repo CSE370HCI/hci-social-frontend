@@ -19,7 +19,7 @@ const HomePage = ({ isLoggedIn }) => {
         <LoginForm login={isLoggedIn} />
       ) : (
         <>
-          <Posts />
+          <Posts  />
         </>
       )}
     </div>

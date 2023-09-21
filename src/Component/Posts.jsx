@@ -5,7 +5,7 @@ const Posts = () => {
   return (
     <div>
        <p>CSE 370 Social Media Test Harness</p>
-       <PostForm/>
+       <PostForm />
     </div>
   )
 }
