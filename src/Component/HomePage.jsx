@@ -11,7 +11,7 @@ const HomePage = ({ isLoggedIn }) => {
   useEffect(() => {
     setUserToken(sessionStorage.getItem("token"));
   }, []);
-
+  
   // if the user is not logged in, show the login form.  Otherwise, show the post form
   return (
     <div>
