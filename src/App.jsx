@@ -9,6 +9,7 @@ function App() {
   // initially set to false
   const [loggedIn, setLoggedIn] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [refreshPosts, setRefreshPosts] = useState(false)
 
   // basic logout function, removes token and user id from session storage
   const logout = (e) => {
@@ -22,8 +23,13 @@ function App() {
 
   const login = (e) => {
     e.preventDefault()
-
+    setRefreshPosts(true)
     setLoggedIn(true)
+  }
+
+  const doRefreshPosts = () => {
+    console.log("CALLING DOREFRESHPOSTS IN APP.JSX");
+    setRefreshPosts(true)
   }
 
   const toggleModal = (e) => {
@@ -48,8 +54,7 @@ function App() {
           <div className="maincontent" id="mainContent">
             <Routes>
               <Route path="/settings" element={<Settings />} />
-              <Route path="/" element={<HomePage setLoggedIn={setLoggedIn} />} />
-              {/* <Route path="/settings" element={<Settings loggedIn={loggedIn} />} /> */}
+              <Route path="/" element={<HomePage setLoggedIn={setLoggedIn} doRefreshPosts={doRefreshPosts} appRefresh={refreshPosts} />} />
               {/* <Route path="/friends" element={<Friends  login={this.login} />} />    */}
               {/* <Route path="/groups" element={<Groups  login={this.login} />} />      */}
               {/* <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}

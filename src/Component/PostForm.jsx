@@ -28,6 +28,7 @@ const PostForm = React.forwardRef((props, ref) => {
         setPostMessage(result.Status);
         alert("Post was successful");
         // Once a post is complete, reload the feed
+        console.log(ref)
         ref.current.loadPosts();
       })
       .catch((err) => {

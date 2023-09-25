@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Post from "./Post.jsx";
 
 const PostingList = (props) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [posts, setPosts] = useState([]);
+
+  const prevRefreshProp = useRef(props.refresh)
 
   const loadPosts = () => {
     if (sessionStorage.getItem("token")) {
@@ -39,10 +41,20 @@ const PostingList = (props) => {
     }
   };
 
+  
+
   useEffect(() => {
     // the first thing we do when the component is ready is load the posts. This updates the props, which will render the posts
     loadPosts();
   }, []);
+
+  // if a parent component wants us to refresh, they can update the refresh value in the props passed in; this should also trigger a
+  // reload of the posting list
+  useEffect(() => {
+    if (prevRefreshProp !== props.refresh){
+      loadPosts();
+    }
+  }, [])
 
 
   return (
@@ -95,14 +107,14 @@ export default PostingList;
 //     this.loadPosts();
 //   }
 
-//   // if a parent component wants us to refresh, they can update the refresh value in the props passed in; this should also trigger a
-//   // reload of the posting list
+  // if a parent component wants us to refresh, they can update the refresh value in the props passed in; this should also trigger a
+  // reload of the posting list
 //   componentDidUpdate(prevProps) {
 //     //console.log("PrevProps "+prevProps.refresh);
 //     //console.log("Props "+this.props.refresh);
-//     if (prevProps.refresh !== this.props.refresh){
-//       this.loadPosts();
-//     }
+    // if (prevProps.refresh !== this.props.refresh){
+    //   this.loadPosts();
+    // }
 //   }
 
 //   loadPosts() {
