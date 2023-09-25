@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PostingList from "./PostingList";
 
+// React.forwardRef is used to allow the parent component to access and interact
+// with the PostingList.jsx component and it's methods & properties via a ref
 const PostForm = React.forwardRef((props, ref) => {
   const [postText, setPostText] = useState("");
   const [postMessage, setPostMessage] = useState("");

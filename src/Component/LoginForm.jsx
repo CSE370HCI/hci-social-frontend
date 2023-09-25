@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../App.css";
 
-const LoginForm = () => {
+const LoginForm = ({ setLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sessionToken, setSessionToken] = useState("");
-  const navigate = useNavigate();
 
   const submitHandler = (event) => {
     // event.preventDefault() prevents the browser from performing its default action
@@ -32,9 +30,10 @@ const LoginForm = () => {
           // set the auth token and user ID in the session state
           sessionStorage.setItem("token", result.token);
           sessionStorage.setItem("user", result.userID);
+          // call setLoggedIn hook from App.jsx to save the login state throughout the app
+          setLoggedIn(true)
           setSessionToken(result.token);
           console.log(sessionToken, " SESSION TOKEN");
-          navigate("/");
           window.location.reload();
         }
       })

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import LoginForm from "./LoginForm";
 import Posts from "./Posts";
 
-const HomePage = ({ isLoggedIn }) => {
+const HomePage = ({ isLoggedIn, setLoggedIn }) => {
   // state variable for userToken, intiially set to an empty string
   const [userToken, setUserToken] = useState("");
 
@@ -16,7 +16,7 @@ const HomePage = ({ isLoggedIn }) => {
   return (
     <div>
       {!userToken ? (
-        <LoginForm login={isLoggedIn} />
+        <LoginForm setLoggedIn={setLoggedIn} />
       ) : (
         <>
           <Posts  />

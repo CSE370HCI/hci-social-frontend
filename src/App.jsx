@@ -10,11 +10,6 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [openModal, setOpenModal] = useState(false)
 
-  // basic login functions, keeps track if the user is logged in throughout the app
-  const login = () => {
-    setLoggedIn(true)
-  }
-
   // basic logout function, removes token and user id from session storage
   const logout = (e) => {
     e.preventDefault()
@@ -23,6 +18,12 @@ function App() {
     setLoggedIn(false)
     // reloads the window, so we get back to the login form
     window.location.reload()
+  }
+
+  const login = (e) => {
+    e.preventDefault()
+
+    setLoggedIn(true)
   }
 
   const toggleModal = (e) => {
@@ -47,8 +48,8 @@ function App() {
           <div className="maincontent" id="mainContent">
             <Routes>
               <Route path="/settings" element={<Settings />} />
-              <Route path="/" element={<HomePage isLoggedIn={loggedIn} />} />
-              {/* <Route path="/settings" element={<Settings login={this.login}  />} /> */}
+              <Route path="/" element={<HomePage setLoggedIn={setLoggedIn} />} />
+              {/* <Route path="/settings" element={<Settings loggedIn={loggedIn} />} /> */}
               {/* <Route path="/friends" element={<Friends  login={this.login} />} />    */}
               {/* <Route path="/groups" element={<Groups  login={this.login} />} />      */}
               {/* <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
@@ -210,10 +211,10 @@ export default App;
 //     );
 //   }
 //   return (
-//     <div className="settings">
-//     <p>Settings</p>
-//     <Profile userid={sessionStorage.getItem("user")} />
-//   </div>
+  //   <div className="settings">
+  //   <p>Settings</p>
+  //   <Profile userid={sessionStorage.getItem("user")} />
+  // </div>
 //   );
 // }
 
