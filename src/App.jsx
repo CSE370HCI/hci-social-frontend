@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Settings from "./Component/Settings";
 import HomePage from "./Component/HomePage";
 import Navbar from "./Component/Navbar";
+import Friends from "./Component/Friends"
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -55,7 +56,7 @@ function App() {
             <Routes>
               <Route path="/settings" element={<Settings />} />
               <Route path="/" element={<HomePage setLoggedIn={setLoggedIn} doRefreshPosts={doRefreshPosts} appRefresh={refreshPosts} />} />
-              {/* <Route path="/friends" element={<Friends  login={this.login} />} />    */}
+              <Route path="/friends" element={<Friends />} />   
               {/* <Route path="/groups" element={<Groups  login={this.login} />} />      */}
               {/* <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
               {/* <Route path="/promise" element={<Promise />} /> */}
@@ -234,12 +235,12 @@ export default App;
 //       </div>
 //     );
 //   }
-//    return (
-//     <div>
-//       <p>Friends</p>
-//         <FriendForm userid={sessionStorage.getItem("user")} />
-//         <FriendList userid={sessionStorage.getItem("user")} />
-//     </div>
+  //  return (
+  //   <div>
+  //     <p>Friends</p>
+  //       <FriendForm userid={sessionStorage.getItem("user")} />
+  //       <FriendList userid={sessionStorage.getItem("user")} />
+  //   </div>
 //    );
 // }
 
