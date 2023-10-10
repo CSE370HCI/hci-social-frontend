@@ -22,7 +22,7 @@ const FriendForm = ({ userid }) => {
           if (result) {
             let names = [];
             result[0].forEach((element) => {
-              if (element.attributes.username) {
+              if (element.attributes && element.attributes.username) {
                 names.push(element);
               }
             });
