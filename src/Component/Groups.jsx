@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import GroupList from "./GroupList"
+import GroupList from "./GroupList";
+import { useNavigate } from "react-router-dom";
 
 const Groups = () => {
+  const navigate = useNavigate();
   // variable for userToken to check authorization
   const userToken = sessionStorage.getItem("token");
 
