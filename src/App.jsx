@@ -256,10 +256,10 @@ export default App;
 //    );
 //  }
 //   return (
-//    <div>
-//      <p>Join a Group!</p>
-//        <GroupList userid={sessionStorage.getItem("user")} />
-//    </div>
+  //  <div>
+  //    <p>Join a Group!</p>
+  //      <GroupList userid={sessionStorage.getItem("user")} />
+  //  </div>
 //   );
 // }
 
