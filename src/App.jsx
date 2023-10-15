@@ -1,46 +1,47 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Settings from "./Component/Settings";
 import HomePage from "./Component/HomePage";
 import Navbar from "./Component/Navbar";
-import Friends from "./Component/Friends"
+import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
+import Modal from "./Component/Modal";
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
   // initially set to false
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
-  const [refreshPosts, setRefreshPosts] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [refreshPosts, setRefreshPosts] = useState(false);
 
   // basic logout function, removes token and user id from session storage
   const logout = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
-    setLoggedIn(false)
+    setLoggedIn(false);
     // reloads the window, so we get back to the login form
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   const login = (e) => {
-    e.preventDefault()
-    setRefreshPosts(true)
-    setLoggedIn(true)
-  }
+    e.preventDefault();
+    setRefreshPosts(true);
+    setLoggedIn(true);
+  };
 
   const doRefreshPosts = () => {
     console.log("CALLING DOREFRESHPOSTS IN APP.JSX");
-    setRefreshPosts(true)
-  }
+    setRefreshPosts(true);
+  };
 
   const toggleModal = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // Take the current state of openModal, and update it to be the negated value of that
     // ex) if openModal == false, this will update openModal to true
-    setOpenModal(prev => !prev)
-    console.log(openModal)
-  }
+    setOpenModal((prev) => !prev);
+    console.log(openModal);
+  };
 
   return (
     // the app is wrapped in a router component, that will render the
@@ -52,29 +53,40 @@ function App() {
     <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         <header className="App-header">
-          <Navbar toggleModal={(e) => toggleModal(e)} logout={(e) => logout(e)}/>
+          <Navbar
+            toggleModal={(e) => toggleModal(e)}
+            logout={(e) => logout(e)}
+          />
           <div className="maincontent" id="mainContent">
             <Routes>
               <Route path="/settings" element={<Settings />} />
-              <Route path="/" element={<HomePage setLoggedIn={setLoggedIn} doRefreshPosts={doRefreshPosts} appRefresh={refreshPosts} />} />
-              <Route path="/friends" element={<Friends />} />   
-              <Route path="/groups" element={<Groups />} />     
+              <Route
+                path="/"
+                element={
+                  <HomePage
+                    setLoggedIn={setLoggedIn}
+                    doRefreshPosts={doRefreshPosts}
+                    appRefresh={refreshPosts}
+                  />
+                }
+              />
+              <Route path="/friends" element={<Friends />} />
+              <Route path="/groups" element={<Groups />} />
               {/* <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
               {/* <Route path="/promise" element={<Promise />} /> */}
               {/* <Route path="/" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
             </Routes>
           </div>
         </header>
-        
-        {/* <Modal show={this.state.openModal} onClose={e => toggleModal(this, e)}> */}
-        {/* This is a modal dialog! */}
-        {/* </Modal> */}
+
+        <Modal show={openModal} onClose={(e) => toggleModal(e)}>
+          This is a modal dialog!
+        </Modal>
       </div>
     </Router>
   );
 }
 export default App;
-
 
 // /*
 //   App.js is the starting point for the application.   All of the components in your app should have this file as the root.
@@ -218,10 +230,10 @@ export default App;
 //     );
 //   }
 //   return (
-  //   <div className="settings">
-  //   <p>Settings</p>
-  //   <Profile userid={sessionStorage.getItem("user")} />
-  // </div>
+//   <div className="settings">
+//   <p>Settings</p>
+//   <Profile userid={sessionStorage.getItem("user")} />
+// </div>
 //   );
 // }
 
@@ -236,12 +248,12 @@ export default App;
 //       </div>
 //     );
 //   }
-  //  return (
-  //   <div>
-  //     <p>Friends</p>
-  //       <FriendForm userid={sessionStorage.getItem("user")} />
-  //       <FriendList userid={sessionStorage.getItem("user")} />
-  //   </div>
+//  return (
+//   <div>
+//     <p>Friends</p>
+//       <FriendForm userid={sessionStorage.getItem("user")} />
+//       <FriendList userid={sessionStorage.getItem("user")} />
+//   </div>
 //    );
 // }
 
@@ -257,10 +269,10 @@ export default App;
 //    );
 //  }
 //   return (
-  //  <div>
-  //    <p>Join a Group!</p>
-  //      <GroupList userid={sessionStorage.getItem("user")} />
-  //  </div>
+//  <div>
+//    <p>Join a Group!</p>
+//      <GroupList userid={sessionStorage.getItem("user")} />
+//  </div>
 //   );
 // }
 
