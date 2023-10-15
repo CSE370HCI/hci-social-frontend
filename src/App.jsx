@@ -6,6 +6,7 @@ import Navbar from "./Component/Navbar";
 import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
+import PromiseComponent from "./Component/PromiseComponent";
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -72,8 +73,8 @@ function App() {
               />
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
+              <Route path="/promise" element={<PromiseComponent />} />
               {/* <Route path="/posts" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
-              {/* <Route path="/promise" element={<Promise />} /> */}
               {/* <Route path="/" element={<Posts doRefreshPosts={this.doRefreshPosts} login={this.login} apprefresh={this.state.refreshPosts} />} /> */}
             </Routes>
           </div>
