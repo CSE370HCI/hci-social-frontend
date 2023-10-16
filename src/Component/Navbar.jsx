@@ -18,7 +18,7 @@ const Navbar = ({ toggleModal, logout }) => {
     <div id="sidenav" className="sidenav">
       <ul id="side-menu-items">
         <li className="pm admin student">
-          <Link to="/posts">
+          <Link to="/">
             <img
               src={postIcon}
               className="sidenav-icon"
