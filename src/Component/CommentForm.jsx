@@ -1,22 +1,21 @@
-import React from "react";
-import "../App.css";
-import PostingList from "./PostingList.jsx";
+import React, { useState, useEffect } from "react";
 
-export default class CommentForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      post_text: "",
-      postmessage: "",
-    };
-    this.postListing = React.createRef();
-  }
+const CommentForm = ({
+  onAddComment,
+  parent,
+  commentCount,
+  loadPosts,
+  loadComments,
+}) => {
+  const [postText, setPostText] = useState("");
+  const [postMessage, setPostMessage] = useState("");
 
-  submitHandler = (event) => {
-    //keep the form from actually submitting
+  useEffect(() => {
+    loadComments();
+  }, []);
+
+  const submitHandler = (event) => {
     event.preventDefault();
-
-    //make the api call to the authentication page
 
     fetch(process.env.REACT_APP_API_PATH + "/posts", {
       method: "post",
@@ -26,8 +25,8 @@ export default class CommentForm extends React.Component {
       },
       body: JSON.stringify({
         authorID: sessionStorage.getItem("user"),
-        content: this.state.post_text,
-        parentID: this.props.parent,
+        content: postText,
+        parentID: parent,
         thumbnailURL: "",
         type: "post",
       }),
@@ -35,9 +34,10 @@ export default class CommentForm extends React.Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          // update the count in the UI manually, to avoid a database hit
-          this.props.onAddComment(this.props.commentCount + 1);
-          this.postListing.current.loadPosts();
+          onAddComment(commentCount + 1);
+          setPostMessage(result.Status);
+          loadPosts();
+          loadComments();
         },
         (error) => {
           alert("error!");
@@ -45,33 +45,102 @@ export default class CommentForm extends React.Component {
       );
   };
 
-  myChangeHandler = (event) => {
-    this.setState({
-      post_text: event.target.value,
-    });
-  };
-
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.submitHandler}>
-          <label>
-            Add A Comment to Post {this.props.parent}
-            <br />
-            <textarea rows="10" cols="70" onChange={this.myChangeHandler} />
-          </label>
+  return (
+    <div>
+      <form onSubmit={submitHandler}>
+        <label>
+          Add A Comment to Post {parent}
           <br />
+          <textarea
+            rows="10"
+            cols="70"
+            onChange={(e) => setPostText(e.target.value)}
+          />
+        </label>
+        <br />
 
-          <input type="submit" value="submit" />
-          <br />
-          {this.state.postmessage}
-        </form>
-        <PostingList
-          ref={this.postListing}
-          parentid={this.props.parent}
-          type="commentlist"
-        />
-      </div>
-    );
-  }
-}
+        <input type="submit" value="submit" />
+        <br />
+        {postMessage}
+      </form>
+    </div>
+  );
+};
+
+export default CommentForm;
+
+// import React from "react";
+// import "../App.css";
+// import PostingList from "./PostingList.jsx";
+
+// export default class CommentForm extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       post_text: "",
+//       postmessage: "",
+//     };
+//   }
+
+//   submitHandler = (event) => {
+//     //keep the form from actually submitting
+//     event.preventDefault();
+
+//     //make the api call to the authentication page
+
+//     fetch(process.env.REACT_APP_API_PATH + "/posts", {
+//       method: "post",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: "Bearer " + sessionStorage.getItem("token"),
+//       },
+//       body: JSON.stringify({
+//         authorID: sessionStorage.getItem("user"),
+//         content: this.state.post_text,
+//         parentID: this.props.parent,
+//         thumbnailURL: "",
+//         type: "post",
+//       }),
+//     })
+//       .then((res) => res.json())
+//       .then(
+//         (result) => {
+//           // update the count in the UI manually, to avoid a database hit
+//           this.props.onAddComment(this.props.commentCount + 1);
+//           this.postListing.current.loadPosts();
+//         },
+//         (error) => {
+//           alert("error!");
+//         }
+//       );
+//   };
+
+//   myChangeHandler = (event) => {
+//     this.setState({
+//       post_text: event.target.value,
+//     });
+//   };
+
+//   render() {
+//     return (
+//       <div>
+//         <form onSubmit={this.submitHandler}>
+//           <label>
+//             Add A Comment to Post {this.props.parent}
+//             <br />
+//             <textarea rows="10" cols="70" onChange={this.myChangeHandler} />
+//           </label>
+//           <br />
+
+//           <input type="submit" value="submit" />
+//           <br />
+//           {this.state.postmessage}
+//         </form>
+//         <PostingList
+//           parentid={this.props.parent}
+//           type="commentlist"
+//         />
+//       </div>
+//     );
+//   }
+// }
