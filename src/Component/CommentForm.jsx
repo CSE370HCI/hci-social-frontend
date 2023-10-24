@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const CommentForm = ({
-  onAddComment,
   parent,
-  commentCount,
   loadPosts,
   loadComments,
 }) => {
@@ -30,7 +28,6 @@ const CommentForm = ({
       .then((res) => res.json())
       .then(
         (result) => {
-          onAddComment(commentCount + 1);
           setPostMessage(result.Status);
           loadPosts();
           loadComments();

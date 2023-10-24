@@ -8,21 +8,10 @@ import likeIcon from "../assets/thumbsup.png";
 const Post = ({ post, type, loadPosts }) => {
   const [showModal, setShowModal] = useState(false);
   const [showTags, setShowTags] = useState(post.reactions.length > 0);
-  const [comments, setComments] = useState(post._count.children);
+  const [comments, setComments] = useState(parseInt(post._count.children));
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [postComments, setPostComments] = useState([]);
-
-  const setCommentCount = (newcount) => {
-    setComments(newcount);
-  };
-
-  const getCommentCount = () => {
-    if (!comments || comments === "0") {
-      return 0;
-    }
-    return parseInt(comments);
-  };
 
   const tagPost = (tag, thisPostID) => {
     //find the appropriate reaction to delete - namely, the one from the current user
@@ -127,6 +116,7 @@ const Post = ({ post, type, loadPosts }) => {
           if (result) {
             setIsLoaded(true);
             setPostComments(result[0]);
+            setComments(result[0].length)
             console.log(result[0]);
           }
         })
@@ -164,7 +154,7 @@ const Post = ({ post, type, loadPosts }) => {
         <p>({post.reactions.length})</p>
         <div className="comment-indicator">
           <div className="comment-indicator-text">
-            {getCommentCount()} Comments
+            {comments} Comments
           </div>
           <img
             src={commentIcon}
@@ -177,9 +167,7 @@ const Post = ({ post, type, loadPosts }) => {
         </div>
         <div className={showHideComments()}>
           <CommentForm
-            onAddComment={setCommentCount}
             parent={post.id}
-            commentCount={getCommentCount}
             loadPosts={loadPosts}
             loadComments={loadComments}
           />
