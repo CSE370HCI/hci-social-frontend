@@ -10,10 +10,6 @@ const CommentForm = ({
   const [postText, setPostText] = useState("");
   const [postMessage, setPostMessage] = useState("");
 
-  useEffect(() => {
-    loadComments();
-  }, []);
-
   const submitHandler = (event) => {
     event.preventDefault();
 

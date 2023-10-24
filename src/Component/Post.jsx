@@ -4,7 +4,6 @@ import CommentForm from "./CommentForm.jsx";
 import helpIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.svg";
 import likeIcon from "../assets/thumbsup.png";
-import Comment from "./Comment.jsx";
 
 const Post = ({ post, type, loadPosts }) => {
   const [showModal, setShowModal] = useState(false);
@@ -128,6 +127,7 @@ const Post = ({ post, type, loadPosts }) => {
           if (result) {
             setIsLoaded(true);
             setPostComments(result[0]);
+            console.log(result[0]);
           }
         })
         .catch((err) => {
@@ -137,10 +137,6 @@ const Post = ({ post, type, loadPosts }) => {
         });
     }
   };
-
-  useEffect(() => {
-    loadComments();
-  }, []);
 
   useEffect(() => {
     loadComments();
@@ -175,7 +171,6 @@ const Post = ({ post, type, loadPosts }) => {
             className="comment-icon"
             onClick={(e) => {
               setShowModal((prev) => !prev);
-              console.log(postComments);
             }}
             alt="View Comments"
           />
@@ -193,10 +188,11 @@ const Post = ({ post, type, loadPosts }) => {
             <div>
               {postComments.length > 0 &&
                 postComments.map((comment) => (
-                  <Comment
+                  <Post
                     key={comment.id}
-                    comment={comment}
-                    loadComments={loadComments}
+                    post={comment}
+                    type="commentlist"
+                    loadPosts={loadComments}
                   />
                 ))}
             </div>
@@ -222,7 +218,7 @@ const Post = ({ post, type, loadPosts }) => {
   };
 
   return (
-    <div key={post.id} className="postlist postbody">
+    <div key={post.id} className={[type, "postbody"].join(" ")}>
       <div className="deletePost">
         {post.author.attributes.username} ({post.created}){showDelete()}
       </div>
