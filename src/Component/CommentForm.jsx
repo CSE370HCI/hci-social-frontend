@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 
+// CommentForm is a functional component that takes parent, loadPosts, and loadComments as props
 const CommentForm = ({
-  parent,
-  loadPosts,
-  loadComments,
+  parent, // ID of the parent post to which the comment belongs
+  loadPosts, // Function to reload posts
+  loadComments, // Function to reload comments
 }) => {
+  // useState to manage the post text
   const [postText, setPostText] = useState("");
+  // useState to manage the status message after posting
   const [postMessage, setPostMessage] = useState("");
 
+  // Function to handle form submission by making a POST request
+  // to the server to add the comment to a post with a given parentID
+  // which is passed in from props
   const submitHandler = (event) => {
+    // Keep the form from actually submitting
     event.preventDefault();
 
     fetch(process.env.REACT_APP_API_PATH + "/posts", {
@@ -31,6 +38,7 @@ const CommentForm = ({
           setPostMessage(result.Status);
           loadPosts();
           loadComments();
+          setPostText("");
         },
         (error) => {
           alert("error!");

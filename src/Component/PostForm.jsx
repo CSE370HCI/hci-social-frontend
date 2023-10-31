@@ -38,13 +38,6 @@ const PostForm = ({ refresh, loadPosts }) => {
       );
   };
 
-  if (!sessionStorage.getItem("token")) {
-    console.log("NO TOKEN");
-    return "Please log in to make and view posts";
-  } else {
-    console.log("Rendering postings ", refresh);
-  }
-
   return (
     <div>
       <form onSubmit={submitHandler}>

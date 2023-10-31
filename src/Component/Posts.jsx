@@ -7,10 +7,13 @@ const Posts = ({ doRefreshPosts, appRefresh }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  //
   const loadPosts = () => {
+    // if the user is not logged in, we don't want to try loading posts, because it will just error out.
     if (sessionStorage.getItem("token")) {
       let url = process.env.REACT_APP_API_PATH + "/posts?parentID=";
 
+      // make an api request to fetch all the posts which are original posts (not comments/don't have a parentId)
       fetch(url, {
         method: "GET",
         headers: {

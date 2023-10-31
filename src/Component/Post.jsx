@@ -5,6 +5,15 @@ import helpIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.svg";
 import likeIcon from "../assets/thumbsup.png";
 
+/* This will render a single post, with all of the options like comments, delete, tags, etc. 
+  
+    This component takes in a post, a type, and a loadPosts props
+    post: the current post to load/display
+    type: - postlist if the post itself is the main post (doesn't have a parentId)
+          - commentlist if the post is a comment on another post/comment (has a parentId)
+    loadPosts: a function passed into the component which is used to load the posts/comments 
+              depending on if it is a comment or an original post
+*/
 const Post = ({ post, type, loadPosts }) => {
   const [showModal, setShowModal] = useState(false);
   const [showTags, setShowTags] = useState(post.reactions.length > 0);
@@ -116,7 +125,7 @@ const Post = ({ post, type, loadPosts }) => {
           if (result) {
             setIsLoaded(true);
             setPostComments(result[0]);
-            setComments(result[0].length)
+            setComments(result[0].length);
             console.log(result[0]);
           }
         })
@@ -153,9 +162,7 @@ const Post = ({ post, type, loadPosts }) => {
         </div>
         <p>({post.reactions.length})</p>
         <div className="comment-indicator">
-          <div className="comment-indicator-text">
-            {comments} Comments
-          </div>
+          <div className="comment-indicator-text">{comments} Comments</div>
           <img
             src={commentIcon}
             className="comment-icon"

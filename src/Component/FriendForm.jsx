@@ -9,6 +9,7 @@ const FriendForm = ({ userid }) => {
 
   useEffect(() => {
     // Fetch data and update users state
+    // make the api call to the user API to get the user with all of their attached preferences
     fetch(process.env.REACT_APP_API_PATH + "/users/", {
       method: "GET",
       headers: {
@@ -36,11 +37,7 @@ const FriendForm = ({ userid }) => {
       );
   }, []); // Empty dependency array ensures this effect runs once after the initial render
 
-  const fieldChangeHandler = (field, e) => {
-    console.log("field change");
-    setFriendname(e.target.value);
-  };
-
+  // Set the friendid state to the user id that is selected from the autocomplete for the connection
   const selectAutocomplete = (friendID) => {
     setFriendid(friendID);
     console.log("Set Friend ID to " + friendID);

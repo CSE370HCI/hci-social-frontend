@@ -38,7 +38,7 @@ const FriendList = (props) => {
   };
 
   const updateConnection = (id, status) => {
-    //make the api call to the user controller
+    //make the api call to the user controller with a PATCH request for updating a connection with another user
     fetch(process.env.REACT_APP_API_PATH + "/connections/" + id, {
       method: "PATCH",
       headers: {
@@ -61,6 +61,9 @@ const FriendList = (props) => {
       );
   };
 
+  // If the user is not blocked, show the block icon
+  // Otherwise, show the unblock icon and update the connection
+  // with the updateConnection function
   const conditionalAction = (status, id) => {
     if (status === "active") {
       return (
