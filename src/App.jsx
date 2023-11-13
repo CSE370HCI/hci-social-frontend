@@ -7,6 +7,7 @@ import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
 import PromiseComponent from "./Component/PromiseComponent";
+import Messaging from "./Component/Messaging";
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -74,6 +75,12 @@ function App() {
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/promise" element={<PromiseComponent />} />
+              {/* Declaring a route with a URL parameter "userID" so that React router dynamically 
+              captures the corresponding values in the URL when there is a match. 
+              It is useful when dynamically rendering the same component for multiple paths.
+              You can see how this is used in the Messaging component 
+              as well as how this path is being set up in the FriendList component */}
+              <Route path="/messages/:userID" element={<Messaging />} />
             </Routes>
           </div>
         </header>

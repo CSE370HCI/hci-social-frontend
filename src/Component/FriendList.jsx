@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import blockIcon from "../assets/block_white_216x216.png";
 import unblockIcon from "../assets/thumbsup.png";
+import messageIcon from "../assets/comment.svg";
+import { Link } from "react-router-dom";
 
 const FriendList = (props) => {
   const [connections, setConnections] = useState([]);
@@ -14,7 +16,7 @@ const FriendList = (props) => {
   const loadFriends = () => {
     fetch(
       process.env.REACT_APP_API_PATH +
-        "/connections?userID=" +
+        "/connections?fromUserID=" +
         sessionStorage.getItem("user"),
       {
         method: "get",
@@ -29,6 +31,7 @@ const FriendList = (props) => {
         (result) => {
           setIsLoaded(true);
           setConnections(result[0]);
+          console.log(result[0]);
         },
         (error) => {
           setIsLoaded(true);
@@ -98,10 +101,28 @@ const FriendList = (props) => {
         <ul>
           {connections.map((connection) => (
             <div key={connection.id} className="userlist">
-              {connection.toUser.attributes.username} -{" "}
-              {connection.attributes.status}
-              <div className="deletePost">
-                {conditionalAction(connection.attributes.status, connection.id)}
+              <div>
+                {connection.toUser.attributes.username} -{" "}
+                {connection.attributes.status}
+              </div>
+              <div className="friends-icons-container deletePost">
+                <div className="deletePost">
+                  {/* Set the id param dynamically to the user's id you want to specifically want to get */}
+                  <Link to={`/messages/${connection.toUserID}`}>
+                    <img
+                      src={messageIcon}
+                      className="sidenav-icon deleteIcon"
+                      alt="Message User"
+                      title="Message User"
+                    />
+                  </Link>
+                </div>
+                <div>
+                  {conditionalAction(
+                    connection.attributes.status,
+                    connection.id
+                  )}
+                </div>
               </div>
             </div>
           ))}

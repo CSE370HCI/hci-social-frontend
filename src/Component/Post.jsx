@@ -126,7 +126,6 @@ const Post = ({ post, type, loadPosts }) => {
             setIsLoaded(true);
             setPostComments(result[0]);
             setComments(result[0].length);
-            console.log(result[0]);
           }
         })
         .catch((err) => {
