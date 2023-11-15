@@ -4,7 +4,6 @@ import unblockIcon from "../assets/thumbsup.png";
 import deleteIcon from "../assets/delete.png";
 
 const GroupList = () => {
-  // const [userid, setUserid] = useState(userid);
   const userid = sessionStorage.getItem("token");
   const [groups, setGroups] = useState([]);
   const [mygroups, setMygroups] = useState([]);
@@ -106,7 +105,6 @@ const GroupList = () => {
 
   // THIS IS AN EXAMPLE CALL ONLY
   // if you want to add a group, you would probably want to let the user define all of this!
-
   const testGroupAdd = () => {
     fetch(process.env.REACT_APP_API_PATH + "/groups", {
       method: "POST",

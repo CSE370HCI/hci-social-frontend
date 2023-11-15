@@ -34,6 +34,7 @@ const LoginForm = ({ setLoggedIn }) => {
           setLoggedIn(true)
           setSessionToken(result.token);
           console.log(sessionToken, " SESSION TOKEN");
+          // Reload the window for when the user logs in to show the posts
           window.location.reload();
         }
       })

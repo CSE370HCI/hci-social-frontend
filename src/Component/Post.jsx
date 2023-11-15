@@ -75,10 +75,13 @@ const Post = ({ post, type, loadPosts }) => {
     }
   };
 
+  // function used to update the classname of the comments on a post
+  // if the showModal state is true, show the comments, otherwise hide the comments
   const showHideComments = () => {
     return showModal ? "comments show" : "comments hide";
   };
 
+  // function used to update the classname of the tags on a post
   const showHideTags = () => {
     if (showTags) {
       if (post.reactions.length > 0) {
@@ -93,6 +96,10 @@ const Post = ({ post, type, loadPosts }) => {
     return "tags hide";
   };
 
+
+  // Function used to delete a post given a postID in the parameter
+  // if the post successfully is deleted, call lostPosts to reload the posts
+  // to show all the posts without the deleted post
   const deletePost = (postID) => {
     fetch(process.env.REACT_APP_API_PATH + "/posts/" + postID, {
       method: "DELETE",
@@ -109,6 +116,7 @@ const Post = ({ post, type, loadPosts }) => {
       });
   };
 
+  // function used to load the comments of a post given the post id from the props
   const loadComments = () => {
     if (sessionStorage.getItem("token")) {
       let url = process.env.REACT_APP_API_PATH + "/posts?parentID=" + post.id;
@@ -137,13 +145,17 @@ const Post = ({ post, type, loadPosts }) => {
     }
   };
 
+  // load the comments of the specific post clicked on
+  // loadComments will run when showModal get turned to true when the user clicks on the comment icon
   useEffect(() => {
     loadComments();
   }, [showModal]);
 
+  // Function to handle the display of comments and related functionality
   const commentDisplay = () => {
     return (
       <div className="comment-block">
+        {/* Tag button */}
         <div className="tag-block">
           <button
             value="tag post"
@@ -160,18 +172,22 @@ const Post = ({ post, type, loadPosts }) => {
             alt="Like Post"
           />
         </div>
+        {/* Display the number of reactions for a given post */}
         <p>({post.reactions.length})</p>
+         {/* Comment indicator and icon */}
         <div className="comment-indicator">
           <div className="comment-indicator-text">{comments} Comments</div>
           <img
             src={commentIcon}
             className="comment-icon"
             onClick={(e) => {
+              // Toggle the showModal state to show/hide comments
               setShowModal((prev) => !prev);
             }}
             alt="View Comments"
           />
         </div>
+        {/* Display the comments and CommentForm component */}
         <div className={showHideComments()}>
           <CommentForm
             parent={post.id}
@@ -179,15 +195,17 @@ const Post = ({ post, type, loadPosts }) => {
             loadComments={loadComments}
           />
 
+          {/* Display existing comments using the same Post component recursively */}
           <div className="posts">
             <div>
+              {/* Check if there are comments before mapping through them */}
               {postComments.length > 0 &&
                 postComments.map((comment) => (
                   <Post
                     key={comment.id}
-                    post={comment}
-                    type="commentlist"
-                    loadPosts={loadComments}
+                    post={comment} // pass in the comment as the post to recursively get all the comments (comments of a comment)
+                    type="commentlist" // Indicate that this is a comment of a post
+                    loadPosts={loadComments} // Function to reload comments for this post
                   />
                 ))}
             </div>
@@ -197,6 +215,7 @@ const Post = ({ post, type, loadPosts }) => {
     );
   };
 
+  // Function to display the delete icon if the user is the author of post
   const showDelete = () => {
     if (post.authorId === sessionStorage.getItem("user")) {
       return (
@@ -212,6 +231,8 @@ const Post = ({ post, type, loadPosts }) => {
     return null;
   };
 
+  // Render the main post body with author information, delete icon (if applicable),
+  // post content, and the comment display section including tags, reactions, and comments.
   return (
     <div key={post.id} className={[type, "postbody"].join(" ")}>
       <div className="deletePost">

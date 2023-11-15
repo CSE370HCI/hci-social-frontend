@@ -18,6 +18,8 @@ const CommentForm = ({
     // Keep the form from actually submitting
     event.preventDefault();
 
+    // submit the comment as a post, with the parentID being the parent that is passed
+    // in through props in Post.jsx
     fetch(process.env.REACT_APP_API_PATH + "/posts", {
       method: "post",
       headers: {

@@ -7,7 +7,7 @@ const Posts = ({ doRefreshPosts, appRefresh }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  //
+  // load all the posts in the database to display on the screen in the home page
   const loadPosts = () => {
     // if the user is not logged in, we don't want to try loading posts, because it will just error out.
     if (sessionStorage.getItem("token")) {
