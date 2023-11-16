@@ -26,7 +26,7 @@ const Post = ({ post, type, loadPosts }) => {
     //find the appropriate reaction to delete - namely, the one from the current user
     let userReaction = -1;
     post.reactions.forEach((reaction) => {
-      if (reaction.reactorID === sessionStorage.getItem("user")) {
+      if (reaction.reactorID === parseInt(sessionStorage.getItem("user"))) {
         userReaction = reaction.id;
       }
     });
@@ -134,7 +134,6 @@ const Post = ({ post, type, loadPosts }) => {
             setIsLoaded(true);
             setPostComments(result[0]);
             setComments(result[0].length);
-            console.log(result[0]);
           }
         })
         .catch((err) => {
@@ -217,7 +216,7 @@ const Post = ({ post, type, loadPosts }) => {
 
   // Function to display the delete icon if the user is the author of post
   const showDelete = () => {
-    if (post.authorId === sessionStorage.getItem("user")) {
+    if (post.authorID === parseInt(sessionStorage.getItem("user"))) {
       return (
         <img
           src={helpIcon}
