@@ -16,7 +16,9 @@ const HomePage = ({ isLoggedIn, setLoggedIn, doRefreshPosts, appRefresh }) => {
   return (
     <div>
       {!userToken ? (
-        <LoginForm setLoggedIn={setLoggedIn} />
+        <>
+          <LoginForm setLoggedIn={setLoggedIn} />
+        </>
       ) : (
         <Posts doRefreshPosts={doRefreshPosts} appRefresh={appRefresh} />
       )}

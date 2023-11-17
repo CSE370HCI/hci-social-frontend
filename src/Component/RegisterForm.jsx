@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import "../App.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const LoginForm = ({ setLoggedIn }) => {
+const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [sessionToken, setSessionToken] = useState("");
-  const navigate = useNavigate();
+  // You can assign the user extra attributes for when they register an account.
+  // As you can see on swagger, attributes is optional where its an object and you
+  // can store extra attributes like profile picture, favorite color, etc.
+  // to fill out when the user creates an account.
+  const [attributes, setAttributes] = useState({});
 
   const submitHandler = (event) => {
     // event.preventDefault() prevents the browser from performing its default action
@@ -14,7 +16,7 @@ const LoginForm = ({ setLoggedIn }) => {
     // keeps the form from actually submitting as well
     event.preventDefault();
 
-    fetch(process.env.REACT_APP_API_PATH + "/auth/login", {
+    fetch(process.env.REACT_APP_API_PATH + "/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -22,39 +24,22 @@ const LoginForm = ({ setLoggedIn }) => {
       body: JSON.stringify({
         email,
         password,
+        attributes,
       }),
     })
       .then((res) => res.json())
       .then((result) => {
-        if (result.userID) {
-          // Successfully logged in
-          console.log(result);
-          // set the auth token and user ID in the session state
-          sessionStorage.setItem("token", result.token);
-          sessionStorage.setItem("user", result.userID);
-          // call setLoggedIn hook from App.jsx to save the login state throughout the app
-          setLoggedIn(true);
-          setSessionToken(result.token);
-          console.log(sessionToken, " SESSION TOKEN");
-          // Reload the window for when the user logs in to show the posts
-          window.location.reload();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+        // Successfully registered an account
+        console.log(result);
+        // set the auth token and user ID in the session state
+        sessionStorage.setItem("token", result.token);
+        sessionStorage.setItem("user", result.userID);
       });
   };
 
-  useEffect(() => {
-    // If the user is logged in, make sure they cannot see the login form
-    if (sessionStorage.getItem("token")) {
-      navigate("/");
-    }
-  }, []);
-
   return (
     <>
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form onSubmit={submitHandler}>
         <label>
           Email
@@ -77,11 +62,11 @@ const LoginForm = ({ setLoggedIn }) => {
       </form>
       <div>
         <p>
-          Register <Link to="/register">here</Link>
+          Login <Link to="/">here</Link>
         </p>
       </div>
     </>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
