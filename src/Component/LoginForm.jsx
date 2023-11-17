@@ -36,7 +36,8 @@ const LoginForm = ({ setLoggedIn }) => {
           setLoggedIn(true);
           setSessionToken(result.token);
           console.log(sessionToken, " SESSION TOKEN");
-          // Reload the window for when the user logs in to show the posts
+          // go to the homepage
+          navigate("/");
           window.location.reload();
         }
       })
@@ -44,13 +45,6 @@ const LoginForm = ({ setLoggedIn }) => {
         console.log(err);
       });
   };
-
-  useEffect(() => {
-    // If the user is logged in, make sure they cannot see the login form
-    if (sessionStorage.getItem("token")) {
-      navigate("/");
-    }
-  }, []);
 
   return (
     <>
@@ -78,6 +72,11 @@ const LoginForm = ({ setLoggedIn }) => {
       <div>
         <p>
           Register <Link to="/register">here</Link>
+        </p>
+      </div>
+      <div>
+        <p>
+          Reset your password <Link to="/reset-password">here</Link>
         </p>
       </div>
     </>

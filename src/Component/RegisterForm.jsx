@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const RegisterForm = () => {
+const RegisterForm = ({ setLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // You can assign the user extra attributes for when they register an account.
   // As you can see on swagger, attributes is optional where its an object and you
   // can store extra attributes like profile picture, favorite color, etc.
   // to fill out when the user creates an account.
-  const [attributes, setAttributes] = useState({});
+  const [attributes, setAttributes] = useState({
+    additionalProp1: {},
+  });
+  const navigate = useNavigate();
 
   const submitHandler = (event) => {
     // event.preventDefault() prevents the browser from performing its default action
@@ -24,7 +27,6 @@ const RegisterForm = () => {
       body: JSON.stringify({
         email,
         password,
-        attributes,
       }),
     })
       .then((res) => res.json())
@@ -34,8 +36,20 @@ const RegisterForm = () => {
         // set the auth token and user ID in the session state
         sessionStorage.setItem("token", result.token);
         sessionStorage.setItem("user", result.userID);
+        // call setLoggedIn hook from App.jsx to save the login state throughout the app
+        setLoggedIn(true);
+        // Reload the window for when the user logs in to show the posts
+        navigate("/");
+        window.location.reload();
       });
   };
+
+  useEffect(() => {
+    // If the user is logged in, make sure they cannot see the login form
+    if (sessionStorage.getItem("token")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
@@ -63,6 +77,11 @@ const RegisterForm = () => {
       <div>
         <p>
           Login <Link to="/">here</Link>
+        </p>
+      </div>
+      <div>
+        <p>
+          Reset your password <Link to="/reset-password">here</Link>
         </p>
       </div>
     </>
