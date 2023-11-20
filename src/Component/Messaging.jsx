@@ -80,17 +80,13 @@ const Messaging = () => {
         <div className="message__container">
           <div className="message__chats">
             <p className="sender__name">{userData.email}</p>
-            <div className="message__sender">
-              <p>Hello there</p>
-            </div>
+            <p className="message__sender">Hello there</p>
           </div>
 
           {/*This shows messages received by you*/}
           <div className="message__chats">
             <p className="recipient__name">{otherUserData.email}</p>
-            <div className="message__recipient">
-              <p>Hey, I'm good, you?</p>
-            </div>
+            <p className="message__recipient">Hey, I'm good, you?</p>
           </div>
         </div>
 

@@ -345,40 +345,42 @@
   cursor: pointer;
 }
 
+.message__recipient-container {
+}
+
 .message__recipient {
   background-color: #282c34;
-  width: 300px;
+  max-width: 400px;
   padding: 8px;
   border-radius: 10px;
   font-size: 15px;
-}
-
-.message__recipient > p {
-  text-align: left;
+  text-align: start;
+  color: #fff;
+  width: fit-content;
 }
 
 .message__sender {
   background-color: blue;
-  max-width: 300px;
+  max-width: 400px;
   padding: 8px;
   border-radius: 10px;
   margin-left: auto;
   font-size: 15px;
+  width: fit-content;
 }
 
 .message__sender {
   text-align: right;
 }
 
-.message__chats > p {
-  font-size: 13px;
-  color: #000;
-}
-
 .recipient__name {
   text-align: left;
+  color: #000;
+  font-size: 13px;
 }
 
 .sender__name {
+  font-size: 13px;
+  color: #000;
   text-align: right;
 }
