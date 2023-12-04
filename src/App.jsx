@@ -7,6 +7,9 @@ import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
 import PromiseComponent from "./Component/PromiseComponent";
+import LoginForm from "./Component/LoginForm";
+import RegisterForm from "./Component/RegisterForm";
+import ResetPassword from "./Component/ResetPassword";
 import Messaging from "./Component/Messaging";
 import { io } from "socket.io-client"
 
@@ -87,6 +90,11 @@ function App() {
                   />
                 }
               />
+              <Route
+                path="/register"
+                element={<RegisterForm setLoggedIn={setLoggedIn} />}
+              />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/promise" element={<PromiseComponent />} />
@@ -108,3 +116,4 @@ function App() {
   );
 }
 export default App;
+

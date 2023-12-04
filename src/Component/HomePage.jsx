@@ -11,16 +11,16 @@ const HomePage = ({ isLoggedIn, setLoggedIn, doRefreshPosts, appRefresh }) => {
   useEffect(() => {
     setUserToken(sessionStorage.getItem("token"));
   }, []);
-  
+
   // if the user is not logged in, show the login form.  Otherwise, show the post form
   return (
     <div>
       {!userToken ? (
-        <LoginForm setLoggedIn={setLoggedIn} />
-      ) : (
         <>
-          <Posts doRefreshPosts={doRefreshPosts} appRefresh={appRefresh} />
+          <LoginForm setLoggedIn={setLoggedIn} />
         </>
+      ) : (
+        <Posts doRefreshPosts={doRefreshPosts} appRefresh={appRefresh} />
       )}
     </div>
   );
