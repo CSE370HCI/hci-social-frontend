@@ -14,7 +14,7 @@ import Messaging from "./Component/Messaging";
 import { io } from "socket.io-client"
 
 const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
-  path: '/ws/hci-rtc-socket/socket.io',
+  path: '/api/hci-socket/socket.io',
   query: {
     tenantID: "default"
   }
