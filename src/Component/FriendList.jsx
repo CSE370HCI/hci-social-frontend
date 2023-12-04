@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import blockIcon from "../assets/block_white_216x216.png";
 import unblockIcon from "../assets/thumbsup.png";
 import messageIcon from "../assets/comment.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { socket } from "../App";
 
 const FriendList = (props) => {
   const [connections, setConnections] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadFriends();
@@ -91,6 +93,47 @@ const FriendList = (props) => {
     }
   };
 
+  useEffect(() => {
+    const handleCreateRoom = (data) => {
+      if (data && data.roomID) {
+        console.log("Room created:", data.roomID);
+        navigate(`/messages/${data.roomID}`);
+        sessionStorage.setItem("toUserID", props.userId);
+      }
+    };
+
+    //Listen for a response after room creation
+    socket.on("/room-created", handleCreateRoom);
+
+    // cleanup
+    return () => {
+      socket.off("/room-created", handleCreateRoom);
+    };
+  }, [navigate, socket]);
+
+  const handleMessageClick = (connectionUser) => {
+    console.log(connectionUser);
+    // Emit an event to create a room with the provided user IDs
+    socket.emit("/chat/create-room", {
+      fromUserID: sessionStorage.getItem("user"),
+      toUserID: connectionUser.id,
+    });
+
+    // Do stuff to join the room once it's actually created
+    socket.once("/room-created", (data) => {
+      if (data && data.roomID) {
+        sessionStorage.setItem("toUserID", connectionUser.id);
+        sessionStorage.setItem("roomID", data.roomID);
+        navigate(`/messages/${connectionUser.id}`);
+
+        // Emit event to actually join the room
+        socket.emit("/chat/join-room", {
+          roomID: data.roomID,
+        });
+      }
+    });
+  };
+
   if (error) {
     return <div> Error: {error.message} </div>;
   } else if (!isLoaded) {
@@ -108,14 +151,13 @@ const FriendList = (props) => {
               <div className="friends-icons-container deletePost">
                 <div className="deletePost">
                   {/* Set the id param dynamically to the user's id you want to specifically want to get */}
-                  <Link to={`/messages/${connection.toUserID}`}>
-                    <img
-                      src={messageIcon}
-                      className="sidenav-icon deleteIcon"
-                      alt="Message User"
-                      title="Message User"
-                    />
-                  </Link>
+                  <img
+                    src={messageIcon}
+                    className="sidenav-icon deleteIcon"
+                    alt="Message User"
+                    title="Message User"
+                    onClick={() => handleMessageClick(connection.toUser)}
+                  />
                 </div>
                 <div>
                   {conditionalAction(

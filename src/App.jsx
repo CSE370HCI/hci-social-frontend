@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Settings from "./Component/Settings";
 import HomePage from "./Component/HomePage";
@@ -8,6 +8,15 @@ import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
 import PromiseComponent from "./Component/PromiseComponent";
 import Messaging from "./Component/Messaging";
+import { io } from "socket.io-client"
+
+const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
+  path: '/ws/hci-rtc-socket/socket.io',
+  query: {
+    tenantID: "default"
+  }
+})
+export { socket }
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -44,6 +53,12 @@ function App() {
     setOpenModal((prev) => !prev);
     console.log(openModal);
   };
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to HCI socket server")
+    })
+  }, [])
 
   return (
     // the app is wrapped in a router component, that will render the

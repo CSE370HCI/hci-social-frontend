@@ -126,6 +126,7 @@
   margin:10px;
   width:60%;
   display: inline-flex;
+  justify-content: space-between;
 }
 
 .comments{
@@ -346,7 +347,7 @@
 }
 
 .message__recipient {
-  background-color: #282c34;
+  background-color: #000;
   width: 300px;
   padding: 8px;
   border-radius: 10px;
