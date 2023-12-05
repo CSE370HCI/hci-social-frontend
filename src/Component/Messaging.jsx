@@ -9,16 +9,16 @@ const Messaging = () => {
   const [otherUserData, setOtherUserData] = useState({});
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [userID, setUserID] = useState(sessionStorage.getItem("toUserID"));
   const navigate = useNavigate();
   const userToken = sessionStorage.getItem("token");
-  const roomID = sessionStorage.getItem("roomID");
   // The useParams hook from react-router-dom returns an object.
   // The object keys are the parameter names declared in the path string
   // in the Route definition, and the values are the corresponding
   // URL segment from the matching URL.
   // We can destructor the object to give us the userID in a variable
   // that we can use throughout the component
-  const { userID } = useParams();
+  const { roomID } = useParams();
 
   // When the page loads, fetch the user's data that is logged in
   // as well as the user's data that you're messaging with to display
@@ -38,7 +38,6 @@ const Messaging = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setUserData(data);
       })
       .catch((err) => {
@@ -55,7 +54,6 @@ const Messaging = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setOtherUserData(data);
       })
       .catch((err) => {
@@ -73,6 +71,31 @@ const Messaging = () => {
     socket.on("/send-message", handleMessageReceived);
 
     // Fetch the chat history when the component mounts
+    const fetchChatHistory = async () => {
+      if (!roomID) return;
+
+      fetch(
+        process.env.REACT_APP_API_PATH + `/chat-history/history/${roomID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setMessages(
+            result.map((msg) => ({
+              id: msg.id,
+              fromUserID: msg.fromUserId,
+              message: msg.content,
+            }))
+          );
+        });
+    };
+
     fetchChatHistory();
 
     return () => {
@@ -82,30 +105,40 @@ const Messaging = () => {
   }, [roomID]);
 
   // Function to fetch chat history from the server with the given roomID which is saved locally from FriendList.jsx
-  const fetchChatHistory = async () => {
-    if (!roomID) return;
-
-    fetch(process.env.REACT_APP_API_PATH + `/chat-history/history/${roomID}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setMessages(result);
-        console.log(result)
-      });
-  };
 
   // if the user isn't logged in, send them to homepage to log in
   useEffect(() => {
-    console.log(userToken);
     if (!userToken) {
       navigate("/");
     }
   }, [userToken]);
+
+  const handleMessageSend = (e) => {
+    e.preventDefault();
+
+    const payload = {
+      fromUserID: parseInt(userData.id),
+      toUserID: otherUserData.id,
+      message: message,
+    };
+
+    console.log(payload);
+    socket.emit("/chat/send", payload);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        ...payload,
+        id: Date.now(),
+      },
+    ]);
+    console.log(messages);
+
+    setMessage("");
+  };
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   return (
     <div className="chat">
@@ -116,20 +149,26 @@ const Messaging = () => {
 
         {/*This shows messages sent from you*/}
         <div className="message__container">
-          <div className="message__chats">
-            <p className="sender__name">{userData.email}</p>
-            <p className="message__sender">Hello there</p>
-          </div>
-
-          {/*This shows messages received by you*/}
-          <div className="message__chats">
-            <p className="recipient__name">{otherUserData.email}</p>
-            <p className="message__recipient">Hey, I'm good, you?</p>
-          </div>
+          {messages.length > 0 &&
+            messages.map((msg) => (
+              <div className="message__chats" key={msg.id}>
+                {msg.fromUserID === userData.id ? (
+                  <>
+                    <p className="sender__name">{userData.email}</p>
+                    <p className="message__sender">{msg.message}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="recipient__name">{otherUserData.email}</p>
+                    <p className="message__recipient">{msg.message}</p>
+                  </>
+                )}
+              </div>
+            ))}
         </div>
 
         <div className="chat__footer">
-          <form className="form">
+          <form className="form" onSubmit={handleMessageSend}>
             <input
               type="text"
               placeholder="Write message"
@@ -137,7 +176,9 @@ const Messaging = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <button className="sendBtn">SEND</button>
+            <button className="sendBtn" type="submit">
+              SEND
+            </button>
           </form>
         </div>
       </div>

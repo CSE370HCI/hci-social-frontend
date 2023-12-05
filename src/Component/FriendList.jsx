@@ -124,7 +124,7 @@ const FriendList = (props) => {
       if (data && data.roomID) {
         sessionStorage.setItem("toUserID", connectionUser.id);
         sessionStorage.setItem("roomID", data.roomID);
-        navigate(`/messages/${connectionUser.id}`);
+        navigate(`/messages/${data.roomID}`);
 
         // Emit event to actually join the room
         socket.emit("/chat/join-room", {

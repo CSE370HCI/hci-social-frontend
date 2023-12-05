@@ -103,7 +103,7 @@ function App() {
               It is useful when dynamically rendering the same component for multiple paths.
               You can see how this is used in the Messaging component 
               as well as how this path is being set up in the FriendList component */}
-              <Route path="/messages/:userID" element={<Messaging />} />
+              <Route path="/messages/:roomID" element={<Messaging />} />
             </Routes>
           </div>
         </header>
