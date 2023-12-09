@@ -9,14 +9,13 @@ const Messaging = () => {
   const [otherUserData, setOtherUserData] = useState({});
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [userID, setUserID] = useState(sessionStorage.getItem("toUserID"));
   const navigate = useNavigate();
   const userToken = sessionStorage.getItem("token");
   // The useParams hook from react-router-dom returns an object.
   // The object keys are the parameter names declared in the path string
   // in the Route definition, and the values are the corresponding
   // URL segment from the matching URL.
-  // We can destructor the object to give us the userID in a variable
+  // We can destructor the object to give us the roomID in a variable
   // that we can use throughout the component
   const { roomID } = useParams();
 
@@ -45,7 +44,8 @@ const Messaging = () => {
       });
 
     // fetch the other user
-    fetch(process.env.REACT_APP_API_PATH + `/users/${userID}`, {
+    // toUserID holds the id of the other user you want to message with
+    fetch(process.env.REACT_APP_API_PATH + `/users/${sessionStorage.getItem("toUserID")}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -64,14 +64,22 @@ const Messaging = () => {
   useEffect(() => {
     // Function to handle the event when a message is received
     const handleMessageReceived = (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
+      console.log('message received', msg)
+      // handles incoming messages, sets the messages state to what the previous state was by using the spread operator (...prevMessages)
+      // and then adding a new element where its the entire message object itself (...msg) and then giving it an id
+      setMessages((prevMessages) => [...prevMessages, {
+        ...msg,
+        id: msg.id || Date.now()
+      }]);
     };
 
     // WebSocket listener for receiving messages
+    // socket.on is used to listen for incoming events from the server. 
+    // it's used to set up a listener for messages that are sent by other users in the chat room.
     socket.on("/send-message", handleMessageReceived);
 
     // Fetch the chat history when the component mounts
-    const fetchChatHistory = async () => {
+    const fetchChatHistory = () => {
       if (!roomID) return;
 
       fetch(
@@ -100,6 +108,7 @@ const Messaging = () => {
 
     return () => {
       // Clean up the listener when the component unmounts
+      // When the user leaves the page/component, socket.off will be called
       socket.off("/send-message", handleMessageReceived);
     };
   }, [roomID]);
@@ -123,6 +132,8 @@ const Messaging = () => {
     };
 
     console.log(payload);
+    // socket.emit is used to send events from the client to the server.
+    // it's used to send a message to the server when a user wants to send a chat message.
     socket.emit("/chat/send", payload);
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -154,11 +165,13 @@ const Messaging = () => {
               <div className="message__chats" key={msg.id}>
                 {msg.fromUserID === userData.id ? (
                   <>
+                    {/* Display messages from yourself */}
                     <p className="sender__name">{userData.email}</p>
                     <p className="message__sender">{msg.message}</p>
                   </>
                 ) : (
-                  <>
+                  <> 
+                    {/* Display messages from the other user */}
                     <p className="recipient__name">{otherUserData.email}</p>
                     <p className="message__recipient">{msg.message}</p>
                   </>

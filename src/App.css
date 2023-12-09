@@ -310,14 +310,14 @@
 .message__container {
   width: 100%;
   height: 60vh;
-  background-color: #fff;
+  background-color: purple;
   padding: 20px;
   overflow-y: scroll;
 }
 
 .chat__footer {
   padding: 20px;
-  background-color: gray;
+  background-color: black;
   width: 100%;
 }
 
@@ -342,18 +342,14 @@
   padding: 10px;
   border: none;
   outline: none;
-  color: #eae3d2;
+  color: yellow;
   cursor: pointer;
-}
-
-.message__recipient-container {
 }
 
 .message__recipient {
   background-color: #000;
   width: 300px;
   padding: 8px;
-  border-radius: 10px;
   font-size: 15px;
   text-align: start;
   color: #fff;
@@ -364,7 +360,6 @@
   background-color: blue;
   max-width: 400px;
   padding: 8px;
-  border-radius: 10px;
   margin-left: auto;
   font-size: 15px;
   width: fit-content;

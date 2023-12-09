@@ -94,6 +94,7 @@ const FriendList = (props) => {
   };
 
   useEffect(() => {
+    // function for creating a room
     const handleCreateRoom = (data) => {
       if (data && data.roomID) {
         console.log("Room created:", data.roomID);
@@ -103,10 +104,16 @@ const FriendList = (props) => {
     };
 
     //Listen for a response after room creation
+    // socket.on is used to listen for incoming events from the server.
+    // it's used to set up a listener for room creation
+    // if it is the first time, it will create a room between the two users, otherwise it will join a room
+    // that has already been established
     socket.on("/room-created", handleCreateRoom);
 
     // cleanup
     return () => {
+      // when the user leaves the component/page, this socket.off will be called which will turn off the listener
+      // for room creation
       socket.off("/room-created", handleCreateRoom);
     };
   }, [navigate, socket]);
@@ -114,6 +121,8 @@ const FriendList = (props) => {
   const handleMessageClick = (connectionUser) => {
     console.log(connectionUser);
     // Emit an event to create a room with the provided user IDs
+    // socket.emit is used to send events from the client to the server.
+    // it's used to create a room if it doesn't exist or join a room if one is already established
     socket.emit("/chat/create-room", {
       fromUserID: sessionStorage.getItem("user"),
       toUserID: connectionUser.id,
