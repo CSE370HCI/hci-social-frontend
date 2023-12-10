@@ -123,7 +123,7 @@ const FriendList = (props) => {
     // Emit an event to create a room with the provided user IDs
     // socket.emit is used to send events from the client to the server.
     // it's used to create a room if it doesn't exist or join a room if one is already established
-    socket.emit("/chat/create-room", {
+    socket.emit("/chat/join-room", {
       fromUserID: sessionStorage.getItem("user"),
       toUserID: connectionUser.id,
     });
@@ -134,11 +134,6 @@ const FriendList = (props) => {
         sessionStorage.setItem("toUserID", connectionUser.id);
         sessionStorage.setItem("roomID", data.roomID);
         navigate(`/messages/${data.roomID}`);
-
-        // Emit event to actually join the room
-        socket.emit("/chat/join-room", {
-          roomID: data.roomID,
-        });
       }
     });
   };
