@@ -130,6 +130,11 @@ class App extends React.Component {
   }
 }
 
+// The following components use the newer "hooks" structure.  There is much debate about which is better, 
+// the older "object" style components, or the newer hooks style components.  I like the object style better,
+// since I think it encapsulates the information more cleanly, but seem to be in the minority... 
+// as you  can see, they do work together.
+
 const Settings = (props) => {
    // if the user is not logged in, show the login form.  Otherwise, show the post form
    if (!sessionStorage.getItem("token")){
