@@ -1,239 +1,246 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../App.css";
 import CommentForm from "./CommentForm.jsx";
 import helpIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.svg";
 import likeIcon from "../assets/thumbsup.png";
 
-/* This will render a single post, with all of the options like comments, delete, tags, etc.  In the harness, it's only called from PostingList, but you could
-  also have it appear in a popup where they edit a post, etc. */
-export default class Post extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showModal: false,
-      comments: this.props.post._count.children,
-      showTags: this.props.post.reactions.length > 0
-    };
-    this.post = React.createRef();
-  }
+/* This will render a single post, with all of the options like comments, delete, tags, etc. 
+  
+    This component takes in a post, a type, and a loadPosts props
+    post: the current post to load/display
+    type: - postlist if the post itself is the main post (doesn't have a parentId)
+          - commentlist if the post is a comment on another post/comment (has a parentId)
+    loadPosts: a function passed into the component which is used to load the posts/comments 
+              depending on if it is a comment or an original post
+*/
+const Post = ({ post, type, loadPosts }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [showTags, setShowTags] = useState(post.reactions.length > 0);
+  const [comments, setComments] = useState(parseInt(post._count.children));
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [postComments, setPostComments] = useState([]);
 
-  showModal = e => {
-    this.setState({
-      showModal: !this.state.showModal
+  const tagPost = (tag, thisPostID) => {
+    //find the appropriate reaction to delete - namely, the one from the current user
+    let userReaction = -1;
+    post.reactions.forEach((reaction) => {
+      if (reaction.reactorID === parseInt(sessionStorage.getItem("user"))) {
+        userReaction = reaction.id;
+      }
     });
-  };
 
-  showTags = e => {
-    this.setState({
-      showTags: !this.state.showTags
-    });
-  };
-
-  setCommentCount = newcount => {
-    this.setState({
-      comments: newcount
-    });
-  };
-
-  getCommentCount() {
-    if (!this.state.comments || this.state.comments === "0") {
-      return 0;
-    }
-    return parseInt(this.state.comments);
-  }
-
-  // this is the simplest version of reactions; it's only mananging one reaction, liking a post.  If you unlike the post, 
-  // it deletes the reaction.  If you like it, it posts the reaction.  This will almost certainly be made more complex
-  // by you, where you will account for multiple different reactions.  Note that in both cases, we reload the post afterwards to
-  // show the updated reactions.
-
-  tagPost(tag, thisPostID){
-     
-      //find the appropriate reaction to delete - namely, the one from the current user
-      let userReaction = -1;
-      this.props.post.reactions.forEach(reaction => {
-        if (reaction.reactorID == sessionStorage.getItem("user")){
-          userReaction = reaction.id;
-        }
-      });
-       
-      // if there is one, delete it.
-      if (userReaction >= 0){
-
+    // if there is one, delete it.
+    if (userReaction >= 0) {
       //make the api call to post
-      fetch(process.env.REACT_APP_API_PATH+"/post-reactions/"+userReaction, {
-        method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+sessionStorage.getItem("token")
-        },
-      })
-        .then(
-          result => {
-            this.props.loadPosts();
+      fetch(
+        process.env.REACT_APP_API_PATH + "/post-reactions/" + userReaction,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
           },
-          error => {
-            alert("error!"+error);
-          }
-        );
-      }else{
-     //make the api call to post
-     fetch(process.env.REACT_APP_API_PATH+"/post-reactions", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+sessionStorage.getItem("token")
-      },
-      body: JSON.stringify({
-        reactorID: sessionStorage.getItem("user"),
-        postID: thisPostID,
-        name: "like"
-      })
-      })
-      .then(
-        result => {
-          this.props.loadPosts();
+        }
+      ).then(
+        (result) => {
+          loadPosts();
         },
-        error => {
-          alert("error!"+error);
+        (error) => {
+          alert("error!" + error);
         }
       );
-     }
-    
-  }
-
-  // this will toggle the CSS classnames that will either show or hide the comment block
-  showHideComments() {
-    if (this.state.showModal) {
-      return "comments show";
+    } else {
+      //make the api call to post
+      fetch(process.env.REACT_APP_API_PATH + "/post-reactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          reactorID: sessionStorage.getItem("user"),
+          postID: thisPostID,
+          name: "like",
+        }),
+      }).then(
+        (result) => {
+          loadPosts();
+        },
+        (error) => {
+          alert("error!" + error);
+        }
+      );
     }
-    return "comments hide";
-  }
+  };
 
-  // this will toggle the CSS classnames that will either show or hide the comment block
-  showHideTags() {
-    if (this.state.showTags) {
-      
-      if (this.props.post.reactions.length > 0){
-        for (let i = 0; i < this.props.post.reactions.length; i++){
-          if (this.props.post.reactions[i].reactorID == sessionStorage.getItem("user")){ 
-            console.log("Had a reaaction");
-            return "tags show tag-active"
+  // function used to update the classname of the comments on a post
+  // if the showModal state is true, show the comments, otherwise hide the comments
+  const showHideComments = () => {
+    return showModal ? "comments show" : "comments hide";
+  };
+
+  // function used to update the classname of the tags on a post
+  const showHideTags = () => {
+    if (showTags) {
+      if (post.reactions.length > 0) {
+        for (let i = 0; i < post.reactions.length; i++) {
+          if (post.reactions[i].reactorID === sessionStorage.getItem("user")) {
+            return "tags show tag-active";
           }
         }
       }
       return "tags show";
     }
     return "tags hide";
-  }
+  };
 
 
-  deletePost(postID) {
-    //make the api call to post
-    fetch(process.env.REACT_APP_API_PATH+"/posts/"+postID, {
+  // Function used to delete a post given a postID in the parameter
+  // if the post successfully is deleted, call lostPosts to reload the posts
+  // to show all the posts without the deleted post
+  const deletePost = (postID) => {
+    fetch(process.env.REACT_APP_API_PATH + "/posts/" + postID, {
       method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+sessionStorage.getItem("token")
-      }
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + sessionStorage.getItem("token"),
+      },
+    })
+      .then((result) => {
+        loadPosts();
       })
-      .then(
-        result => {
-          this.props.loadPosts();
+      .catch((error) => {
+        alert("error!" + error);
+      });
+  };
+
+  // function used to load the comments of a post given the post id from the props
+  const loadComments = () => {
+    if (sessionStorage.getItem("token")) {
+      let url = process.env.REACT_APP_API_PATH + "/posts?parentID=" + post.id;
+
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
         },
-        error => {
-          alert("error!"+error);
-        }
-      );
-  }
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result) {
+            setIsLoaded(true);
+            setPostComments(result[0]);
+            setComments(result[0].length);
+          }
+        })
+        .catch((err) => {
+          setIsLoaded(true);
+          setError(err);
+          console.log("ERROR loading posts");
+        });
+    }
+  };
 
-  // this is showing both tags and comments... but used to show only comments.  That's a 
-  // frequent cause of names being out of sync with the way things work; do you really want to 
-  // risk breaking stuff by changing the name and not knowing everywhere it is called?  
-  commentDisplay() {
-    console.log("Comment count is " + this.props.post.commentCount);
+  // load the comments of the specific post clicked on
+  // loadComments will run when showModal get turned to true when the user clicks on the comment icon
+  useEffect(() => {
+    loadComments();
+  }, [showModal]);
 
-    //if (this.props.post.commentCount <= 0) {
-    //  return "";
-    //  }
-
-    //else {
-      return (
-        <div className="comment-block">
-          <div className="tag-block">
-            <button value="tag post" onClick={e => this.showTags()}>
+  // Function to handle the display of comments and related functionality
+  const commentDisplay = () => {
+    return (
+      <div className="comment-block">
+        {/* Tag button */}
+        <div className="tag-block">
+          <button
+            value="tag post"
+            onClick={(e) => setShowTags((prev) => !prev)}
+          >
             tag post
-            </button>
-          </div>
-          <div name="tagDiv" className={this.showHideTags()}>
+          </button>
+        </div>
+        <div name="tagDiv" className={showHideTags()}>
           <img
-              src={likeIcon}
-              className="comment-icon"
-              onClick={e => this.tagPost("like",this.props.post.id)}
-              alt="Like Post"
-            />
-          </div>
-          <p>({this.props.post.reactions.length})</p>
-          <div className="comment-indicator">
-            <div className="comment-indicator-text">
-              {this.getCommentCount()} Comments
+            src={likeIcon}
+            className="comment-icon"
+            onClick={(e) => tagPost("like", post.id)}
+            alt="Like Post"
+          />
+        </div>
+        {/* Display the number of reactions for a given post */}
+        <p>({post.reactions.length})</p>
+         {/* Comment indicator and icon */}
+        <div className="comment-indicator">
+          <div className="comment-indicator-text">{comments} Comments</div>
+          <img
+            src={commentIcon}
+            className="comment-icon"
+            onClick={(e) => {
+              // Toggle the showModal state to show/hide comments
+              setShowModal((prev) => !prev);
+            }}
+            alt="View Comments"
+          />
+        </div>
+        {/* Display the comments and CommentForm component */}
+        <div className={showHideComments()}>
+          <CommentForm
+            parent={post.id}
+            loadPosts={loadPosts}
+            loadComments={loadComments}
+          />
+
+          {/* Display existing comments using the same Post component recursively */}
+          <div className="posts">
+            <div>
+              {/* Check if there are comments before mapping through them */}
+              {postComments.length > 0 &&
+                postComments.map((comment) => (
+                  <Post
+                    key={comment.id}
+                    post={comment} // pass in the comment as the post to recursively get all the comments (comments of a comment)
+                    type="commentlist" // Indicate that this is a comment of a post
+                    loadPosts={loadComments} // Function to reload comments for this post
+                  />
+                ))}
             </div>
-            <img
-              src={commentIcon}
-              className="comment-icon"
-              onClick={e => this.showModal()}
-              alt="View Comments"
-            />
-          </div>
-          <div className={this.showHideComments()}>
-            <CommentForm
-              onAddComment={this.setCommentCount}
-              parent={this.props.post.id}
-              commentCount={this.getCommentCount()}
-            />
           </div>
         </div>
+      </div>
+    );
+  };
+
+  // Function to display the delete icon if the user is the author of post
+  const showDelete = () => {
+    if (post.authorID === parseInt(sessionStorage.getItem("user"))) {
+      return (
+        <img
+          src={helpIcon}
+          className="sidenav-icon deleteIcon"
+          alt="Delete Post"
+          title="Delete Post"
+          onClick={() => deletePost(post.id)}
+        />
       );
-    //}
-
-  }
-
-  // we only want to expose the delete post functionality if the user is
-  // author of the post
-  showDelete(){
-    if (this.props.post.author.id === sessionStorage.getItem("user")) {
-      return(
-      <img
-        src={helpIcon}
-        className="sidenav-icon deleteIcon"
-        alt="Delete Post"
-        title="Delete Post"
-        onClick={e => this.deletePost(this.props.post.id)}
-      />
-    );
     }
-    return "";
-  }
+    return null;
+  };
 
-  render() {
-
-    return (
-      <div>
-
-      <div
-        key={this.props.post.id}
-        className={[this.props.type, "postbody"].join(" ")}
-      >
+  // Render the main post body with author information, delete icon (if applicable),
+  // post content, and the comment display section including tags, reactions, and comments.
+  return (
+    <div key={post.id} className={[type, "postbody"].join(" ")}>
       <div className="deletePost">
-      {this.props.post.author.attributes.username} ({this.props.post.created})
-      {this.showDelete()}
+        {post.author.attributes.username} ({post.created}){showDelete()}
       </div>
-         <br />{" "}
-        {this.props.post.content}
-        {this.commentDisplay()}
-      </div>
-      </div>
-    );
-  }
-}
+      <br /> {post.content}
+      {commentDisplay()}
+    </div>
+  );
+};
+
+export default Post;
