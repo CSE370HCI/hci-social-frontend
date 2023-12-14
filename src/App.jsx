@@ -7,6 +7,9 @@ import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
 import PromiseComponent from "./Component/PromiseComponent";
+import LoginForm from "./Component/LoginForm";
+import RegisterForm from "./Component/RegisterForm";
+import ResetPassword from "./Component/ResetPassword";
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -71,6 +74,11 @@ function App() {
                   />
                 }
               />
+              <Route
+                path="/register"
+                element={<RegisterForm setLoggedIn={setLoggedIn} />}
+              />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/promise" element={<PromiseComponent />} />
