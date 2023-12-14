@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Settings from "./Component/Settings";
 import HomePage from "./Component/HomePage";
@@ -10,6 +10,18 @@ import PromiseComponent from "./Component/PromiseComponent";
 import LoginForm from "./Component/LoginForm";
 import RegisterForm from "./Component/RegisterForm";
 import ResetPassword from "./Component/ResetPassword";
+import Messaging from "./Component/Messaging";
+import { io } from "socket.io-client"
+
+// Initalize the socket with the respective path and tenantID
+// NEED this in App.jsx to use the socket throughout the application for real-time connections
+const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
+  path: '/realtime-socket/socket.io',
+  query: {
+    tenantID: "default"
+  }
+})
+export { socket }
 
 function App() {
   // logged in state, which tracks the state if the user is currently logged in or not
@@ -47,6 +59,12 @@ function App() {
     console.log(openModal);
   };
 
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to HCI socket server")
+    })
+  }, [])
+
   return (
     // the app is wrapped in a router component, that will render the
     // appropriate content based on the URL path.  Since this is a
@@ -82,6 +100,12 @@ function App() {
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/promise" element={<PromiseComponent />} />
+              {/* Declaring a route with a URL parameter "roomID" so that React router dynamically 
+              captures the corresponding values in the URL when there is a match. 
+              It is useful when dynamically rendering the same component for multiple paths.
+              You can see how this is used in the Messaging component 
+              as well as how this path is being set up in the FriendList component */}
+              <Route path="/messages/:roomID" element={<Messaging />} />
             </Routes>
           </div>
         </header>
@@ -94,3 +118,4 @@ function App() {
   );
 }
 export default App;
+
