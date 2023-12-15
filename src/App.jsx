@@ -16,7 +16,7 @@ import { io } from "socket.io-client"
 // Initalize the socket with the respective path and tenantID
 // NEED this in App.jsx to use the socket throughout the application for real-time connections
 const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
-  path: '/realtime-socket/socket.io',
+  path: '/hci/api/realtime-socket',
   query: {
     tenantID: "default"
   }
