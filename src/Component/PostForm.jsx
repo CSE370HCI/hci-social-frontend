@@ -30,7 +30,7 @@ const PostForm = ({ refresh, loadPosts }) => {
         (result) => {
           setPostMessage(result.Status);
           loadPosts()
-          alert("Post was successful");
+          //alert("Post was successful");
         },
         (error) => {
           alert("error!");
