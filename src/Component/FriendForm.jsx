@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Autocomplete from "./Autocomplete.jsx";
 
-const FriendForm = ({ userid }) => {
+const FriendForm = ({ userid, loadFriends }) => {
   const [friendname, setFriendname] = useState("");
   const [friendid, setFriendid] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
@@ -65,6 +65,7 @@ const FriendForm = ({ userid }) => {
       .then(
         (result) => {
           setResponseMessage(result.Status);
+          loadFriends(); // call loadFriends that is being passed in from props in Friends.jsx to display the friends without reloading
         },
         (error) => {
           alert("error!");

@@ -4,8 +4,11 @@ import FriendList from "./FriendList";
 import { useNavigate } from "react-router-dom";
 
 const Friends = () => {
+  const [connections, setConnections] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  
+
   // variable for userToken to check authorization
   const userToken = sessionStorage.getItem("token");
 
@@ -20,11 +23,48 @@ const Friends = () => {
     }
   }, [userToken]);
 
+  const loadFriends = () => {
+    fetch(
+      process.env.REACT_APP_API_PATH +
+        "/connections?fromUserID=" +
+        sessionStorage.getItem("user"),
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setConnections(result[0]);
+          console.log(result[0]);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+  };
+
   return (
     <div>
       <p>Friends</p>
-      <FriendForm userid={sessionStorage.getItem("user")} />
-      <FriendList userid={sessionStorage.getItem("user")} />
+      <FriendForm
+        userid={sessionStorage.getItem("user")}
+        loadFriends={loadFriends}
+      />
+      <FriendList
+        userid={sessionStorage.getItem("user")}
+        loadFriends={loadFriends}
+        connections={connections}
+        setConnections={setConnections}
+        isLoaded={isLoaded}
+        error={error}
+      />
     </div>
   );
 };

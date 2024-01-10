@@ -6,41 +6,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { socket } from "../App";
 
 const FriendList = (props) => {
-  const [connections, setConnections] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadFriends();
+    props.loadFriends();
   }, []); // Empty dependency array ensures this effect runs once after the initial render
-
-  const loadFriends = () => {
-    fetch(
-      process.env.REACT_APP_API_PATH +
-        "/connections?fromUserID=" +
-        sessionStorage.getItem("user"),
-      {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setConnections(result[0]);
-          console.log(result[0]);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  };
 
   const updateConnection = (id, status) => {
     //make the api call to the user controller with a PATCH request for updating a connection with another user
@@ -57,8 +27,8 @@ const FriendList = (props) => {
       .then((res) => res.json())
       .then(
         (result) => {
-          setConnections([]);
-          loadFriends();
+          props.setConnections([]);
+          props.loadFriends();
         },
         (error) => {
           alert("error!");
@@ -138,15 +108,15 @@ const FriendList = (props) => {
     });
   };
 
-  if (error) {
-    return <div> Error: {error.message} </div>;
-  } else if (!isLoaded) {
+  if (props.error) {
+    return <div> Error: {props.error.message} </div>;
+  } else if (!props.isLoaded) {
     return <div> Loading... </div>;
   } else {
     return (
       <div className="post">
         <ul>
-          {connections.map((connection) => (
+          {props.connections.map((connection) => (
             <div key={connection.id} className="userlist">
               <div>
                 {connection.toUser.attributes.username} -{" "}
