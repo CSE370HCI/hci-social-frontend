@@ -7,11 +7,14 @@ import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
 import PromiseComponent from "./Component/PromiseComponent";
-import LoginForm from "./Component/LoginForm";
+//import LoginForm from "./Component/LoginForm";
 import RegisterForm from "./Component/RegisterForm";
 import ResetPassword from "./Component/ResetPassword";
 import Messaging from "./Component/Messaging";
 import { io } from "socket.io-client"
+
+// App.jsx is the starting point for the application.  This is the component called by index, which will be rendered when
+// a user goes to your app URL.  This component will handle routing to other parts of your app, and any initial setup.
 
 // Initalize the socket with the respective path and tenantID
 // NEED this in App.jsx to use the socket throughout the application for real-time connections
@@ -24,6 +27,7 @@ const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
 export { socket }
 
 function App() {
+  
   // logged in state, which tracks the state if the user is currently logged in or not
   // initially set to false
   const [loggedIn, setLoggedIn] = useState(false);
@@ -40,11 +44,11 @@ function App() {
     window.location.reload();
   };
 
-  const login = (e) => {
-    e.preventDefault();
-    setRefreshPosts(true);
-    setLoggedIn(true);
-  };
+  //const login = (e) => {
+  //  e.preventDefault();
+  //  setRefreshPosts(true);
+  //  setLoggedIn(true);
+  //};
 
   const doRefreshPosts = () => {
     console.log("CALLING DOREFRESHPOSTS IN APP.JSX");

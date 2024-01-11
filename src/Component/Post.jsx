@@ -18,7 +18,7 @@ const Post = ({ post, type, loadPosts }) => {
   const [showModal, setShowModal] = useState(false);
   const [showTags, setShowTags] = useState(post.reactions.length > 0);
   const [comments, setComments] = useState(parseInt(post._count.children));
-  const [error, setError] = useState(null);
+ 
   const [isLoaded, setIsLoaded] = useState(false);
   const [postComments, setPostComments] = useState([]);
 
@@ -138,7 +138,7 @@ const Post = ({ post, type, loadPosts }) => {
         })
         .catch((err) => {
           setIsLoaded(true);
-          setError(err);
+         
           console.log("ERROR loading posts");
         });
     }

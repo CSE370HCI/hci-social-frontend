@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const PostForm = ({ refresh, loadPosts }) => {
   const [postText, setPostText] = useState("");
@@ -28,9 +28,16 @@ const PostForm = ({ refresh, loadPosts }) => {
       .then((res) => res.json())
       .then(
         (result) => {
-          setPostMessage(result.Status);
-          loadPosts()
-          //alert("Post was successful");
+          
+          // reload the posts so your new post is included
+          loadPosts();
+
+          // clear out the post text box, so you could make a new post
+          setPostText("");
+
+          // set a status message, and then set a timeout to clear it after a few seconds
+          setPostMessage("Post Added!");
+          setTimeout(setPostMessage, 3000, "");
         },
         (error) => {
           alert("error!");
@@ -47,8 +54,10 @@ const PostForm = ({ refresh, loadPosts }) => {
           <textarea
             rows="10"
             cols="70"
+            value={postText}
             onChange={(e) => setPostText(e.target.value)} // e.target.value gets the value that the user inputs
-          />
+          >
+          </textarea>
         </label>
         <br />
 

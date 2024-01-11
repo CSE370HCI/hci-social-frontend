@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // CommentForm is a functional component that takes parent, loadPosts, and loadComments as props
 const CommentForm = ({

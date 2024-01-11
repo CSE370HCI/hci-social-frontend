@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import blockIcon from "../assets/block_white_216x216.png";
 import unblockIcon from "../assets/thumbsup.png";
 import messageIcon from "../assets/comment.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { socket } from "../App";
 
 const FriendList = (props) => {
@@ -86,7 +86,7 @@ const FriendList = (props) => {
       // for room creation
       socket.off("/room-created", handleCreateRoom);
     };
-  }, [navigate, socket]);
+  }, [navigate, props.userId]);
 
   const handleMessageClick = (connectionUser) => {
     console.log(connectionUser);
@@ -98,8 +98,11 @@ const FriendList = (props) => {
       toUserID: connectionUser.id,
     });
 
+    console.log("Called join room");
+
     // Do stuff to join the room once it's actually created
     socket.once("/room-created", (data) => {
+      console.log("Room Created");
       if (data && data.roomID) {
         sessionStorage.setItem("toUserID", connectionUser.id);
         sessionStorage.setItem("roomID", data.roomID);

@@ -18,10 +18,12 @@ const Friends = () => {
   // run everything inside of it everytime the userToken variable changes
   useEffect(() => {
     console.log(userToken);
+
+    // if the user is not logged in, go back to the default route, which will take them to the login page
     if (!userToken) {
       navigate("/");
     }
-  }, [userToken]);
+  }, [userToken, navigate]);
 
   const loadFriends = () => {
     fetch(
