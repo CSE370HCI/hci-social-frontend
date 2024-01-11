@@ -116,11 +116,11 @@ const FriendList = (props) => {
     return (
       <div className="post">
         <ul>
-          {props.connections.map((connection) => (
+          {/* the list comes back in oldest first order, reverse so newest shows at the top */}
+          {props.connections.reverse().map((connection) => (
             <div key={connection.id} className="userlist">
               <div>
-                {connection.toUser.attributes.username} -{" "}
-                {connection.attributes.status}
+                {connection.toUser.attributes.username} -{" "} {connection.attributes.status}
               </div>
               <div className="friends-icons-container deletePost">
                 <div className="deletePost">
