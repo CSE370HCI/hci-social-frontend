@@ -336,6 +336,18 @@
   padding: 12px;
 }
 
+.messageIcon {
+  width:40px;
+  height:40px;
+  transition: transform 0.3s ease;
+}
+
+.messageIcon:hover {
+  transform: scale(1.1); 
+  cursor: pointer;
+}
+
+
 .sendBtn {
   width: 150px;
   background-color: green;

@@ -20,8 +20,9 @@ import { io } from "socket.io-client"
 // NEED this in App.jsx to use the socket throughout the application for real-time connections
 const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
   path: '/hci/api/realtime-socket/socket.io',
+  // path: '/realtime-socket/socket.io',
   query: {
-    tenantID: "default"
+    tenantID: "example"
   }
 })
 export { socket }

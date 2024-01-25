@@ -13,6 +13,8 @@ const FriendList = (props) => {
   }, []); // Empty dependency array ensures this effect runs once after the initial render
 
   const updateConnection = (id, status) => {
+    console.log(`Attempting to update connection ${id} to status ${status}`);
+
     //make the api call to the user controller with a PATCH request for updating a connection with another user
     fetch(process.env.REACT_APP_API_PATH + "/connections/" + id, {
       method: "PATCH",
@@ -22,8 +24,10 @@ const FriendList = (props) => {
       },
       body: JSON.stringify({
         attributes: { status: status, type: "friend" },
-      }),
+      }
+      ),
     })
+    
       .then((res) => res.json())
       .then(
         (result) => {
@@ -40,6 +44,7 @@ const FriendList = (props) => {
   // Otherwise, show the unblock icon and update the connection
   // with the updateConnection function
   const conditionalAction = (status, id) => {
+    console.log(`Rendering action based on status: ${status} for connection ${id}`);
     if (status === "active") {
       return (
         <img
@@ -66,8 +71,10 @@ const FriendList = (props) => {
   useEffect(() => {
     // function for creating a room
     const handleCreateRoom = (data) => {
+      console.log("Received data on /room-created event:", data);
       if (data && data.roomID) {
-        console.log("Room created:", data.roomID);
+        console.log("Navigating to room:", data.roomID);
+        // console.log("Room created:", data.roomID);
         navigate(`/messages/${data.roomID}`);
         sessionStorage.setItem("toUserID", props.userId);
       }
@@ -81,15 +88,21 @@ const FriendList = (props) => {
     socket.on("/room-created", handleCreateRoom);
 
     // cleanup
-    return () => {
-      // when the user leaves the component/page, this socket.off will be called which will turn off the listener
-      // for room creation
-      socket.off("/room-created", handleCreateRoom);
-    };
+    // return () => {
+
+    //   // when the user leaves the component/page, this socket.off will be called which will turn off the listener
+    //   // for room creation
+    //   socket.off("/room-created", handleCreateRoom);
+    // };
   }, [navigate, props.userId]);
 
   const handleMessageClick = (connectionUser) => {
-    console.log(connectionUser);
+    // console.log("Message Clicked");
+    console.log("Attempting to message user with ID:", connectionUser.id);
+    console.log("Attempting to message user:", connectionUser);
+    console.log("Session user ID:", sessionStorage.getItem("user"));
+    console.log("Session token:", sessionStorage.getItem("token"));
+    
     // Emit an event to create a room with the provided user IDs
     // socket.emit is used to send events from the client to the server.
     // it's used to create a room if it doesn't exist or join a room if one is already established
@@ -97,16 +110,23 @@ const FriendList = (props) => {
       fromUserID: sessionStorage.getItem("user"),
       toUserID: connectionUser.id,
     });
+    console.log("Join room event emitted for user ID:", connectionUser.id);
 
     console.log("Called join room");
 
+
     // Do stuff to join the room once it's actually created
+    // before the effect hits the socket.once => 
     socket.once("/room-created", (data) => {
-      console.log("Room Created");
+      console.log("Navigating to room with ID:", data.roomID);
+
       if (data && data.roomID) {
+        console.log("Navigating to room with ID:", data.roomID);
         sessionStorage.setItem("toUserID", connectionUser.id);
         sessionStorage.setItem("roomID", data.roomID);
         navigate(`/messages/${data.roomID}`);
+      }else {
+        console.error("Room creation failed, no roomID received.");
       }
     });
   };
@@ -123,18 +143,18 @@ const FriendList = (props) => {
           {props.connections.reverse().map((connection) => (
             <div key={connection.id} className="userlist">
               <div>
-                {connection.toUser.attributes.username} -{" "} {connection.attributes.status}
+                {connection.toUser.attributes.username} -{" "}+{console.log(connection.toUser.attributes.username)} {connection.attributes.status}
               </div>
               <div className="friends-icons-container deletePost">
-                <div className="deletePost">
-                  {/* Set the id param dynamically to the user's id you want to specifically want to get */}
-                  <img
-                    src={messageIcon}
-                    className="sidenav-icon deleteIcon"
-                    alt="Message User"
-                    title="Message User"
-                    onClick={() => handleMessageClick(connection.toUser)}
-                  />
+              <div className="deletePost">
+                <img
+                  src={messageIcon}
+                  className="sidenav-icon messageIcon" // Updated class name here
+                  alt="Message User"
+                  title="Message User"
+                  onClick={() => handleMessageClick(connection.toUser)}
+                />
+                   {/* Set the id param dynamically to the user's id you want to specifically want to get */}
                 </div>
                 <div>
                   {conditionalAction(
