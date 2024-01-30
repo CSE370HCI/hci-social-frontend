@@ -86,14 +86,13 @@ const FriendList = (props) => {
     // if it is the first time, it will create a room between the two users, otherwise it will join a room
     // that has already been established
     socket.on("/room-created", handleCreateRoom);
-
     // cleanup
-    // return () => {
+    return () => {
 
-    //   // when the user leaves the component/page, this socket.off will be called which will turn off the listener
-    //   // for room creation
-    //   socket.off("/room-created", handleCreateRoom);
-    // };
+      // when the user leaves the component/page, this socket.off will be called which will turn off the listener
+      // for room creation
+      socket.off("/room-created", handleCreateRoom);
+    };
   }, [navigate, props.userId]);
 
   const handleMessageClick = (connectionUser) => {
