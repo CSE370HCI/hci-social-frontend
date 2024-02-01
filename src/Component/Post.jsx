@@ -230,12 +230,19 @@ const Post = ({ post, type, loadPosts }) => {
     return null;
   };
 
+  const getUsername = (author) => {
+    if (author.attributes){
+      return author.attributes.username;
+    }
+    return "";
+  }
+
   // Render the main post body with author information, delete icon (if applicable),
   // post content, and the comment display section including tags, reactions, and comments.
   return (
     <div key={post.id} className={[type, "postbody"].join(" ")}>
       <div className="deletePost">
-        {post.author.attributes.username} ({post.created}){showDelete()}
+        {getUsername(post.author) } ({post.created}){showDelete()}
       </div>
       <br /> {post.content}
       {commentDisplay()}
