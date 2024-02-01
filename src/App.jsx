@@ -21,7 +21,7 @@ import { io } from "socket.io-client"
 const socket = io(process.env.REACT_APP_API_PATH_SOCKET, {
   path: '/hci/api/realtime-socket/socket.io',
   query: {
-    tenantID: "default"
+    tenantID: "example"
   }
 })
 export { socket }
