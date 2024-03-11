@@ -19,6 +19,13 @@ const RegisterForm = ({ setLoggedIn }) => {
     // keeps the form from actually submitting as well
     event.preventDefault();
 
+    console.log("my data", {
+      email,
+      password,
+    })
+    
+    console.log("sending to", process.env.REACT_APP_API_PATH + "/auth/signup")
+
     fetch(process.env.REACT_APP_API_PATH + "/auth/signup", {
       method: "POST",
       headers: {
@@ -61,7 +68,10 @@ const RegisterForm = ({ setLoggedIn }) => {
             type="email"
             // event.target refers to the DOM that is triggered from an event, such as onChange, onClick, etc.
             // event.target.value holds the value that is passed in to the input field from the onChange
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => {
+              console.log(event, event.target.value)
+              setEmail(event.target.value)}
+            }
           />
         </label>
         <br />

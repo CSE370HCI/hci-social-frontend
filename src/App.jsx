@@ -6,6 +6,7 @@ import Navbar from "./Component/Navbar";
 import Friends from "./Component/Friends";
 import Groups from "./Component/Groups";
 import Modal from "./Component/Modal";
+import SimplePage from "./Component/SimplePage";
 import PromiseComponent from "./Component/PromiseComponent";
 //import LoginForm from "./Component/LoginForm";
 import RegisterForm from "./Component/RegisterForm";
@@ -104,6 +105,7 @@ function App() {
               <Route path="/friends" element={<Friends />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/promise" element={<PromiseComponent />} />
+              <Route path="/demo" element={<SimplePage />} />
               {/* Declaring a route with a URL parameter "roomID" so that React router dynamically 
               captures the corresponding values in the URL when there is a match. 
               It is useful when dynamically rendering the same component for multiple paths.
