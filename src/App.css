@@ -7,15 +7,30 @@
   height: 40vmin;
 }
 
+
+:root{
+  --red:red;
+  --bg: #7c2667;
+  --font: white;
+  --button-bg: blue;
+  --accent: #999;
+  --positive: green;
+  --negative: red;
+  --positive-text: yellow;
+  --comment-bg:white;
+  --comment-text:black;
+  --comment-accent:lightblue;
+}
+
 .App-header {
-  background-color: #7c2667;
+  background-color: var(--bg);
   min-height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: flex-center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--font);
 }
 
 .deletePost{
@@ -48,13 +63,13 @@
 }
 
 .submitbutton{
-  background-color: blue;
+  background-color: var(--button-bg);
   margin:10px;
   border-radius: 5px;
 }
 
 .no-suggestions {
-  color: #999;
+  color: var(--accent);
   padding: 0.5rem;
 
 }
@@ -68,7 +83,7 @@
 }
 
 .suggestions {
-  border: 1px solid #999;
+  border: 1px solid var(--accent);
   border-top-width: 0;
   list-style: none;
   margin-top: 0;
@@ -88,14 +103,14 @@
 
 .suggestion-active,
 .suggestions li:hover {
-  background-color: #008f68;
-  color: #fae042;
+  background-color: var(--positive);
+  color: var(--positive-text);
   cursor: pointer;
   font-weight: 700;
 }
 
 .suggestions li:not(:last-of-type) {
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid var(--accent);
 }
 
 .profileform label{
@@ -104,12 +119,12 @@
 }
 
 .App-link {
-  color: #09d3ac;
+  color: var(--positive);
 }
 
 .postlist {
   text-align: left;
-  background: blue;
+  background: var(--button-bg);
   border-radius: 20px;
   padding:30px;
   margin:10px;
@@ -120,7 +135,7 @@
 
 .userlist {
   text-align: left;
-  background: blue;
+  background: var(--button-bg);
   border-radius: 20px;
   padding:30px;
   margin:10px;
@@ -130,19 +145,19 @@
 }
 
 .comments{
-    background:white;
+    background: var(--comment-bg);
     width:90%;
     display:block;
     border-radius: 20px;
     padding:10px;
     margin:10px;
-    color:black;
+    color:var(--comment-text);
 }
 
 .commentlist {
   text-align: left;
-  background: lightblue;
-  color:black;
+  background: var(--comment-accent);
+  color:var(--comment-text);
   border-radius: 20px;
   padding:10px;
   margin:10px;
@@ -177,7 +192,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  color:red;
+  color: var(--red);
 }
 
 .comment-block{
@@ -203,11 +218,11 @@
   align-items: center;
   justify-content: flex-start;
 
-  background-color: blue;
+  background-color: var(--button-bg);
 }
 
 .tag-active{
-  border:red;
+  border:var(--red);
   border-width:thick;
   border-style: solid;
 }
@@ -241,8 +256,8 @@
 }
 
 .comment-indicator-text{
-  background-color: lightblue;
-  color: black;
+  background-color: var(--comment-accent);
+  color: var(--comment-text);
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
@@ -267,23 +282,23 @@
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: var(--comment-text); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .modal-content {
-  background-color: #fefefe;
+  background-color: var(--comment-bg);
   margin: 15% auto; /* 15% from the top and centered */
   padding: 1px 10px 20px 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--accent);
   width: 50%; /* Could be more or less, depending on screen size */
   height: 200px;
 }
 
 /* The Close Button */
 .close {
-  color: #aaa;
+  color: var(--accent);
   float: right;
   line-height: 42px;
   font-size: 35px;
@@ -292,7 +307,7 @@
 
 .close:hover,
 .close:focus {
-  color: black;
+  color: var(--comment-text);
   text-decoration: none;
   cursor: pointer;
 }
@@ -310,14 +325,14 @@
 .message__container {
   width: 100%;
   height: 60vh;
-  background-color: purple;
+  background-color: var(--bg);
   padding: 20px;
   overflow-y: scroll;
 }
 
 .chat__footer {
   padding: 20px;
-  background-color: black;
+  background-color: var(--comment-text);
   width: 100%;
 }
 
@@ -331,7 +346,7 @@
 .message {
   width: 80%;
   height: 100%;
-  border: 1px solid #ddd;
+  border: 1px solid var(--accent);
   outline: none;
   padding: 12px;
 }
@@ -350,26 +365,26 @@
 
 .sendBtn {
   width: 150px;
-  background-color: green;
+  background-color: var(--positive);
   padding: 10px;
   border: none;
   outline: none;
-  color: yellow;
+  color: var(--positive-text);
   cursor: pointer;
 }
 
 .message__recipient {
-  background-color: #000;
+  background-color: var(--comment-text);
   width: 300px;
   padding: 8px;
   font-size: 15px;
   text-align: start;
-  color: #fff;
+  color: var(--font);
   width: fit-content;
 }
 
 .message__sender {
-  background-color: blue;
+  background-color: var(--button-bg);
   max-width: 400px;
   padding: 8px;
   margin-left: auto;
@@ -383,12 +398,12 @@
 
 .recipient__name {
   text-align: left;
-  color: #000;
+  color: var(--comment-text);
   font-size: 13px;
 }
 
 .sender__name {
   font-size: 13px;
-  color: #000;
+  color: var(--comment-text);
   text-align: right;
 }

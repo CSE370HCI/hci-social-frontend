@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // pull in the images for the menu items
@@ -14,6 +14,46 @@ import groupIcon from "../assets/group.png";
    to the parent app class in the last entry... this is an example of calling a function
    passed in via props from a parent component */
 const Navbar = ({ toggleModal, logout }) => {
+
+  const root = document.querySelector(':root');
+
+  const setVariables = vars => Object.entries(vars).forEach(v => root.style.setProperty(v[0], v[1]));
+  const darkModeVariables = {
+    "--red":"#AE445A",
+    "--bg": "black",
+    "--font": "#F39F5A",
+    "--button-bg": "#451952",
+    "--accent": "#662549",
+    "--positive": "green",
+    "--positive-text": "#662549",
+    "--comment-bg":"#F39F5A",
+    "--comment-text":"#EF39F5A",
+    "--comment-accent":"#662549",
+  };
+
+  const lightModeVariables = {
+    "--red":"red",
+    "--bg": "#7c2667",
+    "--font": "white",
+    "--button-bg": "blue",
+    "--accent": "#999",
+    "--positive": "green",
+    "--positive-text": "yellow",
+    "--comment-bg":"white",
+    "--comment-text":"black",
+    "--comment-accent":"lightblue",
+  };
+
+  let modes = [lightModeVariables, darkModeVariables]
+  let labels = ["light", "dark"]
+
+  const [mode, setMode] = useState(sessionStorage.getItem("mode")? sessionStorage.getItem("mode") : 0)
+
+  useEffect(() => {
+    setVariables(modes[mode])
+  }, [mode, ])
+
+
   return (
     <div id="sidenav" className="sidenav">
       <ul id="side-menu-items">
@@ -79,6 +119,20 @@ const Navbar = ({ toggleModal, logout }) => {
               title="groups"
             />
           </Link>
+        </li>
+
+        <li className="pm admin">
+          <button onClick={() => 
+            {
+              if (mode == 1){
+                setMode(0)
+                sessionStorage.setItem("mode", 0)
+              } else{
+                setMode(1)
+                sessionStorage.setItem("mode", 1)
+              }
+            }
+            }>{labels[(mode+1) % 2]} mode</button>
         </li>
       </ul>
     </div>
