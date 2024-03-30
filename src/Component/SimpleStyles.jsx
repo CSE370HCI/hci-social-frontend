@@ -3,6 +3,7 @@ import davishall from "../assets/davishall.jpg"
 
 export default function SimpleStyles(){
     const [filter, setFilter] = useState("")
+    const [interval, setAnim] = useState(null)
     const [numeric, setNumeric] = useState("0")
     const [filterVal, setClass] = useState("")
     const [defaults, addDefault] = useState({current:[], new: null})
@@ -53,6 +54,10 @@ export default function SimpleStyles(){
     },[defaults])
 
     useEffect(()=>{
+        if (filter == ""){
+            setClass("none")
+            return
+        }
         let unit = specialUnits[filter] ? specialUnits[filter] : "%"
         console.log(`${filter}(${numeric}${unit})`)
         setClass(`${filter}(${numeric}${unit})`)
@@ -69,21 +74,47 @@ export default function SimpleStyles(){
         </div>
 
         <div>
-            {Object.entries(filterOpts).map(key => <button onClick={() => setFilter(key[0])}> {key[0]} </button>)}
+            {Object.entries(filterOpts).map(key => <button onClick={() => {
+                addDefault({current:[], new:null})
+                clearInterval(interval)
+                setFilter(key[0])}
+                }> {key[0]} </button>)}
         </div>
 
         <p>Adjust the filter with:</p>
         <div>
             <input onChange={(e) => {
                 console.log(e.target.value.toString())
-                setNumeric(e.target.value.toString())}}
+                addDefault({current:[], new:null})
+                clearInterval(interval)
+                setNumeric(e.target.value.toString())
+            }}
             type="range" min="1" max="200" value={numeric?numeric:0} class="slider" id="myRange"></input>
         </div>
+
+        <button onClick={() => {
+            // setNumeric(0)
+            let i = 0
+            if (filter == ""){
+                alert("Choose a filter first!")
+                return
+            }
+            let animinterval = setInterval(() => {
+                let unit = specialUnits[filter] ? specialUnits[filter] : "%"
+                setClass(`${filter}(${i++}${unit})`)
+                // setNumeric(parseInt(numeric)+1)
+                
+            }, 25);
+            setAnim(animinterval)
+            return () => clearInterval(animinterval);
+        }}>Animate!</button>
+        <button onClick={() => clearInterval(interval)}> Stop Animation</button>
 
         <p>Stack some defaults! (Click again to remove)</p>
         <div>
         {Object.entries(filterOpts).map(key => <button onClick={() => addDefault({current:defaults.current, new:key[1]})}> {key[0]} </button>)}
         </div>
+        <br></br>
 
         </div>
         </>
