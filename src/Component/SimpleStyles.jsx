@@ -89,11 +89,10 @@ export default function SimpleStyles(){
                 clearInterval(interval)
                 setNumeric(e.target.value.toString())
             }}
-            type="range" min="1" max="200" value={numeric?numeric:0} class="slider" id="myRange"></input>
+            type="range" min="0" max="200" value={numeric?numeric:0} class="slider" id="myRange"></input>
         </div>
 
         <button onClick={() => {
-            // setNumeric(0)
             let i = 0
             if (filter == ""){
                 alert("Choose a filter first!")
@@ -102,7 +101,6 @@ export default function SimpleStyles(){
             let animinterval = setInterval(() => {
                 let unit = specialUnits[filter] ? specialUnits[filter] : "%"
                 setClass(`${filter}(${i++}${unit})`)
-                // setNumeric(parseInt(numeric)+1)
                 
             }, 25);
             setAnim(animinterval)

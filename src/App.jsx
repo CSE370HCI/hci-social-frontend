@@ -11,6 +11,7 @@ import SimpleStyles from "./Component/SimpleStyles.jsx";
 import PromiseComponent from "./Component/PromiseComponent";
 //import LoginForm from "./Component/LoginForm";
 import RegisterForm from "./Component/RegisterForm";
+import Loader from "./Component/Loader.jsx"
 import ResetPassword from "./Component/ResetPassword";
 import Messaging from "./Component/Messaging";
 import { io } from "socket.io-client"
@@ -118,7 +119,7 @@ function App() {
         </header>
 
         <Modal show={openModal} onClose={(e) => toggleModal(e)}>
-          This is a modal dialog!
+          <Loader/>
         </Modal>
       </div>
     </Router>

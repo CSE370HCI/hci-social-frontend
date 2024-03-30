@@ -290,6 +290,10 @@
   animation: showModal .2s forwards 
 }
 
+.spin {
+  animation: spinny 1s infinite 
+}
+
 @keyframes showModal {
    from {
      opacity: 0;
@@ -300,6 +304,16 @@
      opacity: 1;
      transform: scale(1);
    }
+}
+
+@keyframes spinny {
+  from {
+    transform: rotate(0deg);
+  }
+
+   to {
+    transform: rotate(360deg);
+  }
 }
 /* Modal Content/Box */
 .modal-content {
