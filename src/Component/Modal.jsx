@@ -19,7 +19,7 @@ const Modal = ({ onClose, show, children }) => {
 
   return (
     <div id="myModal" className="modal">
-      <div className="modal-content">
+      <div className="modal-content animated">
         <span className="close" onClick={handleClose}>
           &times;
         </span>

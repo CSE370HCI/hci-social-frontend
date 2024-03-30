@@ -47,7 +47,7 @@ const Navbar = ({ toggleModal, logout }) => {
   let modes = [lightModeVariables, darkModeVariables]
   let labels = ["light", "dark"]
 
-  const [mode, setMode] = useState(sessionStorage.getItem("mode")? sessionStorage.getItem("mode") : 0)
+  const [mode, setMode] = useState(sessionStorage.getItem("mode")? parseInt(sessionStorage.getItem("mode")) : 0)
 
   useEffect(() => {
     setVariables(modes[mode])
