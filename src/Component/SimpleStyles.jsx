@@ -1,143 +1,92 @@
 import React, {useEffect, useState} from "react";
+import davishall from "../assets/davishall.jpg"
 
 export default function SimpleStyles(){
+    const [filter, setFilter] = useState("")
+    const [numeric, setNumeric] = useState("0")
+    const [filterVal, setClass] = useState("")
+    const [defaults, addDefault] = useState({current:[], new: null})
 
-    // say you have situation where you want to control
-    // what user page gets rendered based on how state changes
-    // upon some navigatory action by the user
-    const [open, setOpen] = useState(false)
-    return(
-        <>
-        {open==true ? 
-        <div style={{
-            position:"absolute",
-            backgroundColor:"pink",
-            width:"40vw",
-            height:"40vh",
-            borderRadius:"20px",
-            marginLeft:"30%",
-        }}> 
-        <button onClick={() => setOpen(!open)}>x</button>
-        </div>
-        :null}
-        <div>
-        <button onClick={() => setOpen(!open)}>
-            Click me!
-        </button>
-        </div>
-        </>
-    )
-
-}
-
-// a VERY basic profile card
-function Profile ({data}){      
-    // basically just display a div stuffed with data prop  
-    return (
-        <div>
-            My email is {data.email}<br></br>
-            {data.bio}<br></br>
-            {/* peep conditional styling here */}
-            My favorite color is <span style={{color:data.color}}>{data.color}</span>
-            <br></br>
-        </div>
-    )
-}
-
-// A VERY simple button dispaying the name
-function Name(props){  
-    // use borrowed setter from parent to 
-    // influence how other components render
-    const handleClick = () => {
-        props.setSelected(props.name)
-    }
-    return (
-        <button style={{textAlign:"center", margin:"auto", width:"100%"}} onClick={handleClick}>{props.data}</button>
-    )
-}
-
-
-function Counter(){
-	const [count, setCount] = useState(0);
-	const increase = () => {
-		setCount(count+1)
+    const filterOpts = {
+        "blur":"blur(5px)",
+        "brightness":"brightness(0.4)",
+        "contrast":"contrast(200%)",
+        "drop-shadow":"drop-shadow(16px 16px 20px blue)",
+        "grayscale":"grayscale(50%)",
+        "hue-rotate":"hue-rotate(90deg)",
+        "invert":"invert(75%)",
+        "opacity":"opacity(25%)",
+        "saturate":"saturate(30%)",
+        "sepia":"sepia(60%)",
     }
 
-    const decrease = () => {
-		setCount(count-1)
+    const specialUnits = {
+        "blur": "px",
+        "hue-rotate": "deg",
+        "drop-shadow":"px 16px 20px blue"
     }
-    return (
-        <>
-            <h2>{count}</h2>
-            <button onClick={increase}> Increase </button>
-            <CounterComponent count={count} decrease={decrease}/>
-        </>
-    )
-        
-}
 
-function CounterComponent(props){
-    return (
-        <>
-            <button onClick={props.decrease}> Decrease </button>
-        </>
-    )      
-}
-
-function List(){
-    const data = ['daisy', 'rose', 'carnation', 'marigold']
-    return(
-        <>
-            {data.map(flower => <li>{flower}</li>)}
-        </>
-    )
-}
-
-function ListItem(props){
-    return(
-        <li style={{color:props.color}}>{props.flower}</li>
-    )
-}
-
-function Toggled(props){
-    return(
-        <>
-        {props.display == true? <List/> : null}
-        </>
-    )
-}
-
-function ComplicatedList(){
-    const data = 
-    [
-        {fav: true,flower: 'daisy',color: "yellow"}, 
-        {fav: false, flower:'rose', color:"red"}, 
-        {fav: true, flower:'carnation', color:"pink"}, 
-        {fav: false,flower: 'marigold',color: "orange"}
-    ]
-
-    const [display, setDisplay] = useState(true);
-    const [displayText, setText] = useState("Hide ");
-
-    const toggle = () => {
-        if (display == false){
-            setText("Hide ")
-        } else {
-            setText("Show ")
+    useEffect(()=>{
+        if (!defaults.new){
+            return
         }
-        setDisplay(!display)
-    }
+        if (defaults.current.includes(defaults.new)){
+            let mix = ""
+            let newCurrent = []
+            for (let c of defaults.current){
+                if (c != defaults.new){
+                    mix += c + " "
+                    newCurrent.push(c)
+                }
+            }
+            setClass(mix == "" ? "none":mix)
+            addDefault({current:[...newCurrent], new:null})
+            return
+        }
+        let mix = ""
+        for (let c of defaults.current){
+            mix += c + " "
+        }
+        mix += defaults.new
+        setClass(mix)
+        addDefault({current:[ ...defaults.current, defaults.new], new:null})
+    },[defaults])
+
+    useEffect(()=>{
+        let unit = specialUnits[filter] ? specialUnits[filter] : "%"
+        console.log(`${filter}(${numeric}${unit})`)
+        setClass(`${filter}(${numeric}${unit})`)
+
+    }, [numeric, filter])
 
     return(
         <>
-            <button onClick={toggle}> {displayText} Plain List</button>
-            <Toggled display={display} data={data}/>
-            <h2> Here are the ones I like from the list: </h2>
-            {data.map(flower => flower.fav && <ListItem 
-                flower={flower.flower}
-                color={flower.color}
-                />
-            )}
+        <div>
+            <p>Applying: {filterVal}</p>
+
+        <div>
+            {filterVal ? <img style={{filter: filterVal}} width={"32%"} height={"90%"} src={davishall}></img>:null}
+        </div>
+
+        <div>
+            {Object.entries(filterOpts).map(key => <button onClick={() => setFilter(key[0])}> {key[0]} </button>)}
+        </div>
+
+        <p>Adjust the filter with:</p>
+        <div>
+            <input onChange={(e) => {
+                console.log(e.target.value.toString())
+                setNumeric(e.target.value.toString())}}
+            type="range" min="1" max="200" value={numeric?numeric:0} class="slider" id="myRange"></input>
+        </div>
+
+        <p>Stack some defaults! (Click again to remove)</p>
+        <div>
+        {Object.entries(filterOpts).map(key => <button onClick={() => addDefault({current:defaults.current, new:key[1]})}> {key[0]} </button>)}
+        </div>
+
+        </div>
         </>
     )
 }
+
