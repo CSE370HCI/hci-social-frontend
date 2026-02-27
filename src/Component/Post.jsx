@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../App.css";
 import CommentForm from "./CommentForm.jsx";
 import helpIcon from "../assets/delete.png";
@@ -19,7 +19,7 @@ const Post = ({ post, type, loadPosts }) => {
   const [showTags, setShowTags] = useState(post.reactions.length > 0);
   const [comments, setComments] = useState(parseInt(post._count.children));
  
-  const [isLoaded, setIsLoaded] = useState(false);
+  
   const [postComments, setPostComments] = useState([]);
 
   const tagPost = (tag, thisPostID) => {
@@ -131,24 +131,18 @@ const Post = ({ post, type, loadPosts }) => {
         .then((res) => res.json())
         .then((result) => {
           if (result) {
-            setIsLoaded(true);
+            
             setPostComments(result[0]);
             setComments(result[0].length);
           }
         })
         .catch((err) => {
-          setIsLoaded(true);
+          
          
           console.log("ERROR loading posts");
         });
     }
   };
-
-  // load the comments of the specific post clicked on
-  // loadComments will run when showModal get turned to true when the user clicks on the comment icon
-  useEffect(() => {
-    loadComments();
-  }, [showModal]);
 
   // Function to handle the display of comments and related functionality
   const commentDisplay = () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Autocomplete from "./Autocomplete.jsx";
 
 const FriendForm = ({ userid, loadFriends }) => {
-  const [friendname, setFriendname] = useState("");
+  
   const [friendid, setFriendid] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [users, setUsers] = useState([]);

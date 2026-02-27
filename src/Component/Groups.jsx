@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import GroupList from "./GroupList";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const Groups = () => {
     if (!userToken) {
       navigate("/");
     }
-  }, [userToken]);
+  }, [userToken,navigate]);
 
   return (
     <div>

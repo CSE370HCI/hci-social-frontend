@@ -7,7 +7,7 @@ const RegisterForm = ({ setLoggedIn }) => {
   // You can assign the user extra attributes for when they register an account.
   // As you can see on swagger, attributes is optional where its an object and you
   // can store extra attributes like profile picture, favorite color, etc.
-  // to fill out when the user creates an account.
+  // to fill out when the user creates an account.  We use first name as an example.
   const [attributes, setAttributes] = useState({
     additionalProp1: {},
   });
@@ -27,6 +27,7 @@ const RegisterForm = ({ setLoggedIn }) => {
       body: JSON.stringify({
         email,
         password,
+        attributes,
       }),
     })
       .then((res) => res.json())
@@ -49,7 +50,7 @@ const RegisterForm = ({ setLoggedIn }) => {
     if (sessionStorage.getItem("token")) {
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <>
@@ -70,6 +71,14 @@ const RegisterForm = ({ setLoggedIn }) => {
           <input
             type="password"
             onChange={(event) => setPassword(event.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          First Name
+          <input
+            type="input"
+            onChange={(event) => setAttributes({...attributes, firstName: event.target.value})}
           />
         </label>
         <input type="submit" className="submitbutton" value="submit" />

@@ -119,7 +119,7 @@ const Profile = (props) => {
   // as you type them.
   return (
     <>
-      <img src={picture} alt="picture" />
+      <img src={picture} alt="profile" />
       <form onSubmit={submitHandler} className="profileform">
         <label>
           Picture

@@ -7,10 +7,10 @@ import { socket } from "../App";
 
 const FriendList = (props) => {
   const navigate = useNavigate();
-
+  const loadFriends = props.loadFriends;
   useEffect(() => {
-    props.loadFriends();
-  }, []); // Empty dependency array ensures this effect runs once after the initial render
+    loadFriends();
+  }, [loadFriends]); // Empty dependency array ensures this effect runs once after the initial render
 
   const updateConnection = (id, status) => {
     console.log(`Attempting to update connection ${id} to status ${status}`);

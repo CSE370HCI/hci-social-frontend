@@ -120,7 +120,7 @@ const Messaging = () => {
     if (!userToken) {
       navigate("/");
     }
-  }, [userToken]);
+  }, [userToken,navigate]);
 
   const handleMessageSend = (e) => {
     e.preventDefault();

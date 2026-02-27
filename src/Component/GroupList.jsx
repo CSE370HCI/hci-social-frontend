@@ -4,13 +4,13 @@ import unblockIcon from "../assets/thumbsup.png";
 import deleteIcon from "../assets/delete.png";
 
 const GroupList = () => {
-  const userid = sessionStorage.getItem("token");
+  
   const [groups, setGroups] = useState([]);
   const [mygroups, setMygroups] = useState([]);
   const [mygroupIDs, setMygroupIDs] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
-  const [responseMessage, setResponseMessage] = useState("");
+  
 
   useEffect(() => {
     loadGroups();
@@ -173,7 +173,7 @@ const GroupList = () => {
         } else if (response.status === 404) {
           //alert("membership not found");
         }
-        setResponseMessage(response.Status);
+       
 
         console.log("LOADING GROUPS");
         loadGroups();
@@ -193,7 +193,7 @@ const GroupList = () => {
         .then((res) => res.json())
         .then(
           (result) => {
-            setResponseMessage(result.Status);
+            
             loadGroups();
           },
           (error) => {

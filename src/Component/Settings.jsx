@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Profile from "./Profile"
 
@@ -16,7 +16,7 @@ const Settings = () => {
     if (!userToken) {
       navigate("/");
     }
-  }, [userToken]);
+  }, [userToken,navigate]);
 
   return (
     <div className="settings">

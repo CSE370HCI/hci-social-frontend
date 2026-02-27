@@ -90,6 +90,7 @@ function App() {
                 path="/"
                 element={
                   <HomePage
+                    isLoggedIn={loggedIn}
                     setLoggedIn={setLoggedIn}
                     doRefreshPosts={doRefreshPosts}
                     appRefresh={refreshPosts}
