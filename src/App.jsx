@@ -116,7 +116,7 @@ function App() {
         </header>
 
         <Modal show={openModal} onClose={(e) => toggleModal(e)}>
-          This is a modal dialog!
+          This is an example modal dialog!
         </Modal>
       </div>
     </Router>
