@@ -238,7 +238,7 @@ const Post = ({ post, type, loadPosts }) => {
       <div className="deletePost">
         {getUsername(post.author) } ({post.created}){showDelete()}
       </div>
-      <br /> {post.content}
+      <br /> <div>{post.content}</div>
       {commentDisplay()}
     </div>
   );
